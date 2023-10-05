@@ -16,7 +16,15 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/di.git"
+        },
+                {
+            "type": "vcs",
             "url": "https://github.com/rooted-phoenix/core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/utils.git"
         }
     ],
     "autoload": {

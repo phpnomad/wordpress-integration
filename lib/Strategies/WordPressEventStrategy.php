@@ -16,12 +16,20 @@ class WordPressEventStrategy implements EventStrategy
         return 'phoenix/' . $event::getId();
     }
 
+    /**
+     * Broadcasts an event.
+     *
+     * @param Event $event
+     * @return void
+     */
     public function broadcast(Event $event): void
     {
         do_action($this->getActionName($event), $event);
     }
 
     /**
+     * Attaches an action to an event.
+     *
      * @param class-string<Event> $event
      * @param callable $action
      * @param int|null $priority
@@ -33,6 +41,8 @@ class WordPressEventStrategy implements EventStrategy
     }
 
     /**
+     * Detaches an action from an event.
+     *
      * @param class-string<Event> $event
      * @param callable $action
      * @param int|null $priority
