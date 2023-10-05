@@ -62,10 +62,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-file-iterator" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/friendsofphp/php-cs-fixer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpunit/php-code-coverage" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/php-di/invoker" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/php-di/php-di" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/laravel/serializable-closure" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/core" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/di" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/utils" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

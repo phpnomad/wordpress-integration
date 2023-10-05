@@ -29,12 +29,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Phoenix\\Core\\": "lib/"
+            "Phoenix\\Integrations\\WordPress\\": "lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Phoenix\\Core\\Tests\\": "tests/"
+            "Phoenix\\Integrations\\WordPress\\Tests\\": "tests/"
         }
     },
     "authors": [

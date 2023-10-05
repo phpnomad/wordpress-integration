@@ -1,12 +1,12 @@
 <?php
 
-namespace Phoenix\Core\Abstracts;
+namespace Phoenix\Integrations\WordPress;
 
 use Phoenix\Core\Bootstrap\Interfaces\EventStrategy;
 use Phoenix\Core\Bootstrap\Interfaces\Initializer;
 use Phoenix\Core\Strategies\WordPressEventStrategy;
 
-abstract class WordPressInitializer implements Initializer
+class WordPressInitializer implements Initializer
 {
     public const REQUIRED_PHP_VERSION = '7.4';
 

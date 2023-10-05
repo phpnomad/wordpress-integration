@@ -78,10 +78,9 @@
       <path value="$PROJECT_DIR$/vendor/phpunit/php-code-coverage" />
       <path value="$PROJECT_DIR$/vendor/phoenix" />
       <path value="$PROJECT_DIR$/vendor" />
-      <path value="$PROJECT_DIR$/vendor/php-di/invoker" />
-      <path value="$PROJECT_DIR$/vendor/php-di/php-di" />
-      <path value="$PROJECT_DIR$/vendor/laravel/serializable-closure" />
       <path value="$PROJECT_DIR$/vendor/phoenix/core" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/di" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/utils" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

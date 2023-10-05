@@ -1,6 +1,6 @@
 <?php
 
-namespace Phoenix\Core\Strategies;
+namespace Phoenix\Integrations\WordPress\Strategies;
 
 use Phoenix\Core\Bootstrap\Interfaces\EventStrategy;
 use Phoenix\Core\Events\Interfaces\Event;
