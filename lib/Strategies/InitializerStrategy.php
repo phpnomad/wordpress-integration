@@ -2,9 +2,8 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
-use Phoenix\Core\Bootstrap\Interfaces\EventStrategy;
+use Phoenix\Core\Bootstrap\Interfaces\EventStrategy as CoreEventStrategy;
 use Phoenix\Core\Bootstrap\Interfaces\Initializer;
-use Phoenix\Core\Strategies\WordPressEventStrategy;
 
 class InitializerStrategy implements Initializer
 {
@@ -18,7 +17,7 @@ class InitializerStrategy implements Initializer
     public function getClassDefinitions(): array
     {
         return [
-            EventStrategy::class => WordPressEventStrategy::class
+            CoreEventStrategy::class => EventStrategy::class
         ];
     }
 
