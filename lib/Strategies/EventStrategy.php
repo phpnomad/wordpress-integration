@@ -2,10 +2,10 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
-use Phoenix\Core\Bootstrap\Interfaces\EventStrategy;
 use Phoenix\Core\Events\Interfaces\Event;
+use Phoenix\Core\Bootstrap\Interfaces\EventStrategy as CoreEventStrategy;
 
-class WordPressEventStrategy implements EventStrategy
+class EventStrategy implements CoreEventStrategy
 {
     /**
      * @param Event|class-string<Event> $event
