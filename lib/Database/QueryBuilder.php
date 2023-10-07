@@ -2,17 +2,18 @@
 
 namespace Phoenix\Integrations\WordPress\Database;
 
+use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\QueryBuilder as QueryBuilderInterface;
 use Phoenix\Utils\Helpers\Arr;
 use wpdb;
 
 class QueryBuilder implements QueryBuilderInterface
 {
-    protected array $select = ['SELECT'];
+    protected array $select = [];
 
     protected array $where = [];
 
-    protected array $from = ['FROM'];
+    protected array $from = [];
 
     protected array $sql = [];
 
@@ -23,7 +24,6 @@ class QueryBuilder implements QueryBuilderInterface
     protected array $raw = [];
 
     protected array $items = [];
-    private array $validOperands = ['>', '<', '=', '<=', '>=', '!>', '!<', '!=', '!<=', '!>=', 'IN', 'NOT IN', 'LIKE'];
 
     protected array $operands = [];
 
@@ -33,11 +33,13 @@ class QueryBuilder implements QueryBuilderInterface
 
     protected array $orderBy = [];
 
-    protected string $preparedQuery;
-
     /** @inheritDoc */
     public function select(array $fields)
     {
+        if (empty($this->select)) {
+            $this->select = ['SELECT'];
+        }
+
         $this->select[] = Arr::process($fields)
             ->each(function (string $field, $key) {
                 return is_string($key) ? "$field AS $key" : $field;
@@ -50,6 +52,10 @@ class QueryBuilder implements QueryBuilderInterface
     /** @inheritDoc */
     public function from(string $table, ?string $alias = null)
     {
+        if (empty($this->from)) {
+            $this->from[] = 'FROM';
+        }
+
         $this->from[] = $table;
 
         if ($alias) {
@@ -164,6 +170,10 @@ class QueryBuilder implements QueryBuilderInterface
             array_unshift($select, ',');
         }
 
+        if (empty($this->select)) {
+            $this->select = ['SELECT'];
+        }
+
         // Merge into select statement.
         $this->select = array_merge($this->select, $select);
 
@@ -181,6 +191,10 @@ class QueryBuilder implements QueryBuilderInterface
         // Add a comma to the end if it isn't the only field
         if (count($this->select) > 1) {
             array_unshift($select, ',');
+        }
+
+        if (empty($this->select)) {
+            $this->select = ['SELECT'];
         }
 
         // Merge into select
@@ -225,10 +239,22 @@ class QueryBuilder implements QueryBuilderInterface
     /** @inheritDoc */
     public function build(): string
     {
-        // Build SQL array
-        $this->sql = array_merge($this->select, $this->from);
-        $this->maybeAppend('right_join');
-        $this->maybeAppend('left_join');
+        if (empty($this->select)) {
+            throw new QueryBuilderException('Missing select field');
+        }
+
+        if (empty($this->from)) {
+            throw new QueryBuilderException('Missing from field');
+        }
+
+        foreach ($this->operands as $operand) {
+            if (!$this->isValidOperand($operand)) {
+                throw new QueryBuilderException('Invalid operand' . $operand);
+            }
+        }
+
+        $this->sql = Arr::merge($this->select, $this->from);
+        $this->maybeAppend('join');
         $this->maybeAppend('where');
         $this->maybeAppend('group_by');
         $this->maybeAppend('order_by');
@@ -242,9 +268,38 @@ class QueryBuilder implements QueryBuilderInterface
             $sql = $this->wpdb()->prepare($sql, ...$this->prepare);
         }
 
-        $this->preparedQuery = $sql;
+        $this->reset();
 
         return $sql;
+    }
+
+    protected function reset(): void
+    {
+        $this->select = [];
+        $this->where = [];
+        $this->from = [];
+        $this->sql = [];
+        $this->preparedValues = [];
+        $this->prepare = [];
+        $this->raw = [];
+        $this->items = [];
+        $this->operands = [];
+        $this->limit = [];
+        $this->offset = [];
+        $this->orderBy = [];
+    }
+
+    /**
+     * Validates operands.
+     *
+     * @param string $operand The operand to check for
+     * @return bool true if it exists, otherwise false.
+     * @since 1.2.3
+     *
+     */
+    private function isValidOperand($operand): bool
+    {
+        return in_array($operand, ['>', '<', '=', '<=', '>=', '!>', '!<', '!=', '!<=', '!>=', 'IN', 'NOT IN', 'LIKE']);
     }
 
     /**

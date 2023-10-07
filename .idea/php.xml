@@ -82,6 +82,7 @@
       <path value="$PROJECT_DIR$/vendor/phpstan/phpstan-mockery" />
       <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
       <path value="$PROJECT_DIR$/../../../wordpress" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/cache" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
