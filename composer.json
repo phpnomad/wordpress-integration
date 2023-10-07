@@ -18,13 +18,21 @@
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/di.git"
         },
-                {
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/core.git"
+        },
+        {
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/core.git"
         },
         {
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/utils.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/db.git"
         }
     ],
     "autoload": {
@@ -44,8 +52,12 @@
         }
     ],
     "require-dev": {
-        "phoenix/tests": "^0.1.0",
-        "phoenix/core": "dev-phx-38/core-repository-setup"
+        "phoenix/tests": "^0.1.0"
+    },
+    "require": {
+        "phoenix/core": "dev-phx-38/core-repository-setup",
+        "phoenix/db": "dev-main",
+        "phoenix/utils": "dev-phx-38/core-repository-setup"
     },
     "config": {
         "allow-plugins": {

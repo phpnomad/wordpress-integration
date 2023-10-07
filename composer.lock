@@ -4,8 +4,211 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b72fd8f2542f8c9a3585c424658ff567",
-    "packages": [],
+    "content-hash": "c1fcd34aad57b3b1f502a624e03fa322",
+    "packages": [
+        {
+            "name": "phoenix/core",
+            "version": "dev-phx-38/core-repository-setup",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:rooted-phoenix/core.git",
+                "reference": "57ba70c422a9b3f81c78dd5d3947df2184f62c7d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/57ba70c422a9b3f81c78dd5d3947df2184f62c7d",
+                "reference": "57ba70c422a9b3f81c78dd5d3947df2184f62c7d",
+                "shasum": ""
+            },
+            "require": {
+                "phoenix/di": "dev-phx-38/core-repository-setup",
+                "phoenix/utils": "dev-phx-38/core-repository-setup"
+            },
+            "require-dev": {
+                "phoenix/tests": "^0.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phoenix\\Core\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Phoenix\\Core\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "homepage": "https://github.com/phoenix/core",
+            "support": {
+                "source": "https://github.com/rooted-phoenix/core/tree/phx-38/core-repository-setup",
+                "issues": "https://github.com/rooted-phoenix/core/issues"
+            },
+            "time": "2023-10-06T00:19:02+00:00"
+        },
+        {
+            "name": "phoenix/db",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:rooted-phoenix/db.git",
+                "reference": "e9b97467744489d9bbd48bfbe5108fbe46a20a4f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/e9b97467744489d9bbd48bfbe5108fbe46a20a4f",
+                "reference": "e9b97467744489d9bbd48bfbe5108fbe46a20a4f",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phoenix/tests": "^0.1.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phoenix\\Database\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Phoenix\\Database\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "homepage": "https://github.com/phoenix/core",
+            "support": {
+                "source": "https://github.com/rooted-phoenix/db/tree/main",
+                "issues": "https://github.com/rooted-phoenix/db/issues"
+            },
+            "time": "2023-10-07T00:42:45+00:00"
+        },
+        {
+            "name": "phoenix/di",
+            "version": "dev-phx-38/core-repository-setup",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:rooted-phoenix/di.git",
+                "reference": "e24acb113f79f4bbdbcf8a699fa115ffbd959590"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/e24acb113f79f4bbdbcf8a699fa115ffbd959590",
+                "reference": "e24acb113f79f4bbdbcf8a699fa115ffbd959590",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phoenix/tests": "^0.1.0",
+                "phoenix/utils": "dev-phx-38/core-repository-setup"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phoenix\\Di\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Phoenix\\Di\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "homepage": "https://github.com/phoenix/core",
+            "support": {
+                "source": "https://github.com/rooted-phoenix/di/tree/phx-38/core-repository-setup",
+                "issues": "https://github.com/rooted-phoenix/di/issues"
+            },
+            "time": "2023-10-05T23:06:10+00:00"
+        },
+        {
+            "name": "phoenix/utils",
+            "version": "dev-phx-38/core-repository-setup",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:rooted-phoenix/utils.git",
+                "reference": "a2c718c347d4c1d6b5534dd6383229cdac7ad2b3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rooted-phoenix/utils/zipball/a2c718c347d4c1d6b5534dd6383229cdac7ad2b3",
+                "reference": "a2c718c347d4c1d6b5534dd6383229cdac7ad2b3",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phoenix/tests": "^0.1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phoenix\\Utils\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Phoenix\\Utils\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "homepage": "https://github.com/phoenix/core",
+            "support": {
+                "source": "https://github.com/rooted-phoenix/utils/tree/phx-38/core-repository-setup",
+                "issues": "https://github.com/rooted-phoenix/utils/issues"
+            },
+            "time": "2023-10-07T00:54:46+00:00"
+        }
+    ],
     "packages-dev": [
         {
             "name": "composer/pcre",
@@ -764,109 +967,6 @@
             "time": "2022-02-21T01:04:05+00:00"
         },
         {
-            "name": "phoenix/core",
-            "version": "dev-phx-38/core-repository-setup",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:rooted-phoenix/core.git",
-                "reference": "9b03d684a94f8c079ddae0719995d244929cc140"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/9b03d684a94f8c079ddae0719995d244929cc140",
-                "reference": "9b03d684a94f8c079ddae0719995d244929cc140",
-                "shasum": ""
-            },
-            "require": {
-                "phoenix/di": "dev-phx-38/core-repository-setup",
-                "phoenix/utils": "dev-phx-38/core-repository-setup"
-            },
-            "require-dev": {
-                "phoenix/tests": "^0.1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Phoenix\\Core\\": "lib/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Phoenix\\Core\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "php-cs-fixer": [
-                    "php-cs-fixer fix"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alex Standiford",
-                    "email": "alex@standiford.us"
-                }
-            ],
-            "homepage": "https://github.com/phoenix/core",
-            "support": {
-                "source": "https://github.com/rooted-phoenix/core/tree/phx-38/core-repository-setup",
-                "issues": "https://github.com/rooted-phoenix/core/issues"
-            },
-            "time": "2023-10-05T23:16:14+00:00"
-        },
-        {
-            "name": "phoenix/di",
-            "version": "dev-phx-38/core-repository-setup",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:rooted-phoenix/di.git",
-                "reference": "e24acb113f79f4bbdbcf8a699fa115ffbd959590"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/e24acb113f79f4bbdbcf8a699fa115ffbd959590",
-                "reference": "e24acb113f79f4bbdbcf8a699fa115ffbd959590",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phoenix/tests": "^0.1.0",
-                "phoenix/utils": "dev-phx-38/core-repository-setup"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Phoenix\\Di\\": "lib/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Phoenix\\Di\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "php-cs-fixer": [
-                    "php-cs-fixer fix"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alex Standiford",
-                    "email": "alex@standiford.us"
-                }
-            ],
-            "homepage": "https://github.com/phoenix/core",
-            "support": {
-                "source": "https://github.com/rooted-phoenix/di/tree/phx-38/core-repository-setup",
-                "issues": "https://github.com/rooted-phoenix/di/issues"
-            },
-            "time": "2023-10-05T23:06:10+00:00"
-        },
-        {
             "name": "phoenix/tests",
             "version": "0.1.0",
             "source": {
@@ -919,55 +1019,6 @@
             "time": "2023-10-05T10:03:49+00:00"
         },
         {
-            "name": "phoenix/utils",
-            "version": "dev-phx-38/core-repository-setup",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:rooted-phoenix/utils.git",
-                "reference": "6222ef73e53ed58cb9226fdd99772feadf51debd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/utils/zipball/6222ef73e53ed58cb9226fdd99772feadf51debd",
-                "reference": "6222ef73e53ed58cb9226fdd99772feadf51debd",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phoenix/tests": "^0.1.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Phoenix\\Utils\\": "lib/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Phoenix\\Utils\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "php-cs-fixer": [
-                    "php-cs-fixer fix"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alex Standiford",
-                    "email": "alex@standiford.us"
-                }
-            ],
-            "homepage": "https://github.com/phoenix/core",
-            "support": {
-                "source": "https://github.com/rooted-phoenix/utils/tree/phx-38/core-repository-setup",
-                "issues": "https://github.com/rooted-phoenix/utils/issues"
-            },
-            "time": "2023-10-05T22:56:35+00:00"
-        },
-        {
             "name": "phpstan/extension-installer",
             "version": "1.3.1",
             "source": {
@@ -1017,12 +1068,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "b6eacdbd653c338965065c493942c9be3937f602"
+                "reference": "34d864ef4128208a3ed1e39c1a4303605987cd5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/b6eacdbd653c338965065c493942c9be3937f602",
-                "reference": "b6eacdbd653c338965065c493942c9be3937f602",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/34d864ef4128208a3ed1e39c1a4303605987cd5b",
+                "reference": "34d864ef4128208a3ed1e39c1a4303605987cd5b",
                 "shasum": ""
             },
             "require": {
@@ -1072,7 +1123,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-05T14:21:52+00:00"
+            "time": "2023-10-06T20:22:38+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
@@ -1131,12 +1182,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "a296faea1fc5986d39243fde2abd9504f05079ca"
+                "reference": "0b6cb84a359426d34e439ce6d1173b41e07cb672"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/a296faea1fc5986d39243fde2abd9504f05079ca",
-                "reference": "a296faea1fc5986d39243fde2abd9504f05079ca",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/0b6cb84a359426d34e439ce6d1173b41e07cb672",
+                "reference": "0b6cb84a359426d34e439ce6d1173b41e07cb672",
                 "shasum": ""
             },
             "require": {
@@ -1201,7 +1252,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-09-29T10:36:14+00:00"
+            "time": "2023-10-06T09:53:04+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -1450,12 +1501,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "8f609fce64965cb30389fe3e369c40b931796297"
+                "reference": "18a76cf7293527f275342720eeb063dff346c97e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8f609fce64965cb30389fe3e369c40b931796297",
-                "reference": "8f609fce64965cb30389fe3e369c40b931796297",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/18a76cf7293527f275342720eeb063dff346c97e",
+                "reference": "18a76cf7293527f275342720eeb063dff346c97e",
                 "shasum": ""
             },
             "require": {
@@ -1545,7 +1596,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-05T06:49:44+00:00"
+            "time": "2023-10-06T09:52:37+00:00"
         },
         {
             "name": "psr/container",
@@ -4023,7 +4074,9 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "phoenix/core": 20
+        "phoenix/core": 20,
+        "phoenix/db": 20,
+        "phoenix/utils": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
