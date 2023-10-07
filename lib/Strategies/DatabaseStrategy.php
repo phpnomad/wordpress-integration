@@ -3,6 +3,7 @@
 namespace Phoenix\Integrations\WordPress\Strategies;
 
 use Phoenix\Database\DatabaseStrategy as CoreDatabaseStrategy;
+use Phoenix\Database\Exceptions\RecordNotFoundException;
 use Phoenix\Database\QueryBuilder;
 use Phoenix\Integrations\WordPress\Traits\CanQueryWordPressDatabase;
 use Phoenix\Utils\Helpers\Arr;
@@ -40,11 +41,19 @@ class DatabaseStrategy implements CoreDatabaseStrategy
     }
 
     /** @inheritDoc */
-    public function where(string $table, array $conditions): array
+    public function where(string $table, array $conditions, ?int $limit = null, ?int $offset = null): array
     {
         $this->queryBuilder
             ->select(['*'])
             ->from($table);
+
+        if ($limit) {
+            $this->queryBuilder->limit($limit);
+        }
+
+        if ($offset) {
+            $this->queryBuilder->offset($offset);
+        }
 
         $this->buildConditions($conditions);
 
@@ -102,5 +111,17 @@ class DatabaseStrategy implements CoreDatabaseStrategy
 
             $this->queryBuilder->andWhere($column, $operator, $value);
         }
+    }
+
+    /** @inheritDoc */
+    public function findBy(string $table, string $column, $value): array
+    {
+        $results = $this->where($table, ['column' => $column, 'operator' => '=', 'value' => $value], 1);
+
+        if (empty($results)) {
+            throw new RecordNotFoundException('Could not find record');
+        }
+
+        return Arr::get($results, 0);
     }
 }
