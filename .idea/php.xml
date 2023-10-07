@@ -83,6 +83,8 @@
       <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
       <path value="$PROJECT_DIR$/../../../wordpress" />
       <path value="$PROJECT_DIR$/vendor/phoenix/cache" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/event" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/config" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

@@ -24,6 +24,14 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/event.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/config.git"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/rooted-phoenix/core.git"
         },
         {

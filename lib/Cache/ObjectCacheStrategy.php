@@ -4,7 +4,7 @@ namespace Phoenix\Integrations\WordPress\Cache;
 
 use Phoenix\Cache\Interfaces\CacheStrategy as CoreCacheStrategy;
 
-class CacheStrategy implements CoreCacheStrategy
+class ObjectCacheStrategy implements CoreCacheStrategy
 {
     /** @inheritDoc */
     public function get(string $key)

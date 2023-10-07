@@ -67,6 +67,8 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan-mockery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/extension-installer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/event" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/config" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

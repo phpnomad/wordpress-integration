@@ -3,13 +3,13 @@
 namespace Phoenix\Integrations\WordPress\Strategies;
 
 use Phoenix\Cache\Interfaces\CacheStrategy as CoreCacheStrategy;
-use Phoenix\Core\Bootstrap\Interfaces\EventStrategy as CoreEventStrategy;
-use Phoenix\Core\Bootstrap\Interfaces\Initializer;
+use Phoenix\Core\Bootstrap\Abstracts\BaseInitializer;
+use Phoenix\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use Phoenix\Database\QueryBuilder as CoreQueryBuilder;
-use Phoenix\Integrations\WordPress\Cache\CacheStrategy;
+use Phoenix\Integrations\WordPress\Cache\TransientCacheStrategy;
 use Phoenix\Integrations\WordPress\Database\QueryBuilder;
 
-class InitializerStrategy implements Initializer
+class InitializerStrategy extends BaseInitializer
 {
     public const REQUIRED_PHP_VERSION = '7.4';
 
@@ -22,7 +22,7 @@ class InitializerStrategy implements Initializer
     {
         return [
             CoreEventStrategy::class => EventStrategy::class,
-            CoreCacheStrategy::class => CacheStrategy::class,
+            CoreCacheStrategy::class => TransientCacheStrategy::class,
             CoreQueryBuilder::class => QueryBuilder::class
         ];
     }
@@ -44,10 +44,5 @@ class InitializerStrategy implements Initializer
         }
 
         return true;
-    }
-
-    public function init(): void
-    {
-        // TODO: Implement init() method.
     }
 }
