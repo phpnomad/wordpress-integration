@@ -2,8 +2,12 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
+use Phoenix\Cache\Interfaces\CacheStrategy as CoreCacheStrategy;
 use Phoenix\Core\Bootstrap\Interfaces\EventStrategy as CoreEventStrategy;
 use Phoenix\Core\Bootstrap\Interfaces\Initializer;
+use Phoenix\Database\QueryBuilder as CoreQueryBuilder;
+use Phoenix\Integrations\WordPress\Cache\CacheStrategy;
+use Phoenix\Integrations\WordPress\Database\QueryBuilder;
 
 class InitializerStrategy implements Initializer
 {
@@ -17,7 +21,9 @@ class InitializerStrategy implements Initializer
     public function getClassDefinitions(): array
     {
         return [
-            CoreEventStrategy::class => EventStrategy::class
+            CoreEventStrategy::class => EventStrategy::class,
+            CoreCacheStrategy::class => CacheStrategy::class,
+            CoreQueryBuilder::class => QueryBuilder::class
         ];
     }
 

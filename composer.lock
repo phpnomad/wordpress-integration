@@ -4,20 +4,70 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c1fcd34aad57b3b1f502a624e03fa322",
+    "content-hash": "2d6547992c16d6dc4c3b1b7e681f2ddd",
     "packages": [
+        {
+            "name": "phoenix/cache",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:rooted-phoenix/cache.git",
+                "reference": "6931dfda3925f49ebf850758a5613054992f0789"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rooted-phoenix/cache/zipball/6931dfda3925f49ebf850758a5613054992f0789",
+                "reference": "6931dfda3925f49ebf850758a5613054992f0789",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phoenix/tests": "^0.1.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phoenix\\Cache\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Phoenix\\Cache\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "homepage": "https://github.com/phoenix/core",
+            "support": {
+                "source": "https://github.com/rooted-phoenix/cache/tree/main",
+                "issues": "https://github.com/rooted-phoenix/cache/issues"
+            },
+            "time": "2023-10-07T01:40:38+00:00"
+        },
         {
             "name": "phoenix/core",
             "version": "dev-phx-38/core-repository-setup",
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/core.git",
-                "reference": "57ba70c422a9b3f81c78dd5d3947df2184f62c7d"
+                "reference": "767d3fccad90f5ea5dd0a4ec3b9d8d4601c344fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/57ba70c422a9b3f81c78dd5d3947df2184f62c7d",
-                "reference": "57ba70c422a9b3f81c78dd5d3947df2184f62c7d",
+                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/767d3fccad90f5ea5dd0a4ec3b9d8d4601c344fe",
+                "reference": "767d3fccad90f5ea5dd0a4ec3b9d8d4601c344fe",
                 "shasum": ""
             },
             "require": {
@@ -57,7 +107,7 @@
                 "source": "https://github.com/rooted-phoenix/core/tree/phx-38/core-repository-setup",
                 "issues": "https://github.com/rooted-phoenix/core/issues"
             },
-            "time": "2023-10-06T00:19:02+00:00"
+            "time": "2023-10-07T01:07:23+00:00"
         },
         {
             "name": "phoenix/db",
@@ -4076,6 +4126,7 @@
     "stability-flags": {
         "phoenix/core": 20,
         "phoenix/db": 20,
+        "phoenix/cache": 20,
         "phoenix/utils": 20
     },
     "prefer-stable": false,
