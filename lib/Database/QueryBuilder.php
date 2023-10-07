@@ -4,11 +4,14 @@ namespace Phoenix\Integrations\WordPress\Database;
 
 use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\QueryBuilder as QueryBuilderInterface;
+use Phoenix\Integrations\WordPress\Traits\CanGetDataFormats;
 use Phoenix\Utils\Helpers\Arr;
 use wpdb;
 
 class QueryBuilder implements QueryBuilderInterface
 {
+    use CanGetDataFormats;
+
     protected array $select = [];
 
     protected array $where = [];
@@ -273,7 +276,8 @@ class QueryBuilder implements QueryBuilderInterface
         return $sql;
     }
 
-    protected function reset(): void
+    /** @inheritDoc */
+    public function reset()
     {
         $this->select = [];
         $this->where = [];
@@ -287,6 +291,22 @@ class QueryBuilder implements QueryBuilderInterface
         $this->limit = [];
         $this->offset = [];
         $this->orderBy = [];
+
+        return $this;
+    }
+
+    /** @inheritDoc */
+    public function resetClauses(string $clause, string ...$clauses)
+    {
+        $clauses[] = $clause;
+
+        foreach ($clauses as $clauseToReset) {
+            if (isset($this->$clauseToReset)) {
+                $this->$clauseToReset = [];
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -342,24 +362,6 @@ class QueryBuilder implements QueryBuilderInterface
         }
 
         return $this->preparedValues[$field];
-    }
-
-    /**
-     * Determines the wpdb->prepare field type based on the field's column type.
-     *
-     * @param string|int|float $value The field to check against.
-     * @return string The field type. Either %d, %f, of %s.
-     *
-     */
-    private function getFieldSprintfType($value): string
-    {
-        if (is_int($value)) {
-            return '%d';
-        } elseif (is_float($value)) {
-            return '%f';
-        } else {
-            return '%s';
-        }
     }
 
     /**
