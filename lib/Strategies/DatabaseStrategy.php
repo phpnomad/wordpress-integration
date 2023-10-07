@@ -2,9 +2,10 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
-use Phoenix\Database\DatabaseStrategy as CoreDatabaseStrategy;
+use Phoenix\Database\Exceptions\DatabaseErrorException;
+use Phoenix\Database\Interfaces\DatabaseStrategy as CoreDatabaseStrategy;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
-use Phoenix\Database\QueryBuilder;
+use Phoenix\Database\Interfaces\QueryBuilder;
 use Phoenix\Integrations\WordPress\Traits\CanQueryWordPressDatabase;
 use Phoenix\Utils\Helpers\Arr;
 
@@ -43,21 +44,7 @@ class DatabaseStrategy implements CoreDatabaseStrategy
     /** @inheritDoc */
     public function where(string $table, array $conditions, ?int $limit = null, ?int $offset = null): array
     {
-        $this->queryBuilder
-            ->select(['*'])
-            ->from($table);
-
-        if ($limit) {
-            $this->queryBuilder->limit($limit);
-        }
-
-        if ($offset) {
-            $this->queryBuilder->offset($offset);
-        }
-
-        $this->buildConditions($conditions);
-
-        return $this->wpdbGetResults();
+        return $this->getResults(['*'], $table, $conditions, $limit, $offset);
     }
 
     /** @inheritDoc */
@@ -89,6 +76,55 @@ class DatabaseStrategy implements CoreDatabaseStrategy
         return (int)$this->wpdbGetVar();
     }
 
+    /** @inheritDoc */
+    public function findBy(string $table, string $column, $value): array
+    {
+        $results = $this->where($table, ['column' => $column, 'operator' => '=', 'value' => $value], 1);
+
+        if (empty($results)) {
+            throw new RecordNotFoundException('Could not find record');
+        }
+
+        return Arr::get($results, 0);
+    }
+
+    /** @inheritDoc */
+    public function findIds(string $table, array $conditions, ?int $limit = null, ?int $offset = null): array
+    {
+        return $this->getResults(['id'], $table, $conditions, $limit, $offset);
+    }
+
+    /**
+     * Query the database with conditions.
+     *
+     * @param array $fields
+     * @param string $table
+     * @param array{column: string, operator: string, value: mixed}[] $conditions
+     * @param positive-int|null $limit
+     * @param positive-int|null $offset
+     * @return int[]
+     * @throws DatabaseErrorException
+     * @throws RecordNotFoundException
+     */
+    protected function getResults(array $fields, string $table, array $conditions, ?int $limit = null, ?int $offset = null)
+    {
+        $this->queryBuilder
+            ->select($fields)
+            ->from($table);
+
+        if ($limit) {
+            $this->queryBuilder->limit($limit);
+        }
+
+        if ($offset) {
+            $this->queryBuilder->offset($offset);
+        }
+
+        $this->buildConditions($conditions);
+
+        return $this->wpdbGetResults();
+    }
+
     /**
      * Takes the given array of conditions and adds it to the query builder as a where statement.
      *
@@ -111,17 +147,5 @@ class DatabaseStrategy implements CoreDatabaseStrategy
 
             $this->queryBuilder->andWhere($column, $operator, $value);
         }
-    }
-
-    /** @inheritDoc */
-    public function findBy(string $table, string $column, $value): array
-    {
-        $results = $this->where($table, ['column' => $column, 'operator' => '=', 'value' => $value], 1);
-
-        if (empty($results)) {
-            throw new RecordNotFoundException('Could not find record');
-        }
-
-        return Arr::get($results, 0);
     }
 }

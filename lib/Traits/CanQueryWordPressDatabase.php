@@ -5,7 +5,7 @@ namespace Phoenix\Integrations\WordPress\Traits;
 use Phoenix\Database\Exceptions\DatabaseErrorException;
 use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
-use Phoenix\Database\QueryBuilder;
+use Phoenix\Database\Interfaces\QueryBuilder;
 
 trait CanQueryWordPressDatabase
 {
@@ -15,7 +15,7 @@ trait CanQueryWordPressDatabase
 
     /**
      * Gets a batch of rows using wpdb.
-     * @return array<string, mixed>[]
+     * @return array<string, mixed>[]|array<int>
      * @throws DatabaseErrorException
      * @throws RecordNotFoundException
      */
