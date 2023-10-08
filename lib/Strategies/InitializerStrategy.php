@@ -2,6 +2,7 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
+use Phoenix\Cache\Interfaces\CacheStrategy;
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
 use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
 use Phoenix\Core\Bootstrap\Abstracts\BaseInitializer;
@@ -23,10 +24,10 @@ class InitializerStrategy extends BaseInitializer
     public function getClassDefinitions(): array
     {
         return [
-            CoreEventStrategy::class => EventStrategy::class,
-            PersistentCacheStrategy::class => TransientCacheStrategy::class,
-            InMemoryCacheStrategy::class => ObjectCacheStrategy::class,
-            CoreQueryBuilder::class => QueryBuilder::class
+            EventStrategy::class => CoreEventStrategy::class,
+            TransientCacheStrategy::class => PersistentCacheStrategy::class,
+            ObjectCacheStrategy::class => [CacheStrategy::class, InMemoryCacheStrategy::class],
+            QueryBuilder::class => CoreQueryBuilder::class
         ];
     }
 
