@@ -169,12 +169,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/db.git",
-                "reference": "348210c34c982682534bd7df64c53b0811e84525"
+                "reference": "897ceebb4326efc859018130e252011848fabff1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/348210c34c982682534bd7df64c53b0811e84525",
-                "reference": "348210c34c982682534bd7df64c53b0811e84525",
+                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/897ceebb4326efc859018130e252011848fabff1",
+                "reference": "897ceebb4326efc859018130e252011848fabff1",
                 "shasum": ""
             },
             "require-dev": {
@@ -212,7 +212,7 @@
                 "source": "https://github.com/rooted-phoenix/db/tree/main",
                 "issues": "https://github.com/rooted-phoenix/db/issues"
             },
-            "time": "2023-10-08T01:26:46+00:00"
+            "time": "2023-10-08T01:54:21+00:00"
         },
         {
             "name": "phoenix/di",

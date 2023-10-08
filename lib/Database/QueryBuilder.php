@@ -43,7 +43,7 @@ class QueryBuilder implements QueryBuilderInterface
     protected string $table;
 
     /** $inheritDoc */
-    public function useTable(string $table)
+    public function useTable(Table $table)
     {
         $this->table = $table;
 
@@ -69,7 +69,7 @@ class QueryBuilder implements QueryBuilderInterface
     /** @inheritDoc */
     public function from()
     {
-        $this->from = ['FROM', $this->table::getName(), 'AS', $this->table::getAlias()];
+        $this->from = ['FROM', $this->table->getName(), 'AS', $this->table->getAlias()];
 
         return $this;
     }
@@ -128,13 +128,13 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /** @inheritDoc */
-    public function leftJoin(string $table, string $column, string $onColumn)
+    public function leftJoin(Table $table, string $column, string $onColumn)
     {
         $join = [
             'LEFT JOIN',
-            $table::getName(),
+            $table->getName(),
             'AS',
-            $table::getAlias(),
+            $table->getAlias(),
             'ON',
             $this->prependField($column),
             '=',
@@ -152,13 +152,13 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /** @inheritDoc */
-    public function rightJoin(string $table, string $column, string $onColumn)
+    public function rightJoin(Table $table, string $column, string $onColumn)
     {
         $join = [
             'RIGHT JOIN',
-            $table::getName(),
+            $table->getName(),
             'AS',
-            $table::getAlias(),
+            $table->getAlias(),
             'ON',
             $this->prependField($column),
             '=',
@@ -409,13 +409,13 @@ class QueryBuilder implements QueryBuilderInterface
      * Prepends the specified field with the current table's alias.
      *
      * @param string $field
-     * @param ?class-string<Table> $table
+     * @param Table $table
      * @return string
      */
-    protected function prependField(string $field, ?string $table = null): string
+    protected function prependField(string $field, Table $table = null): string
     {
         $table = $table ?? $this->table;
 
-        return $table::getAlias() . '.' . $field;
+        return $table->getAlias() . '.' . $field;
     }
 }

@@ -6,6 +6,7 @@ use Phoenix\Database\Exceptions\DatabaseErrorException;
 use Phoenix\Database\Interfaces\DatabaseStrategy as CoreDatabaseStrategy;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
 use Phoenix\Database\Interfaces\QueryBuilder;
+use Phoenix\Database\Interfaces\Table;
 use Phoenix\Integrations\WordPress\Traits\CanQueryWordPressDatabase;
 use Phoenix\Utils\Helpers\Arr;
 
@@ -21,55 +22,58 @@ class DatabaseStrategy implements CoreDatabaseStrategy
     }
 
     /** @inheritDoc */
-    public function find(string $table, $id): array
+    public function find(Table $table, $id): array
     {
         $this->queryBuilder
-            ->select(['*'])
-            ->from($table)
+            ->useTable($table)
+            ->select('*')
+            ->from()
             ->where('id', '=', $id);
 
         return $this->wpdbGetRow();
     }
 
     /** @inheritDoc */
-    public function all(string $table): array
+    public function all(Table $table): array
     {
         $this->queryBuilder
-            ->select(['*'])
-            ->from($table);
+            ->useTable($table)
+            ->select('*')
+            ->from();
 
         return $this->wpdbGetResults();
     }
 
     /** @inheritDoc */
-    public function where(string $table, array $conditions, ?int $limit = null, ?int $offset = null): array
+    public function where(Table $table, array $conditions, ?int $limit = null, ?int $offset = null): array
     {
         return $this->getResults(['*'], $table, $conditions, $limit, $offset);
     }
 
     /** @inheritDoc */
-    public function create(string $table, array $attributes): int
+    public function create(Table $table, array $attributes): int
     {
-        return $this->wpdbInsert($table, $attributes);
+        return $this->wpdbInsert($table->getName(), $attributes);
     }
 
     /** @inheritDoc */
-    public function update(string $table, $id, array $attributes): void
+    public function update(Table $table, $id, array $attributes): void
     {
-        $this->wpdbUpdate($table, $attributes, ['id' => $id]);
+        $this->wpdbUpdate($table->getName(), $attributes, ['id' => $id]);
     }
 
-    public function delete(string $table, $id): void
+    public function delete(Table $table, $id): void
     {
-        $this->wpdbDelete($table, $id);
+        $this->wpdbDelete($table->getName(), $id);
     }
 
     /** @inheritDoc */
-    public function count(string $table, array $conditions = []): int
+    public function count(Table $table, array $conditions = []): int
     {
         $this->queryBuilder
+            ->useTable($table)
             ->count('id')
-            ->from($table);
+            ->from();
 
         $this->buildConditions($conditions);
 
@@ -77,7 +81,7 @@ class DatabaseStrategy implements CoreDatabaseStrategy
     }
 
     /** @inheritDoc */
-    public function findBy(string $table, string $column, $value): array
+    public function findBy(Table $table, string $column, $value): array
     {
         $results = $this->where($table, ['column' => $column, 'operator' => '=', 'value' => $value], 1);
 
@@ -89,7 +93,7 @@ class DatabaseStrategy implements CoreDatabaseStrategy
     }
 
     /** @inheritDoc */
-    public function findIds(string $table, array $conditions, ?int $limit = null, ?int $offset = null): array
+    public function findIds(Table $table, array $conditions, ?int $limit = null, ?int $offset = null): array
     {
         return $this->getResults(['id'], $table, $conditions, $limit, $offset);
     }
@@ -98,7 +102,7 @@ class DatabaseStrategy implements CoreDatabaseStrategy
      * Query the database with conditions.
      *
      * @param array $fields
-     * @param string $table
+     * @param Table $table
      * @param array{column: string, operator: string, value: mixed}[] $conditions
      * @param positive-int|null $limit
      * @param positive-int|null $offset
@@ -106,11 +110,12 @@ class DatabaseStrategy implements CoreDatabaseStrategy
      * @throws DatabaseErrorException
      * @throws RecordNotFoundException
      */
-    protected function getResults(array $fields, string $table, array $conditions, ?int $limit = null, ?int $offset = null)
+    protected function getResults(array $fields, Table $table, array $conditions, ?int $limit = null, ?int $offset = null)
     {
         $this->queryBuilder
-            ->select($fields)
-            ->from($table);
+            ->useTable($table)
+            ->select(...$fields)
+            ->from();
 
         if ($limit) {
             $this->queryBuilder->limit($limit);
