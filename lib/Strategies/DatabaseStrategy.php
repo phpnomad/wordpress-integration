@@ -153,4 +153,17 @@ class DatabaseStrategy implements CoreDatabaseStrategy
             $this->queryBuilder->andWhere($column, $operator, $value);
         }
     }
+
+    /** @inheritdoc */
+    public function query(QueryBuilder $builder): array
+    {
+        $current = $this->queryBuilder;
+        $this->queryBuilder = $builder;
+
+        $results = $this->wpdbGetResults();
+
+        $this->queryBuilder = $current;
+
+        return $results;
+    }
 }
