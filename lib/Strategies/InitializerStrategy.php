@@ -2,10 +2,12 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
-use Phoenix\Cache\Interfaces\CacheStrategy as CoreCacheStrategy;
+use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
+use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
 use Phoenix\Core\Bootstrap\Abstracts\BaseInitializer;
 use Phoenix\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use Phoenix\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
+use Phoenix\Integrations\WordPress\Cache\ObjectCacheStrategy;
 use Phoenix\Integrations\WordPress\Cache\TransientCacheStrategy;
 use Phoenix\Integrations\WordPress\Database\QueryBuilder;
 
@@ -22,7 +24,8 @@ class InitializerStrategy extends BaseInitializer
     {
         return [
             CoreEventStrategy::class => EventStrategy::class,
-            CoreCacheStrategy::class => TransientCacheStrategy::class,
+            PersistentCacheStrategy::class => TransientCacheStrategy::class,
+            InMemoryCacheStrategy::class => ObjectCacheStrategy::class,
             CoreQueryBuilder::class => QueryBuilder::class
         ];
     }
