@@ -3,7 +3,8 @@
 namespace Phoenix\Integrations\WordPress\Database;
 
 use Phoenix\Database\Exceptions\QueryBuilderException;
-use Phoenix\Database\QueryBuilder as QueryBuilderInterface;
+use Phoenix\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
+use Phoenix\Database\Interfaces\Table;
 use Phoenix\Integrations\WordPress\Traits\CanGetDataFormats;
 use Phoenix\Utils\Helpers\Arr;
 use wpdb;
@@ -36,16 +37,29 @@ class QueryBuilder implements QueryBuilderInterface
 
     protected array $orderBy = [];
 
+    /**
+     * @var class-string<Table>
+     */
+    protected string $table;
+
+    /** $inheritDoc */
+    public function useTable(string $table)
+    {
+        $this->table = $table;
+
+        return $this;
+    }
+
     /** @inheritDoc */
-    public function select(array $fields)
+    public function select(string $field, string ...$fields)
     {
         if (empty($this->select)) {
             $this->select = ['SELECT'];
         }
 
-        $this->select[] = Arr::process($fields)
-            ->each(function (string $field, $key) {
-                return is_string($key) ? "$field AS $key" : $field;
+        $this->select[] = Arr::process(Arr::merge([$field], $fields))
+            ->each(function (string $field) {
+                return $this->prependField($field);
             })
             ->toString();
 
@@ -53,17 +67,9 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /** @inheritDoc */
-    public function from(string $table, ?string $alias = null)
+    public function from()
     {
-        if (empty($this->from)) {
-            $this->from[] = 'FROM';
-        }
-
-        $this->from[] = $table;
-
-        if ($alias) {
-            $this->from[] = $alias;
-        }
+        $this->from = ['FROM', $this->table::getName(), 'AS', $this->table::getAlias()];
 
         return $this;
     }
@@ -76,7 +82,7 @@ class QueryBuilder implements QueryBuilderInterface
         }
 
         $this->operands[] = $operand;
-        $this->where = Arr::merge($this->where, [$field, $operand]);
+        $this->where = Arr::merge($this->where, [$this->prependField($field), $operand]);
 
         // Add the value to the list of values to prepare via wpdb->prepare
         if ($operand === 'NOT IN' || $operand === 'IN') {
@@ -91,7 +97,7 @@ class QueryBuilder implements QueryBuilderInterface
             array_pop($this->where);
             $this->where[] = ')';
         } elseif ('LIKE' === $operand) {
-            $this->where[] = $field;
+            $this->where[] = $this->prependField($field);
             $this->where[] = 'LIKE';
             $this->where[] = $this->wpdb()->esc_like($value);
         } else {
@@ -122,17 +128,41 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /** @inheritDoc */
-    public function join(string $type, string $table, string $alias, string $column, string $onColumn)
+    public function leftJoin(string $table, string $column, string $onColumn)
     {
         $join = [
-            $type,
-            'JOIN',
-            $table,
-            $alias,
+            'LEFT JOIN',
+            $table::getName(),
+            'AS',
+            $table::getAlias(),
             'ON',
-            $column,
+            $this->prependField($column),
             '=',
-            $onColumn,
+            $this->prependField($onColumn, $table),
+        ];
+
+        if (isset($this->join)) {
+            $this->join = Arr::merge($this->join, $join);
+        } else {
+            // Build join
+            $this->join = $join;
+        }
+
+        return $this;
+    }
+
+    /** @inheritDoc */
+    public function rightJoin(string $table, string $column, string $onColumn)
+    {
+        $join = [
+            'RIGHT JOIN',
+            $table::getName(),
+            'AS',
+            $table::getAlias(),
+            'ON',
+            $this->prependField($column),
+            '=',
+            $this->prependField($onColumn, $table),
         ];
 
         if (isset($this->join)) {
@@ -151,10 +181,10 @@ class QueryBuilder implements QueryBuilderInterface
         foreach (Arr::merge([$column], $columns) as $columnToGroup) {
             // Build group by
             if (empty($this->groupBy)) {
-                $this->groupBy = ['GROUP BY', $columnToGroup];
+                $this->groupBy = ['GROUP BY', $this->prependField($columnToGroup)];
             } else {
                 $this->groupBy[] = ',';
-                $this->groupBy[] = $columnToGroup;
+                $this->groupBy[] = $this->prependField($columnToGroup);
             }
         }
 
@@ -166,7 +196,7 @@ class QueryBuilder implements QueryBuilderInterface
     {
         $alias = $alias ?: $fieldToSum . '_sum';
         // Prepare select
-        $select = ['SUM(' . $fieldToSum . ')', 'as', $alias];
+        $select = ['SUM(' . $this->prependField($fieldToSum) . ')', 'as', $alias];
 
         // Add a comma to the end if it isn't the only field
         if (count($this->select) > 1) {
@@ -189,7 +219,7 @@ class QueryBuilder implements QueryBuilderInterface
         $alias = $alias ?: $fieldToCount . '_count';
 
         // Prepare select
-        $select = ['COUNT(' . $fieldToCount . ')', 'as', $alias];
+        $select = ['COUNT(' . $this->prependField($fieldToCount) . ')', 'as', $alias];
 
         // Add a comma to the end if it isn't the only field
         if (count($this->select) > 1) {
@@ -234,7 +264,7 @@ class QueryBuilder implements QueryBuilderInterface
         }
 
         // Add order by
-        $this->orderBy = ['ORDER BY', $field, $order];
+        $this->orderBy = ['ORDER BY', $this->prependField($field), $order];
 
         return $this;
     }
@@ -356,7 +386,7 @@ class QueryBuilder implements QueryBuilderInterface
     {
         if (!isset($this->preparedValues[$field])) {
             $this->preparedValues[$field] = [
-                'type' => $this->getFieldSprintfType($field),
+                'type' => $this->getFieldSprintfType($value),
                 'value' => $value,
             ];
         }
@@ -373,5 +403,19 @@ class QueryBuilder implements QueryBuilderInterface
         global $wpdb;
 
         return $wpdb;
+    }
+
+    /**
+     * Prepends the specified field with the current table's alias.
+     *
+     * @param string $field
+     * @param ?class-string<Table> $table
+     * @return string
+     */
+    protected function prependField(string $field, ?string $table = null): string
+    {
+        $table = $table ?? $this->table;
+
+        return $table::getAlias() . '.' . $field;
     }
 }
