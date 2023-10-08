@@ -5,7 +5,7 @@ namespace Phoenix\Integrations\WordPress\Strategies;
 use Phoenix\Cache\Interfaces\CacheStrategy as CoreCacheStrategy;
 use Phoenix\Core\Bootstrap\Abstracts\BaseInitializer;
 use Phoenix\Events\Interfaces\EventStrategy as CoreEventStrategy;
-use Phoenix\Database\QueryBuilder as CoreQueryBuilder;
+use Phoenix\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
 use Phoenix\Integrations\WordPress\Cache\TransientCacheStrategy;
 use Phoenix\Integrations\WordPress\Database\QueryBuilder;
 
