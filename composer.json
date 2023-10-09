@@ -5,6 +5,7 @@
     "homepage": "https://github.com/phoenix/core",
     "readme": "README.md",
     "license": "MIT",
+    "minimum-stability": "dev",
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix"
     },
@@ -12,16 +13,48 @@
         {
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/tests.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/di.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/event.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/config.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/core.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/utils.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/cache.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/db.git"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Phoenix\\Core\\": "lib/"
+            "Phoenix\\Integrations\\WordPress\\": "lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Phoenix\\Core\\Tests\\": "tests/"
+            "Phoenix\\Integrations\\WordPress\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -32,6 +65,12 @@
     ],
     "require-dev": {
         "phoenix/tests": "^0.1.0"
+    },
+    "require": {
+        "phoenix/core": "dev-phx-38/core-repository-setup",
+        "phoenix/db": "dev-main",
+        "phoenix/cache": "dev-main",
+        "phoenix/utils": "dev-phx-38/core-repository-setup"
     },
     "config": {
         "allow-plugins": {
