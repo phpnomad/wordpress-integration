@@ -25,7 +25,7 @@ class RestStrategy implements CoreRestStrategy
     {
         return Arr::each($validations, function (Validation $validation) {
             return [
-                'validation_callback' => function($param, $request, $key) use ($validation) {
+                'validation_callback' => function ($param, $request, $key) use ($validation) {
                     return $validation->isValid($key, Request::fromRequest($request));
                 }
             ];
@@ -46,6 +46,17 @@ class RestStrategy implements CoreRestStrategy
     }
 
     /**
+     * Converts the endpoint format to match WordPress format.
+     *
+     * @param string $input
+     * @return string
+     */
+    private function convertEndpointFormat(string $input): string
+    {
+        return preg_replace('/\{([\w-]+)}/', '(?P<$1>[\w-]+)', $input);
+    }
+
+    /**
      * Register a route.
      *
      * @param string $endpoint
@@ -57,8 +68,8 @@ class RestStrategy implements CoreRestStrategy
     protected function registerRoute(string $endpoint, array $validations, Handler $handler, string $method)
     {
         add_action('rest_api_init', function () use ($endpoint, $validations, $handler, $method) {
-            $namespace = Config::get('core.rest.namespace') . '/' . Config::get('core.rest.version');
-            register_rest_route($namespace, $endpoint, [
+            $namespace = Config::get('core.general.prefix') . '/v1';
+            register_rest_route($namespace, $this->convertEndpointFormat($endpoint), [
                 'methods' => $method,
                 'callback' => function (WP_REST_Request $request) use ($handler) {
                     return $this->wrapCallback($handler, $request);
