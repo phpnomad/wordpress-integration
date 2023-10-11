@@ -4,6 +4,7 @@ namespace Phoenix\Integrations\WordPress\Strategies;
 
 use Phoenix\Core\Repositories\Config;
 use Phoenix\Integrations\WordPress\Rest\Request;
+use Phoenix\Rest\Interfaces\Handler;
 use Phoenix\Rest\Interfaces\Request as CoreRequest;
 use Phoenix\Rest\Interfaces\Response;
 use Phoenix\Rest\Interfaces\RestStrategy as CoreRestStrategy;
@@ -32,13 +33,14 @@ class RestStrategy implements CoreRestStrategy
     }
 
     /**
-     * @param callable(CoreRequest $request): Response $callback
+     * @param Handler $handler
      * @param WP_REST_Request $request
      * @return WP_REST_Response
      */
-    private function wrapCallback(callable $callback, WP_REST_Request $request): WP_REST_Response
+    private function wrapCallback(Handler $handler, WP_REST_Request $request): WP_REST_Response
     {
-        $response = $callback(Request::fromRequest($request));
+        /** @var \Phoenix\Integrations\WordPress\Rest\Response $response */
+        $response = $handler->getResponse(Request::fromRequest($request));
 
         return $response->getResponse();
     }
@@ -48,18 +50,18 @@ class RestStrategy implements CoreRestStrategy
      *
      * @param string $endpoint
      * @param array $validations
-     * @param callable(CoreRequest $request): Response $callback
+     * @param Handler $handler
      * @param string $method
      * @return void
      */
-    protected function registerRoute(string $endpoint, array $validations, callable $callback, string $method)
+    protected function registerRoute(string $endpoint, array $validations, Handler $handler, string $method)
     {
-        add_action('rest_api_init', function () use ($endpoint, $validations, $callback, $method) {
+        add_action('rest_api_init', function () use ($endpoint, $validations, $handler, $method) {
             $namespace = Config::get('core.rest.namespace') . '/' . Config::get('core.rest.version');
             register_rest_route($namespace, $endpoint, [
                 'methods' => $method,
-                'callback' => function (WP_REST_Request $request) use ($callback) {
-                    return $this->wrapCallback($callback, $request);
+                'callback' => function (WP_REST_Request $request) use ($handler) {
+                    return $this->wrapCallback($handler, $request);
                 },
                 'args' => [
                     $this->convertValidationsToArgs($validations)
@@ -69,38 +71,38 @@ class RestStrategy implements CoreRestStrategy
     }
 
     /** @inheritDoc */
-    public function get(string $endpoint, array $validations, callable $callback): void
+    public function get(string $endpoint, array $validations, Handler $handler): void
     {
-        $this->registerRoute($endpoint, $validations, $callback, 'GET');
+        $this->registerRoute($endpoint, $validations, $handler, 'GET');
     }
 
     /** @inheritDoc */
-    public function post(string $endpoint, array $validations, callable $callback): void
+    public function post(string $endpoint, array $validations, Handler $handler): void
     {
-        $this->registerRoute($endpoint, $validations, $callback, 'POST');
+        $this->registerRoute($endpoint, $validations, $handler, 'POST');
     }
 
     /** @inheritDoc */
-    public function put(string $endpoint, array $validations, callable $callback): void
+    public function put(string $endpoint, array $validations, Handler $handler): void
     {
-        $this->registerRoute($endpoint, $validations, $callback, 'PUT');
+        $this->registerRoute($endpoint, $validations, $handler, 'PUT');
     }
 
     /** @inheritDoc */
-    public function delete(string $endpoint, array $validations, callable $callback): void
+    public function delete(string $endpoint, array $validations, Handler $handler): void
     {
-        $this->registerRoute($endpoint, $validations, $callback, 'DELETE');
+        $this->registerRoute($endpoint, $validations, $handler, 'DELETE');
     }
 
     /** @inheritDoc */
-    public function patch(string $endpoint, array $validations, callable $callback): void
+    public function patch(string $endpoint, array $validations, Handler $handler): void
     {
-        $this->registerRoute($endpoint, $validations, $callback, 'PATCH');
+        $this->registerRoute($endpoint, $validations, $handler, 'PATCH');
     }
 
     /** @inheritDoc */
-    public function options(string $endpoint, array $validations, callable $callback): void
+    public function options(string $endpoint, array $validations, Handler $handler): void
     {
-        $this->registerRoute($endpoint, $validations, $callback, 'OPTIONS');
+        $this->registerRoute($endpoint, $validations, $handler, 'OPTIONS');
     }
 }

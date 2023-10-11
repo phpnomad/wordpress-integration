@@ -49,8 +49,11 @@ class Response implements CoreResponse
         return $this->setStatus($code)->setJson(['error' => $message]);
     }
 
-    /** @inheritDoc */
-    public function getResponse()
+    /**
+     * @inheritDoc
+     * @return WP_REST_Response
+     */
+    public function getResponse(): WP_REST_Response
     {
         return $this->response;
     }
