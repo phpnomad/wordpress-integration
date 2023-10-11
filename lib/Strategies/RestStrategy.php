@@ -23,7 +23,11 @@ class RestStrategy implements CoreRestStrategy
     protected function convertValidationsToArgs(array $validations): array
     {
         return Arr::each($validations, function (Validation $validation) {
-            return [$validation, 'isValid'];
+            return [
+                'validation_callback' => function($param, $request, $key) use ($validation) {
+                    return $validation->isValid($key, Request::fromRequest($request));
+                }
+            ];
         });
     }
 
@@ -57,7 +61,9 @@ class RestStrategy implements CoreRestStrategy
                 'callback' => function (WP_REST_Request $request) use ($callback) {
                     return $this->wrapCallback($callback, $request);
                 },
-                'args' => $this->convertValidationsToArgs($validations)
+                'args' => [
+                    $this->convertValidationsToArgs($validations)
+                ]
             ]);
         });
     }

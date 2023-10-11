@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8d273acd2bb37627a1220d3a5211424c",
+    "content-hash": "f5d395b94c85151956c3ad6367ed948b",
     "packages": [
         {
             "name": "phoenix/cache",
@@ -324,12 +324,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/rest.git",
-                "reference": "a157f801a8a4dbfdd916db2063dba60d5c66a9fc"
+                "reference": "99d308c77e8e6257b6396c7dff7ae98ecd5912c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/rest/zipball/a157f801a8a4dbfdd916db2063dba60d5c66a9fc",
-                "reference": "a157f801a8a4dbfdd916db2063dba60d5c66a9fc",
+                "url": "https://api.github.com/repos/rooted-phoenix/rest/zipball/99d308c77e8e6257b6396c7dff7ae98ecd5912c1",
+                "reference": "99d308c77e8e6257b6396c7dff7ae98ecd5912c1",
                 "shasum": ""
             },
             "require-dev": {
@@ -366,7 +366,7 @@
                 "source": "https://github.com/rooted-phoenix/rest/tree/main",
                 "issues": "https://github.com/rooted-phoenix/rest/issues"
             },
-            "time": "2023-10-11T02:18:39+00:00"
+            "time": "2023-10-11T03:51:53+00:00"
         },
         {
             "name": "phoenix/utils",
@@ -4292,7 +4292,9 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }
