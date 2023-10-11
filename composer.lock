@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1233ad524b30c2a706b4dad9dff9b04d",
+    "content-hash": "8d273acd2bb37627a1220d3a5211424c",
     "packages": [
         {
             "name": "phoenix/cache",
@@ -108,29 +108,32 @@
         },
         {
             "name": "phoenix/core",
-            "version": "dev-phx-38/core-repository-setup",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/core.git",
-                "reference": "a39b6382a58e52adf3b24438374f141a6dfcc90a"
+                "reference": "bed717835a174e727b2a3787a662162a149aa077"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/a39b6382a58e52adf3b24438374f141a6dfcc90a",
-                "reference": "a39b6382a58e52adf3b24438374f141a6dfcc90a",
+                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/bed717835a174e727b2a3787a662162a149aa077",
+                "reference": "bed717835a174e727b2a3787a662162a149aa077",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "phoenix/cache": "dev-main",
                 "phoenix/config": "dev-main",
-                "phoenix/di": "dev-phx-38/core-repository-setup",
+                "phoenix/db": "dev-main",
+                "phoenix/di": "dev-main",
                 "phoenix/event": "dev-main",
-                "phoenix/utils": "dev-phx-38/core-repository-setup"
+                "phoenix/rest": "dev-main",
+                "phoenix/utils": "dev-main"
             },
             "require-dev": {
                 "phoenix/tests": "^0.1.0"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -158,10 +161,10 @@
             ],
             "homepage": "https://github.com/phoenix/core",
             "support": {
-                "source": "https://github.com/rooted-phoenix/core/tree/phx-38/core-repository-setup",
+                "source": "https://github.com/rooted-phoenix/core/tree/main",
                 "issues": "https://github.com/rooted-phoenix/core/issues"
             },
-            "time": "2023-10-08T12:35:09+00:00"
+            "time": "2023-10-11T01:47:38+00:00"
         },
         {
             "name": "phoenix/db",
@@ -216,22 +219,23 @@
         },
         {
             "name": "phoenix/di",
-            "version": "dev-phx-38/core-repository-setup",
+            "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/di.git",
-                "reference": "39b7bf091d06b583755f71af00f91dff0726abee"
+                "reference": "a6539cef156405620e560eaf5525d7c22ed6d71b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/39b7bf091d06b583755f71af00f91dff0726abee",
-                "reference": "39b7bf091d06b583755f71af00f91dff0726abee",
+                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/a6539cef156405620e560eaf5525d7c22ed6d71b",
+                "reference": "a6539cef156405620e560eaf5525d7c22ed6d71b",
                 "shasum": ""
             },
             "require-dev": {
                 "phoenix/tests": "^0.1.0",
                 "phoenix/utils": "dev-phx-38/core-repository-setup"
             },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -259,10 +263,10 @@
             ],
             "homepage": "https://github.com/phoenix/core",
             "support": {
-                "source": "https://github.com/rooted-phoenix/di/tree/phx-38/core-repository-setup",
+                "source": "https://github.com/rooted-phoenix/di/tree/main",
                 "issues": "https://github.com/rooted-phoenix/di/issues"
             },
-            "time": "2023-10-08T12:00:46+00:00"
+            "time": "2023-10-09T09:27:30+00:00"
         },
         {
             "name": "phoenix/event",
@@ -315,22 +319,73 @@
             "time": "2023-10-07T15:28:55+00:00"
         },
         {
-            "name": "phoenix/utils",
-            "version": "dev-phx-38/core-repository-setup",
+            "name": "phoenix/rest",
+            "version": "dev-main",
             "source": {
                 "type": "git",
-                "url": "git@github.com:rooted-phoenix/utils.git",
-                "reference": "317eab54cfc7a9a206a14cb9c8c5724a99aec2b1"
+                "url": "git@github.com:rooted-phoenix/rest.git",
+                "reference": "a157f801a8a4dbfdd916db2063dba60d5c66a9fc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/utils/zipball/317eab54cfc7a9a206a14cb9c8c5724a99aec2b1",
-                "reference": "317eab54cfc7a9a206a14cb9c8c5724a99aec2b1",
+                "url": "https://api.github.com/repos/rooted-phoenix/rest/zipball/a157f801a8a4dbfdd916db2063dba60d5c66a9fc",
+                "reference": "a157f801a8a4dbfdd916db2063dba60d5c66a9fc",
                 "shasum": ""
             },
             "require-dev": {
                 "phoenix/tests": "^0.1.0"
             },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Phoenix\\Rest\\": "lib/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Phoenix\\Rest\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "homepage": "https://github.com/phoenix/core",
+            "support": {
+                "source": "https://github.com/rooted-phoenix/rest/tree/main",
+                "issues": "https://github.com/rooted-phoenix/rest/issues"
+            },
+            "time": "2023-10-11T02:18:39+00:00"
+        },
+        {
+            "name": "phoenix/utils",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "git@github.com:rooted-phoenix/utils.git",
+                "reference": "88fab9624c84137d661958f5827e30b72bcbf77c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rooted-phoenix/utils/zipball/88fab9624c84137d661958f5827e30b72bcbf77c",
+                "reference": "88fab9624c84137d661958f5827e30b72bcbf77c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phoenix/tests": "^0.1.0"
+            },
+            "default-branch": true,
             "type": "library",
             "autoload": {
                 "psr-4": {
@@ -358,10 +413,10 @@
             ],
             "homepage": "https://github.com/phoenix/core",
             "support": {
-                "source": "https://github.com/rooted-phoenix/utils/tree/phx-38/core-repository-setup",
+                "source": "https://github.com/rooted-phoenix/utils/tree/main",
                 "issues": "https://github.com/rooted-phoenix/utils/issues"
             },
-            "time": "2023-10-07T17:57:02+00:00"
+            "time": "2023-10-09T09:27:48+00:00"
         }
     ],
     "packages-dev": [
@@ -1223,12 +1278,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "eec8ede223d2bba457d2c846a968450a0a7fb248"
+                "reference": "4e6e860b28b25dcd36569205e60b46c75b3f1d28"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/eec8ede223d2bba457d2c846a968450a0a7fb248",
-                "reference": "eec8ede223d2bba457d2c846a968450a0a7fb248",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/4e6e860b28b25dcd36569205e60b46c75b3f1d28",
+                "reference": "4e6e860b28b25dcd36569205e60b46c75b3f1d28",
                 "shasum": ""
             },
             "require": {
@@ -1278,7 +1333,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-08T12:18:40+00:00"
+            "time": "2023-10-10T19:56:18+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
@@ -2881,12 +2936,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "b65b268ad3a15706d28b8de217bcceb8fa4da0dc"
+                "reference": "2d5e1d6ab944b22488f3dec1e424b1ce62413f67"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/b65b268ad3a15706d28b8de217bcceb8fa4da0dc",
-                "reference": "b65b268ad3a15706d28b8de217bcceb8fa4da0dc",
+                "url": "https://api.github.com/repos/symfony/console/zipball/2d5e1d6ab944b22488f3dec1e424b1ce62413f67",
+                "reference": "2d5e1d6ab944b22488f3dec1e424b1ce62413f67",
                 "shasum": ""
             },
             "require": {
@@ -2964,7 +3019,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-09-29T03:15:27+00:00"
+            "time": "2023-10-09T11:19:22+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -4232,6 +4287,7 @@
         "phoenix/core": 20,
         "phoenix/db": 20,
         "phoenix/cache": 20,
+        "phoenix/rest": 20,
         "phoenix/utils": 20
     },
     "prefer-stable": false,

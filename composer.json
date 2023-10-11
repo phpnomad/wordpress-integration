@@ -38,6 +38,10 @@
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/utils.git"
         },
+                {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/rest.git"
+        },
         {
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/cache.git"
@@ -67,10 +71,12 @@
         "phoenix/tests": "^0.1.0"
     },
     "require": {
-        "phoenix/core": "dev-phx-38/core-repository-setup",
+        "phoenix/core": "dev-main",
         "phoenix/db": "dev-main",
         "phoenix/cache": "dev-main",
-        "phoenix/utils": "dev-phx-38/core-repository-setup"
+        "phoenix/rest": "dev-main",
+        "phoenix/utils": "dev-main",
+        "ext-json": "*"
     },
     "config": {
         "allow-plugins": {

@@ -52,13 +52,9 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/phar-io/version" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php80" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-intl-grapheme" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/core" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/utils" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/options-resolver" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/db" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-mbstring" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/symfony/polyfill-php81" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/di" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/tests" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/friendsofphp/php-cs-fixer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/myclabs/deep-copy" />
@@ -66,9 +62,14 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan-mockery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/extension-installer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/cache" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/event" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/db" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/cache" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/di" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/config" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/core" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/utils" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/rest" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

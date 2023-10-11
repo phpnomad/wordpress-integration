@@ -11,6 +11,7 @@ use Phoenix\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
 use Phoenix\Integrations\WordPress\Cache\ObjectCacheStrategy;
 use Phoenix\Integrations\WordPress\Cache\TransientCacheStrategy;
 use Phoenix\Integrations\WordPress\Database\QueryBuilder;
+use Phoenix\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 
 class WordPressInitializer implements Initializer
 {
@@ -25,7 +26,8 @@ class WordPressInitializer implements Initializer
             EventStrategy::class => CoreEventStrategy::class,
             TransientCacheStrategy::class => PersistentCacheStrategy::class,
             ObjectCacheStrategy::class => [CacheStrategy::class, InMemoryCacheStrategy::class],
-            QueryBuilder::class => CoreQueryBuilder::class
+            QueryBuilder::class => CoreQueryBuilder::class,
+            RestStrategy::class => CoreRestStrategy::class
         ];
     }
 

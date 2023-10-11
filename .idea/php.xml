@@ -85,6 +85,8 @@
       <path value="$PROJECT_DIR$/vendor/phoenix/cache" />
       <path value="$PROJECT_DIR$/vendor/phoenix/event" />
       <path value="$PROJECT_DIR$/vendor/phoenix/config" />
+      <path value="$PROJECT_DIR$/vendor/phoenix" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/rest" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
