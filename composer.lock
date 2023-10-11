@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0003f04c878970e4c7d22660af6ac6a8",
+    "content-hash": "4c160fb0beada497ee3b56d640ac8c3d",
     "packages": [
         {
             "name": "phoenix/cache",
@@ -12,12 +12,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/cache.git",
-                "reference": "4216ce54b50ce0424a7134b470c7765c9df1427b"
+                "reference": "6157527b64a095eae585306dbdd7db1f52f6c395"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/cache/zipball/4216ce54b50ce0424a7134b470c7765c9df1427b",
-                "reference": "4216ce54b50ce0424a7134b470c7765c9df1427b",
+                "url": "https://api.github.com/repos/rooted-phoenix/cache/zipball/6157527b64a095eae585306dbdd7db1f52f6c395",
+                "reference": "6157527b64a095eae585306dbdd7db1f52f6c395",
                 "shasum": ""
             },
             "require-dev": {
@@ -54,57 +54,7 @@
                 "source": "https://github.com/rooted-phoenix/cache/tree/main",
                 "issues": "https://github.com/rooted-phoenix/cache/issues"
             },
-            "time": "2023-10-08T11:32:45+00:00"
-        },
-        {
-            "name": "phoenix/config",
-            "version": "dev-main",
-            "source": {
-                "type": "git",
-                "url": "git@github.com:rooted-phoenix/config.git",
-                "reference": "ab6ae653ad36464409a506513a007e7f3f3fa1b7"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/config/zipball/ab6ae653ad36464409a506513a007e7f3f3fa1b7",
-                "reference": "ab6ae653ad36464409a506513a007e7f3f3fa1b7",
-                "shasum": ""
-            },
-            "require-dev": {
-                "phoenix/tests": "^0.1.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Phoenix\\Config\\": "lib/"
-                }
-            },
-            "autoload-dev": {
-                "psr-4": {
-                    "Phoenix\\Core\\Tests\\": "tests/"
-                }
-            },
-            "scripts": {
-                "php-cs-fixer": [
-                    "php-cs-fixer fix"
-                ]
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Alex Standiford",
-                    "email": "alex@standiford.us"
-                }
-            ],
-            "homepage": "https://github.com/phoenix/core",
-            "support": {
-                "source": "https://github.com/rooted-phoenix/config/tree/main",
-                "issues": "https://github.com/rooted-phoenix/config/issues"
-            },
-            "time": "2023-10-07T19:04:07+00:00"
+            "time": "2023-10-11T17:37:42+00:00"
         },
         {
             "name": "phoenix/core",
@@ -112,18 +62,17 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/core.git",
-                "reference": "8e010cd26eb83db86f41dfbec7764661b3ce3a0a"
+                "reference": "e2af719159d5edd463908042ba859c72bda9c4e1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/8e010cd26eb83db86f41dfbec7764661b3ce3a0a",
-                "reference": "8e010cd26eb83db86f41dfbec7764661b3ce3a0a",
+                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/e2af719159d5edd463908042ba859c72bda9c4e1",
+                "reference": "e2af719159d5edd463908042ba859c72bda9c4e1",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "phoenix/cache": "dev-main",
-                "phoenix/config": "dev-main",
                 "phoenix/db": "dev-main",
                 "phoenix/di": "dev-main",
                 "phoenix/event": "dev-main",
@@ -165,7 +114,7 @@
                 "source": "https://github.com/rooted-phoenix/core/tree/main",
                 "issues": "https://github.com/rooted-phoenix/core/issues"
             },
-            "time": "2023-10-11T14:45:36+00:00"
+            "time": "2023-10-11T17:54:07+00:00"
         },
         {
             "name": "phoenix/db",
@@ -173,12 +122,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/db.git",
-                "reference": "abdf09d7b1def57ea04c7beab76248c967b5da30"
+                "reference": "98c3cf1b5896732a32d0cb9e43bf201c4a11b79a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/abdf09d7b1def57ea04c7beab76248c967b5da30",
-                "reference": "abdf09d7b1def57ea04c7beab76248c967b5da30",
+                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/98c3cf1b5896732a32d0cb9e43bf201c4a11b79a",
+                "reference": "98c3cf1b5896732a32d0cb9e43bf201c4a11b79a",
                 "shasum": ""
             },
             "require-dev": {
@@ -216,7 +165,7 @@
                 "source": "https://github.com/rooted-phoenix/db/tree/main",
                 "issues": "https://github.com/rooted-phoenix/db/issues"
             },
-            "time": "2023-10-11T12:46:53+00:00"
+            "time": "2023-10-11T15:58:06+00:00"
         },
         {
             "name": "phoenix/di",
@@ -224,12 +173,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/di.git",
-                "reference": "a6539cef156405620e560eaf5525d7c22ed6d71b"
+                "reference": "dd553e111c70271117d651102c38854d4222d147"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/a6539cef156405620e560eaf5525d7c22ed6d71b",
-                "reference": "a6539cef156405620e560eaf5525d7c22ed6d71b",
+                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/dd553e111c70271117d651102c38854d4222d147",
+                "reference": "dd553e111c70271117d651102c38854d4222d147",
                 "shasum": ""
             },
             "require-dev": {
@@ -267,7 +216,7 @@
                 "source": "https://github.com/rooted-phoenix/di/tree/main",
                 "issues": "https://github.com/rooted-phoenix/di/issues"
             },
-            "time": "2023-10-09T09:27:30+00:00"
+            "time": "2023-10-11T16:54:23+00:00"
         },
         {
             "name": "phoenix/event",
@@ -1329,12 +1278,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "131ad963d089f8a838d7ebca70c77f0074669526"
+                "reference": "348b72ed6d423238d53956694e81492374be6c73"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/131ad963d089f8a838d7ebca70c77f0074669526",
-                "reference": "131ad963d089f8a838d7ebca70c77f0074669526",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/348b72ed6d423238d53956694e81492374be6c73",
+                "reference": "348b72ed6d423238d53956694e81492374be6c73",
                 "shasum": ""
             },
             "require": {
@@ -1384,7 +1333,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-11T14:23:18+00:00"
+            "time": "2023-10-11T17:28:36+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",

@@ -3,9 +3,12 @@
 namespace Phoenix\Integrations\WordPress\Cache;
 
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
+use Phoenix\Cache\Traits\CanLoadCacheTrait;
 
 class ObjectCacheStrategy implements InMemoryCacheStrategy
 {
+    use CanLoadCacheTrait;
+
     /** @inheritDoc */
     public function get(string $key)
     {

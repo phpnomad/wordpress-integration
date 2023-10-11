@@ -3,9 +3,12 @@
 namespace Phoenix\Integrations\WordPress\Cache;
 
 use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
+use Phoenix\Cache\Traits\CanLoadCacheTrait;
 
 class TransientCacheStrategy implements PersistentCacheStrategy
 {
+    use CanLoadCacheTrait;
+
     /** @inheritDoc */
     public function get(string $key)
     {
