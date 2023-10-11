@@ -42,7 +42,7 @@
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/utils.git"
         },
-                {
+        {
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/rest.git"
         },

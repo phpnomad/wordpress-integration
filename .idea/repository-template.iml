@@ -70,6 +70,7 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/core" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/utils" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/rest" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/loader" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

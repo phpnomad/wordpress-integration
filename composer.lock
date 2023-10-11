@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4c160fb0beada497ee3b56d640ac8c3d",
+    "content-hash": "0003f04c878970e4c7d22660af6ac6a8",
     "packages": [
         {
             "name": "phoenix/cache",
@@ -325,12 +325,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/loader.git",
-                "reference": "0607a44f7b7c82410efd02adb4423cd5187db939"
+                "reference": "36107d41b6ffe2f225c6dc9523558747fbeafbcd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/loader/zipball/0607a44f7b7c82410efd02adb4423cd5187db939",
-                "reference": "0607a44f7b7c82410efd02adb4423cd5187db939",
+                "url": "https://api.github.com/repos/rooted-phoenix/loader/zipball/36107d41b6ffe2f225c6dc9523558747fbeafbcd",
+                "reference": "36107d41b6ffe2f225c6dc9523558747fbeafbcd",
                 "shasum": ""
             },
             "require-dev": {
@@ -367,7 +367,7 @@
                 "source": "https://github.com/rooted-phoenix/loader/tree/main",
                 "issues": "https://github.com/rooted-phoenix/loader/issues"
             },
-            "time": "2023-10-11T14:29:44+00:00"
+            "time": "2023-10-11T15:05:14+00:00"
         },
         {
             "name": "phoenix/rest",
