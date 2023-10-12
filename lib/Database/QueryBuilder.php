@@ -38,7 +38,7 @@ class QueryBuilder implements QueryBuilderInterface
     protected array $orderBy = [];
 
     /**
-     * @var class-string<Table>
+     * @var Table
      */
     protected string $table;
 

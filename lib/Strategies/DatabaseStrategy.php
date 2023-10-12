@@ -22,6 +22,18 @@ class DatabaseStrategy implements CoreDatabaseStrategy
     }
 
     /** @inheritDoc */
+    public function prefix(): ?string
+    {
+        global $wpdb;
+
+        if (!isset($wpdb)) {
+            throw new DatabaseErrorException('The wpdb global is not set. This indicates you probably tried to access the database too early.');
+        }
+
+        return $wpdb->prefix;
+    }
+
+    /** @inheritDoc */
     public function find(Table $table, $id): array
     {
         $this->queryBuilder

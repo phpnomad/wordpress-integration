@@ -62,12 +62,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/core.git",
-                "reference": "e2af719159d5edd463908042ba859c72bda9c4e1"
+                "reference": "a1a31852d124203456babf4a94d9db57f9352ca3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/e2af719159d5edd463908042ba859c72bda9c4e1",
-                "reference": "e2af719159d5edd463908042ba859c72bda9c4e1",
+                "url": "https://api.github.com/repos/rooted-phoenix/core/zipball/a1a31852d124203456babf4a94d9db57f9352ca3",
+                "reference": "a1a31852d124203456babf4a94d9db57f9352ca3",
                 "shasum": ""
             },
             "require": {
@@ -114,7 +114,7 @@
                 "source": "https://github.com/rooted-phoenix/core/tree/main",
                 "issues": "https://github.com/rooted-phoenix/core/issues"
             },
-            "time": "2023-10-11T17:54:07+00:00"
+            "time": "2023-10-12T15:14:53+00:00"
         },
         {
             "name": "phoenix/db",
@@ -122,17 +122,18 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/db.git",
-                "reference": "98c3cf1b5896732a32d0cb9e43bf201c4a11b79a"
+                "reference": "728d1a7549583b235d64efdd87dcd7bfac4b7e29"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/98c3cf1b5896732a32d0cb9e43bf201c4a11b79a",
-                "reference": "98c3cf1b5896732a32d0cb9e43bf201c4a11b79a",
+                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/728d1a7549583b235d64efdd87dcd7bfac4b7e29",
+                "reference": "728d1a7549583b235d64efdd87dcd7bfac4b7e29",
                 "shasum": ""
             },
             "require-dev": {
+                "phoenix/cache": "dev-main",
                 "phoenix/tests": "^0.1.0",
-                "phoenix/utils": "dev-phx-38/core-repository-setup"
+                "phoenix/utils": "dev-main"
             },
             "default-branch": true,
             "type": "library",
@@ -165,7 +166,7 @@
                 "source": "https://github.com/rooted-phoenix/db/tree/main",
                 "issues": "https://github.com/rooted-phoenix/db/issues"
             },
-            "time": "2023-10-11T15:58:06+00:00"
+            "time": "2023-10-12T15:35:16+00:00"
         },
         {
             "name": "phoenix/di",
@@ -173,12 +174,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/di.git",
-                "reference": "dd553e111c70271117d651102c38854d4222d147"
+                "reference": "9de93dc1f364d32e75764498d0e3aacd5e554c81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/dd553e111c70271117d651102c38854d4222d147",
-                "reference": "dd553e111c70271117d651102c38854d4222d147",
+                "url": "https://api.github.com/repos/rooted-phoenix/di/zipball/9de93dc1f364d32e75764498d0e3aacd5e554c81",
+                "reference": "9de93dc1f364d32e75764498d0e3aacd5e554c81",
                 "shasum": ""
             },
             "require-dev": {
@@ -216,7 +217,7 @@
                 "source": "https://github.com/rooted-phoenix/di/tree/main",
                 "issues": "https://github.com/rooted-phoenix/di/issues"
             },
-            "time": "2023-10-11T16:54:23+00:00"
+            "time": "2023-10-12T13:32:16+00:00"
         },
         {
             "name": "phoenix/event",
@@ -374,12 +375,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/utils.git",
-                "reference": "88fab9624c84137d661958f5827e30b72bcbf77c"
+                "reference": "1c45ab19a547e292a58981892c7bf40f4fc312c6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/utils/zipball/88fab9624c84137d661958f5827e30b72bcbf77c",
-                "reference": "88fab9624c84137d661958f5827e30b72bcbf77c",
+                "url": "https://api.github.com/repos/rooted-phoenix/utils/zipball/1c45ab19a547e292a58981892c7bf40f4fc312c6",
+                "reference": "1c45ab19a547e292a58981892c7bf40f4fc312c6",
                 "shasum": ""
             },
             "require-dev": {
@@ -416,7 +417,7 @@
                 "source": "https://github.com/rooted-phoenix/utils/tree/main",
                 "issues": "https://github.com/rooted-phoenix/utils/issues"
             },
-            "time": "2023-10-09T09:27:48+00:00"
+            "time": "2023-10-11T18:55:03+00:00"
         }
     ],
     "packages-dev": [
@@ -713,16 +714,16 @@
         },
         {
             "name": "friendsofphp/php-cs-fixer",
-            "version": "v3.34.1",
+            "version": "v3.35.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer.git",
-                "reference": "98bf1b1068b4ceddbbc2a2b70b67a5e380add9e3"
+                "reference": "ec1ccc264994b6764882669973ca435cf05bab08"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/98bf1b1068b4ceddbbc2a2b70b67a5e380add9e3",
-                "reference": "98bf1b1068b4ceddbbc2a2b70b67a5e380add9e3",
+                "url": "https://api.github.com/repos/PHP-CS-Fixer/PHP-CS-Fixer/zipball/ec1ccc264994b6764882669973ca435cf05bab08",
+                "reference": "ec1ccc264994b6764882669973ca435cf05bab08",
                 "shasum": ""
             },
             "require": {
@@ -755,8 +756,6 @@
                 "phpspec/prophecy": "^1.16",
                 "phpspec/prophecy-phpunit": "^2.0",
                 "phpunit/phpunit": "^9.5",
-                "phpunitgoodpractices/polyfill": "^1.6",
-                "phpunitgoodpractices/traits": "^1.9.2",
                 "symfony/phpunit-bridge": "^6.2.3",
                 "symfony/yaml": "^5.4 || ^6.0"
             },
@@ -796,7 +795,7 @@
             ],
             "support": {
                 "issues": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/issues",
-                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.34.1"
+                "source": "https://github.com/PHP-CS-Fixer/PHP-CS-Fixer/tree/v3.35.1"
             },
             "funding": [
                 {
@@ -804,7 +803,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-10-03T23:51:05+00:00"
+            "time": "2023-10-12T13:47:26+00:00"
         },
         {
             "name": "hamcrest/hamcrest-php",
@@ -1278,12 +1277,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "348b72ed6d423238d53956694e81492374be6c73"
+                "reference": "22cb9ce6a9fee4bae96bade0642ada44d7ffd060"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/348b72ed6d423238d53956694e81492374be6c73",
-                "reference": "348b72ed6d423238d53956694e81492374be6c73",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/22cb9ce6a9fee4bae96bade0642ada44d7ffd060",
+                "reference": "22cb9ce6a9fee4bae96bade0642ada44d7ffd060",
                 "shasum": ""
             },
             "require": {
@@ -1333,7 +1332,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-11T17:28:36+00:00"
+            "time": "2023-10-12T14:23:14+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",
