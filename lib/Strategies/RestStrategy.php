@@ -2,11 +2,9 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
-use Phoenix\Core\Repositories\Config;
 use Phoenix\Integrations\WordPress\Rest\Request;
 use Phoenix\Rest\Interfaces\Handler;
-use Phoenix\Rest\Interfaces\Request as CoreRequest;
-use Phoenix\Rest\Interfaces\Response;
+use Phoenix\Rest\Interfaces\HasRestNamespace;
 use Phoenix\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use Phoenix\Rest\Interfaces\Validation;
 use Phoenix\Utils\Helpers\Arr;
@@ -15,6 +13,15 @@ use WP_REST_Response;
 
 class RestStrategy implements CoreRestStrategy
 {
+    /**
+     * @var HasRestNamespace
+     */
+    protected HasRestNamespace $restNamespaceProvider;
+
+    public function __construct(HasRestNamespace $restNamespaceProvider)
+    {
+        $this->restNamespaceProvider = $restNamespaceProvider;
+    }
     /**
      * Converts
      *
@@ -68,8 +75,7 @@ class RestStrategy implements CoreRestStrategy
     protected function registerRoute(string $endpoint, array $validations, Handler $handler, string $method)
     {
         add_action('rest_api_init', function () use ($endpoint, $validations, $handler, $method) {
-            $namespace = Config::get('core.general.prefix') . '/v1';
-            register_rest_route($namespace, $this->convertEndpointFormat($endpoint), [
+            register_rest_route($this->restNamespaceProvider->getRestNamespace(), $this->convertEndpointFormat($endpoint), [
                 'methods' => $method,
                 'callback' => function (WP_REST_Request $request) use ($handler) {
                     return $this->wrapCallback($handler, $request);
