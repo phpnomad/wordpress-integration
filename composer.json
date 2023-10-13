@@ -52,6 +52,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/event.git"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/rooted-phoenix/db.git"
         }
     ],
@@ -75,8 +79,8 @@
         "phoenix/tests": "^0.1.0"
     },
     "require": {
-        "phoenix/core": "dev-main",
         "phoenix/db": "dev-main",
+        "phoenix/event": "dev-main",
         "phoenix/cache": "dev-main",
         "phoenix/rest": "dev-main",
         "phoenix/utils": "dev-main",

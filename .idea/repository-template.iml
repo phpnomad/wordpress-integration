@@ -62,14 +62,12 @@
       <excludeFolder url="file://$MODULE_DIR$/vendor/theseer/tokenizer" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/phpstan-mockery" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phpstan/extension-installer" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/event" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/db" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/cache" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/di" />
-      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/core" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/utils" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/rest" />
       <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/loader" />
+      <excludeFolder url="file://$MODULE_DIR$/vendor/phoenix/event" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -67,13 +67,11 @@
       <path value="$PROJECT_DIR$/vendor/phar-io/version" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php80" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-intl-grapheme" />
-      <path value="$PROJECT_DIR$/vendor/phoenix/core" />
       <path value="$PROJECT_DIR$/vendor/phoenix/utils" />
       <path value="$PROJECT_DIR$/vendor/symfony/options-resolver" />
       <path value="$PROJECT_DIR$/vendor/phoenix/db" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-mbstring" />
       <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php81" />
-      <path value="$PROJECT_DIR$/vendor/phoenix/di" />
       <path value="$PROJECT_DIR$/vendor/phoenix/tests" />
       <path value="$PROJECT_DIR$/vendor/friendsofphp/php-cs-fixer" />
       <path value="$PROJECT_DIR$/vendor/myclabs/deep-copy" />
@@ -83,10 +81,10 @@
       <path value="$PROJECT_DIR$/vendor/phpstan/extension-installer" />
       <path value="$PROJECT_DIR$/../../../wordpress" />
       <path value="$PROJECT_DIR$/vendor/phoenix/cache" />
-      <path value="$PROJECT_DIR$/vendor/phoenix/event" />
       <path value="$PROJECT_DIR$/vendor/phoenix" />
       <path value="$PROJECT_DIR$/vendor/phoenix/rest" />
       <path value="$PROJECT_DIR$/vendor/phoenix/loader" />
+      <path value="$PROJECT_DIR$/vendor/phoenix/event" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
