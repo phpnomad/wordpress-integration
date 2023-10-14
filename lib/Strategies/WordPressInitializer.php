@@ -5,9 +5,12 @@ namespace Phoenix\Integrations\WordPress\Strategies;
 use Phoenix\Cache\Interfaces\CacheStrategy;
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
 use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
-use Phoenix\Database\Interfaces\DatabaseStrategy as CoreDatabaseStrategy;
+use Phoenix\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use Phoenix\Database\Interfaces\HasDatabaseDefaultCacheTtl;
 use Phoenix\Database\Interfaces\HasGlobalDatabasePrefix;
+use Phoenix\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyAlias;
+use Phoenix\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
+use Phoenix\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
 use Phoenix\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use Phoenix\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
 use Phoenix\Integrations\WordPress\Cache\ObjectCacheStrategy;
@@ -31,7 +34,10 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
             EventStrategy::class => CoreEventStrategy::class,
             TransientCacheStrategy::class => PersistentCacheStrategy::class,
             ObjectCacheStrategy::class => [CacheStrategy::class, InMemoryCacheStrategy::class],
-            DatabaseStrategy::class => CoreDatabaseStrategy::class,
+            QueryStrategy::class => CoreQueryStrategy::class,
+            TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
+            TableDeleteStrategy::class => CoreTableDeleteStrategyAlias::class,
+            TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
             QueryBuilder::class => CoreQueryBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
             DatabaseProvider::class => [HasDatabaseDefaultCacheTtl::class, HasGlobalDatabasePrefix::class]
