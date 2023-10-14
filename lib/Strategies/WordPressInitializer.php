@@ -5,6 +5,8 @@ namespace Phoenix\Integrations\WordPress\Strategies;
 use Phoenix\Cache\Interfaces\CacheStrategy;
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
 use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
+use Phoenix\Database\Interfaces\HasCharsetProvider;
+use Phoenix\Database\Interfaces\HasCollateProvider;
 use Phoenix\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use Phoenix\Database\Interfaces\HasDatabaseDefaultCacheTtl;
 use Phoenix\Database\Interfaces\HasGlobalDatabasePrefix;
@@ -40,7 +42,7 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
             TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
             QueryBuilder::class => CoreQueryBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
-            DatabaseProvider::class => [HasDatabaseDefaultCacheTtl::class, HasGlobalDatabasePrefix::class]
+            DatabaseProvider::class => [HasDatabaseDefaultCacheTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class]
         ];
     }
 

@@ -46,7 +46,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
         return <<<SQL
             CREATE TABLE IF NOT EXISTS {$table->getName()} (
                 $args
-            ) {$table->getCollation()};
+            ) CHARACTER SET {$table->getCharset()} COLLATE {$table->getCollation()};
         SQL;
     }
 
