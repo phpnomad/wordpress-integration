@@ -77,7 +77,7 @@ class QueryBuilder implements QueryBuilderInterface
     /** @inheritDoc */
     public function where(string $field, string $operand, $value, ...$values)
     {
-        if (!isset($this->where)) {
+        if (empty($this->where)) {
             $this->where = ['WHERE'];
         }
 
@@ -141,7 +141,7 @@ class QueryBuilder implements QueryBuilderInterface
             $this->prependField($onColumn, $table),
         ];
 
-        if (isset($this->join)) {
+        if (!empty($this->join)) {
             $this->join = Arr::merge($this->join, $join);
         } else {
             // Build join
@@ -165,7 +165,7 @@ class QueryBuilder implements QueryBuilderInterface
             $this->prependField($onColumn, $table),
         ];
 
-        if (isset($this->join)) {
+        if (!empty($this->join)) {
             $this->join = Arr::merge($this->join, $join);
         } else {
             // Build join
