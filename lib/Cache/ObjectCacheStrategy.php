@@ -2,6 +2,7 @@
 
 namespace Phoenix\Integrations\WordPress\Cache;
 
+use Phoenix\Cache\Exceptions\CachedItemNotFoundException;
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
 use Phoenix\Cache\Traits\CanLoadCacheTrait;
 
@@ -12,7 +13,14 @@ class ObjectCacheStrategy implements InMemoryCacheStrategy
     /** @inheritDoc */
     public function get(string $key)
     {
-        return wp_cache_get($key);
+        $found = false;
+        $cache = wp_cache_get($key, '', false, $found);
+
+        if (!$found) {
+            throw new CachedItemNotFoundException('Cached item ' . $key . ' Was not found');
+        }
+
+        return $cache;
     }
 
     /** @inheritDoc */
