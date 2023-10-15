@@ -32,7 +32,7 @@ trait CanGetDataFormats
      */
     protected function getFormats(array $data): array
     {
-        return Arr::reduce($data, function($datum){
+        return Arr::map($data, function($datum){
             return $this->getFieldSprintfType($datum);
         }, []);
     }
