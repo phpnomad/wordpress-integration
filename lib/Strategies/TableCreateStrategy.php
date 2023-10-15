@@ -54,7 +54,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     {
         return Arr::process($table->getColumns())
             ->map(function(Column $column){
-                $this->convertColumnToSchemaString($column);
+                return $this->convertColumnToSchemaString($column);
             })
             ->setSeparator(',\n')
             ->toString();
@@ -64,7 +64,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     {
         return Arr::process($table->getIndices())
             ->map(function(Index $index){
-                $this->convertIndexToSchemaString($index);
+                return $this->convertIndexToSchemaString($index);
             })
             ->setSeparator(',\n')
             ->toString();
@@ -104,5 +104,4 @@ class TableCreateStrategy implements CoreTableCreateStrategy
 
         return implode(' ', $pieces);
     }
-
 }
