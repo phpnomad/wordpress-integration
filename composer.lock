@@ -62,12 +62,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/db.git",
-                "reference": "8ca3ffe085c5d0382dd66f54bb86d140ce96d121"
+                "reference": "6ca322f678d02c638c425bfbc864da6a148f1838"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/8ca3ffe085c5d0382dd66f54bb86d140ce96d121",
-                "reference": "8ca3ffe085c5d0382dd66f54bb86d140ce96d121",
+                "url": "https://api.github.com/repos/rooted-phoenix/db/zipball/6ca322f678d02c638c425bfbc864da6a148f1838",
+                "reference": "6ca322f678d02c638c425bfbc864da6a148f1838",
                 "shasum": ""
             },
             "require-dev": {
@@ -108,7 +108,7 @@
                 "source": "https://github.com/rooted-phoenix/db/tree/main",
                 "issues": "https://github.com/rooted-phoenix/db/issues"
             },
-            "time": "2023-10-14T15:17:53+00:00"
+            "time": "2023-10-15T00:27:06+00:00"
         },
         {
             "name": "phoenix/event",
@@ -166,12 +166,12 @@
             "source": {
                 "type": "git",
                 "url": "git@github.com:rooted-phoenix/loader.git",
-                "reference": "327935cac9a2e19c0047af42699070f283c66d58"
+                "reference": "9747363d8d2a35f4cc5d9c5ff2a6f52c40e0db9a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rooted-phoenix/loader/zipball/327935cac9a2e19c0047af42699070f283c66d58",
-                "reference": "327935cac9a2e19c0047af42699070f283c66d58",
+                "url": "https://api.github.com/repos/rooted-phoenix/loader/zipball/9747363d8d2a35f4cc5d9c5ff2a6f52c40e0db9a",
+                "reference": "9747363d8d2a35f4cc5d9c5ff2a6f52c40e0db9a",
                 "shasum": ""
             },
             "require-dev": {
@@ -211,7 +211,7 @@
                 "source": "https://github.com/rooted-phoenix/loader/tree/main",
                 "issues": "https://github.com/rooted-phoenix/loader/issues"
             },
-            "time": "2023-10-13T12:36:34+00:00"
+            "time": "2023-10-14T22:06:01+00:00"
         },
         {
             "name": "phoenix/rest",
@@ -1171,12 +1171,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpstan/phpstan.git",
-                "reference": "a26b23c53ff9b9ad18329d0f7ba3f93d6a247227"
+                "reference": "1e21d906d9d74fc9b84a951bf48708b109233d4c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/a26b23c53ff9b9ad18329d0f7ba3f93d6a247227",
-                "reference": "a26b23c53ff9b9ad18329d0f7ba3f93d6a247227",
+                "url": "https://api.github.com/repos/phpstan/phpstan/zipball/1e21d906d9d74fc9b84a951bf48708b109233d4c",
+                "reference": "1e21d906d9d74fc9b84a951bf48708b109233d4c",
                 "shasum": ""
             },
             "require": {
@@ -1226,7 +1226,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2023-10-13T11:10:20+00:00"
+            "time": "2023-10-14T19:27:55+00:00"
         },
         {
             "name": "phpstan/phpstan-mockery",

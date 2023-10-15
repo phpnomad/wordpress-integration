@@ -53,7 +53,9 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     protected function convertColumnsToSqlString(Table $table): string
     {
         return Arr::process($table->getColumns())
-            ->map([$this, 'convertColumnToSchemaString'])
+            ->map(function(Column $column){
+                $this->convertColumnToSchemaString($column);
+            })
             ->setSeparator(',\n')
             ->toString();
     }
@@ -61,7 +63,9 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     protected function convertIndicesToSqlString(Table $table): string
     {
         return Arr::process($table->getIndices())
-            ->map([$this, 'convertIndexToSchemaString'])
+            ->map(function(Index $index){
+                $this->convertIndexToSchemaString($index);
+            })
             ->setSeparator(',\n')
             ->toString();
     }
