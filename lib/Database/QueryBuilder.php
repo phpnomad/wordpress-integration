@@ -40,7 +40,7 @@ class QueryBuilder implements QueryBuilderInterface
     /**
      * @var Table
      */
-    protected string $table;
+    protected Table $table;
 
     /** $inheritDoc */
     public function useTable(Table $table)
