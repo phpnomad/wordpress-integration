@@ -66,7 +66,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
             ->map(function(Index $index){
                 return $this->convertIndexToSchemaString($index);
             })
-            ->setSeparator(',\n')
+            ->setSeparator(',\n ')
             ->toString();
     }
 
