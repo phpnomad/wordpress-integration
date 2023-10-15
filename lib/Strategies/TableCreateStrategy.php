@@ -56,7 +56,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
             ->map(function(Column $column){
                 return $this->convertColumnToSchemaString($column);
             })
-            ->setSeparator(',\n')
+            ->setSeparator(",\n ")
             ->toString();
     }
 
