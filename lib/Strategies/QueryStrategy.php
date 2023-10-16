@@ -76,7 +76,7 @@ class QueryStrategy implements CoreQueryStrategy
 
     public function delete(Table $table, $id): void
     {
-        $this->wpdbDelete($table->getName(), $id);
+        $this->wpdbDelete($table->getName(), ['id' => $id]);
     }
 
     /** @inheritDoc */
