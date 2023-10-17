@@ -56,11 +56,11 @@ trait CanQueryWordPressDatabase
             throw new DatabaseErrorException('Get row failed. Invalid query', 500, $e);
         }
 
-        if (is_null($result)) {
-            throw new DatabaseErrorException('Get row failed - ' . $wpdb->last_error);
-        }
+        if (!$result) {
+            if(!empty($wpdb->last_error)){
+                throw new DatabaseErrorException('Get row failed - ' . $wpdb->last_error);
+            }
 
-        if (empty($result)) {
             throw new RecordNotFoundException('Could not get the specified row because it does not exist.');
         }
 
