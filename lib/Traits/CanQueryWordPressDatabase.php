@@ -6,6 +6,7 @@ use Phoenix\Database\Exceptions\DatabaseErrorException;
 use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
 use Phoenix\Database\Interfaces\QueryBuilder;
+use Phoenix\Database\Interfaces\Table;
 
 trait CanQueryWordPressDatabase
 {
@@ -86,17 +87,17 @@ trait CanQueryWordPressDatabase
     }
 
     /**
-     * @param string $table
+     * @param Table $table
      * @param array $data
      * @param array $where
      * @return int
      * @throws DatabaseErrorException
      */
-    protected function wpdbUpdate(string $table, array $data, array $where): int
+    protected function wpdbUpdate(Table $table, array $data, array $where): int
     {
         global $wpdb;
 
-        $result = $wpdb->update($table, $data, $where, $this->getFormats($data), $this->getFormats($where));
+        $result = $wpdb->update($table->getName(), $data, $where, $this->getFormats($data), $this->getFormats($where));
 
         if (false === $result) {
             throw new DatabaseErrorException('Update failed - ' . $wpdb->last_error);
@@ -108,8 +109,9 @@ trait CanQueryWordPressDatabase
             $firstItem = array_values($where);
 
             $this->queryBuilder
-                ->count('*')
-                ->from($table)
+                ->useTable($table)
+                ->count('id')
+                ->from()
                 ->where(array_shift($firstItemKey), '=', array_shift($firstItem));
 
             foreach ($where as $key => $value) {

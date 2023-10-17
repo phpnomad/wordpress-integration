@@ -71,7 +71,7 @@ class QueryStrategy implements CoreQueryStrategy
     /** @inheritDoc */
     public function update(Table $table, $id, array $attributes): void
     {
-        $this->wpdbUpdate($table->getName(), $attributes, ['id' => $id]);
+        $this->wpdbUpdate($table, $attributes, ['id' => $id]);
     }
 
     public function delete(Table $table, $id): void
