@@ -25,7 +25,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     public function create(Table $table): void
     {
         try {
-            $this->wpdbQuery($this->buildCreateQuery($table), Arr::values($this->prepare));
+            $this->wpdbQuery($this->buildCreateQuery($table));
         } catch (DatabaseErrorException $e) {
             throw new TableCreateFailedException($e);
         }

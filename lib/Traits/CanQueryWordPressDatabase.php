@@ -3,16 +3,16 @@
 namespace Phoenix\Integrations\WordPress\Traits;
 
 use Phoenix\Database\Exceptions\DatabaseErrorException;
+use Phoenix\Database\Exceptions\DuplicateEntryException;
 use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
 use Phoenix\Database\Interfaces\QueryBuilder;
 use Phoenix\Database\Interfaces\Table;
+use Phoenix\Utils\Helpers\Str;
 
 trait CanQueryWordPressDatabase
 {
     use CanGetDataFormats;
-
-    protected QueryBuilder $queryBuilder;
 
     /**
      * Gets a batch of rows using wpdb.
@@ -23,7 +23,6 @@ trait CanQueryWordPressDatabase
     protected function wpdbGetResults(): array
     {
         global $wpdb;
-
         try {
             $result = $wpdb->get_results($this->queryBuilder->build(), ARRAY_A);
         } catch (QueryBuilderException $e) {
