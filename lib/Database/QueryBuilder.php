@@ -273,15 +273,18 @@ class QueryBuilder implements QueryBuilderInterface
     public function build(): string
     {
         if (empty($this->select)) {
+            $this->reset();
             throw new QueryBuilderException('Missing select field');
         }
 
         if (empty($this->from)) {
+            $this->reset();
             throw new QueryBuilderException('Missing from field');
         }
 
         foreach ($this->operands as $operand) {
             if (!$this->isValidOperand($operand)) {
+                $this->reset();
                 throw new QueryBuilderException('Invalid operand' . $operand);
             }
         }
