@@ -2,17 +2,26 @@
 
 namespace Phoenix\Integrations\WordPress\Cache;
 
+use cache\lib\Traits\WithExistsCheck;
+use Phoenix\Cache\Exceptions\CachedItemNotFoundException;
 use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
 use Phoenix\Cache\Traits\CanLoadCacheTrait;
 
 class TransientCacheStrategy implements PersistentCacheStrategy
 {
     use CanLoadCacheTrait;
+    use WithExistsCheck;
 
     /** @inheritDoc */
     public function get(string $key)
     {
-        return get_transient($key);
+        $result = get_transient($key);
+
+        if (false === $result) {
+            throw new CachedItemNotFoundException();
+        }
+
+        return $result;
     }
 
     /** @inheritDoc */

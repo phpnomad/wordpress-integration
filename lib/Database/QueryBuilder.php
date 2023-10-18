@@ -3,15 +3,18 @@
 namespace Phoenix\Integrations\WordPress\Database;
 
 use Phoenix\Database\Exceptions\QueryBuilderException;
+use Phoenix\Database\Interfaces\HasUsableTable;
 use Phoenix\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
 use Phoenix\Database\Interfaces\Table;
+use Phoenix\Database\Traits\WithUseTable;
 use Phoenix\Integrations\WordPress\Traits\CanGetDataFormats;
 use Phoenix\Utils\Helpers\Arr;
 use wpdb;
 
-class QueryBuilder implements QueryBuilderInterface
+class QueryBuilder implements QueryBuilderInterface, HasUsableTable
 {
     use CanGetDataFormats;
+    use WithUseTable;
 
     protected array $select = [];
 
@@ -36,19 +39,6 @@ class QueryBuilder implements QueryBuilderInterface
     protected array $offset = [];
 
     protected array $orderBy = [];
-
-    /**
-     * @var Table
-     */
-    protected Table $table;
-
-    /** $inheritDoc */
-    public function useTable(Table $table)
-    {
-        $this->table = $table;
-
-        return $this;
-    }
 
     /** @inheritDoc */
     public function select(string $field, string ...$fields)

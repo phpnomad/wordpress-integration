@@ -5,10 +5,12 @@ namespace Phoenix\Integrations\WordPress\Cache;
 use Phoenix\Cache\Exceptions\CachedItemNotFoundException;
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
 use Phoenix\Cache\Traits\CanLoadCacheTrait;
+use Phoenix\Cache\Traits\WithExistsCheck;
 
 class ObjectCacheStrategy implements InMemoryCacheStrategy
 {
     use CanLoadCacheTrait;
+    use WithExistsCheck;
 
     /** @inheritDoc */
     public function get(string $key)
