@@ -5,6 +5,8 @@ namespace Phoenix\Integrations\WordPress\Strategies;
 use Phoenix\Cache\Interfaces\CacheStrategy;
 use Phoenix\Cache\Interfaces\InMemoryCacheStrategy;
 use Phoenix\Cache\Interfaces\PersistentCacheStrategy;
+use Phoenix\Database\Interfaces\CanConvertDatabaseStringToDateTime;
+use Phoenix\Database\Interfaces\CanConvertToDatabaseDateString;
 use Phoenix\Database\Interfaces\HasCharsetProvider;
 use Phoenix\Database\Interfaces\HasCollateProvider;
 use Phoenix\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
@@ -15,6 +17,7 @@ use Phoenix\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAl
 use Phoenix\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
 use Phoenix\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use Phoenix\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
+use Phoenix\Integrations\WordPress\Adapters\DatabaseDateAdapter;
 use Phoenix\Integrations\WordPress\Cache\ObjectCacheStrategy;
 use Phoenix\Integrations\WordPress\Cache\TransientCacheStrategy;
 use Phoenix\Integrations\WordPress\Database\QueryBuilder;
@@ -42,7 +45,8 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
             TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
             QueryBuilder::class => CoreQueryBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
-            DatabaseProvider::class => [HasDatabaseDefaultCacheTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class]
+            DatabaseProvider::class => [HasDatabaseDefaultCacheTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
+            DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class]
         ];
     }
 

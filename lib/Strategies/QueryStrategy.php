@@ -2,7 +2,9 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
+use DateTime;
 use Phoenix\Database\Exceptions\DatabaseErrorException;
+use Phoenix\Database\Interfaces\CanConvertToDatabaseDateString;
 use Phoenix\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
 use Phoenix\Database\Interfaces\QueryBuilder;
@@ -15,10 +17,12 @@ class QueryStrategy implements CoreQueryStrategy
     use CanQueryWordPressDatabase;
 
     protected QueryBuilder $queryBuilder;
+    protected CanConvertToDatabaseDateString $databaseDateAdapter;
 
-    public function __construct(QueryBuilder $queryBuilder)
+    public function __construct(QueryBuilder $queryBuilder, CanConvertToDatabaseDateString $databaseDateAdapter)
     {
         $this->queryBuilder = $queryBuilder;
+        $this->databaseDateAdapter = $databaseDateAdapter;
     }
 
     /** @inheritDoc */
@@ -65,13 +69,13 @@ class QueryStrategy implements CoreQueryStrategy
     /** @inheritDoc */
     public function create(Table $table, array $attributes): int
     {
-        return $this->wpdbInsert($table->getName(), $attributes);
+        return $this->wpdbInsert($table->getName(), $this->prepareAttributes($attributes));
     }
 
     /** @inheritDoc */
     public function update(Table $table, $id, array $attributes): void
     {
-        $this->wpdbUpdate($table, $attributes, ['id' => $id]);
+        $this->wpdbUpdate($table, $this->prepareAttributes($attributes), ['id' => $id]);
     }
 
     public function delete(Table $table, $id): void
@@ -164,6 +168,20 @@ class QueryStrategy implements CoreQueryStrategy
 
             $this->queryBuilder->andWhere($column, $operator, $value);
         }
+    }
+
+    /**
+     * Prepares attributes for MySQL query.
+     *
+     * @param array $attributes The attributes, prepared for a query.
+     * @return array
+     */
+    protected function prepareAttributes(array $attributes): array
+    {
+        return Arr::each(
+            $attributes,
+            fn($value, string $key) => $value instanceof DateTime ? $this->databaseDateAdapter->toDatabaseDateString($value) : $value
+        );
     }
 
     /** @inheritdoc */
