@@ -99,6 +99,6 @@ class TableCreateStrategy implements CoreTableCreateStrategy
 
         $pieces[] = "(" . implode(', ', $index->getColumns()) . ")";
 
-        return implode(' ', $pieces);
+        return implode(' ', Arr::merge($pieces, $index->getAttributes()));
     }
 }
