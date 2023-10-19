@@ -77,9 +77,7 @@ class RestStrategy implements CoreRestStrategy
             $this->convertEndpointFormat($endpoint),
             [
                 'methods' => $method,
-                'callback' => function (WP_REST_Request $request) use ($handler) {
-                    return $this->wrapCallback($handler, $request);
-                },
+                'callback' => fn(WP_REST_Request $request) => $this->wrapCallback($handler, $request),
                 'args' => [
                     $this->convertValidationsToArgs($validations)
                 ]
