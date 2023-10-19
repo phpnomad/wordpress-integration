@@ -40,7 +40,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     protected function buildCreateQuery(Table $table): string
     {
         $args = Arr::process([$this->convertColumnsToSqlString($table), $this->convertIndicesToSqlString($table)])
-            ->whereNotNull()
+            ->whereNotEmpty()
             ->setSeparator(",\n ")
             ->toString();
 
