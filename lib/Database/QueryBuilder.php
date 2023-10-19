@@ -48,9 +48,7 @@ class QueryBuilder implements QueryBuilderInterface, HasUsableTable
         }
 
         $this->select[] = Arr::process(Arr::merge([$field], $fields))
-            ->each(fn (string $field) {
-                return $this->prependField($field);
-            })
+            ->each(fn(string $field) => $this->prependField($field))
             ->toString();
 
         return $this;
