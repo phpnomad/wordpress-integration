@@ -40,6 +40,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     protected function buildCreateQuery(Table $table): string
     {
         $args = Arr::process([$this->convertColumnsToSqlString($table), $this->convertIndicesToSqlString($table)])
+            ->whereNotNull()
             ->setSeparator(",\n ")
             ->toString();
 
@@ -53,9 +54,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     protected function convertColumnsToSqlString(Table $table): string
     {
         return Arr::process($table->getColumns())
-            ->map(function(Column $column){
-                return $this->convertColumnToSchemaString($column);
-            })
+            ->map(fn(Column $column) => $this->convertColumnToSchemaString($column))
             ->setSeparator(",\n ")
             ->toString();
     }
@@ -63,9 +62,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     protected function convertIndicesToSqlString(Table $table): string
     {
         return Arr::process($table->getIndices())
-            ->map(function(Index $index){
-                return $this->convertIndexToSchemaString($index);
-            })
+            ->map(fn(Index $index) => $this->convertIndexToSchemaString($index))
             ->setSeparator(",\n ")
             ->toString();
     }

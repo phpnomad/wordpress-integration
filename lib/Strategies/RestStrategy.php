@@ -22,6 +22,7 @@ class RestStrategy implements CoreRestStrategy
     {
         $this->restNamespaceProvider = $restNamespaceProvider;
     }
+
     /**
      * Converts
      *
@@ -30,13 +31,10 @@ class RestStrategy implements CoreRestStrategy
      */
     protected function convertValidationsToArgs(array $validations): array
     {
-        return Arr::each($validations, function (Validation $validation) {
-            return [
-                'validation_callback' => function ($param, $request, $key) use ($validation) {
-                    return $validation->isValid($key, Request::fromRequest($request));
-                }
-            ];
-        });
+        return Arr::each($validations, fn(Validation $validation) => [
+            'validation_callback' => fn($param, $request, $key) => $validation->isValid($key, Request::fromRequest($request))
+        ]
+        );
     }
 
     /**
@@ -74,8 +72,10 @@ class RestStrategy implements CoreRestStrategy
      */
     protected function registerRoute(string $endpoint, array $validations, Handler $handler, string $method)
     {
-        add_action('rest_api_init', function () use ($endpoint, $validations, $handler, $method) {
-            register_rest_route($this->restNamespaceProvider->getRestNamespace(), $this->convertEndpointFormat($endpoint), [
+        add_action('rest_api_init', fn() => register_rest_route(
+            $this->restNamespaceProvider->getRestNamespace(),
+            $this->convertEndpointFormat($endpoint),
+            [
                 'methods' => $method,
                 'callback' => function (WP_REST_Request $request) use ($handler) {
                     return $this->wrapCallback($handler, $request);
@@ -83,8 +83,8 @@ class RestStrategy implements CoreRestStrategy
                 'args' => [
                     $this->convertValidationsToArgs($validations)
                 ]
-            ]);
-        });
+            ]
+        ));
     }
 
     /** @inheritDoc */
