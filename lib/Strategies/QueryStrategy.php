@@ -196,4 +196,10 @@ class QueryStrategy implements CoreQueryStrategy
 
         return $results;
     }
+
+    /** @inheritDoc */
+    public function deleteWhere(Table $table, array $conditions): void
+    {
+        $this->wpdbDelete($table->getName(), $conditions);
+    }
 }

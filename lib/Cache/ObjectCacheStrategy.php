@@ -36,4 +36,10 @@ class ObjectCacheStrategy implements InMemoryCacheStrategy
     {
         wp_cache_delete($key);
     }
+
+    /** @inheritDoc */
+    public function clear(): void
+    {
+        wp_cache_flush();
+    }
 }
