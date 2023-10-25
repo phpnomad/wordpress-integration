@@ -2,12 +2,12 @@
 
 namespace Phoenix\Integrations\WordPress\Strategies;
 
-use Phoenix\Database\Exceptions\DatabaseErrorException;
 use Phoenix\Database\Exceptions\TableCreateFailedException;
 use Phoenix\Database\Factories\Column;
 use Phoenix\Database\Factories\Index;
 use Phoenix\Database\Interfaces\Table;
 use Phoenix\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategy;
+use Phoenix\Datastore\Exceptions\DatastoreErrorException;
 use Phoenix\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
 use Phoenix\Utils\Helpers\Arr;
 
@@ -26,7 +26,7 @@ class TableCreateStrategy implements CoreTableCreateStrategy
     {
         try {
             $this->wpdbQuery($this->buildCreateQuery($table));
-        } catch (DatabaseErrorException $e) {
+        } catch (DatastoreErrorException $e) {
             throw new TableCreateFailedException($e);
         }
     }

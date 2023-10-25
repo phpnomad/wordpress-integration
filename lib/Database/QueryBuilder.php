@@ -47,6 +47,11 @@ class QueryBuilder implements QueryBuilderInterface, HasUsableTable
             $this->select = ['SELECT'];
         }
 
+        if ('*' === $field) {
+            $this->select[] = '*';
+            return $this;
+        }
+
         $this->select[] = Arr::process(Arr::merge([$field], $fields))
             ->each(fn(string $field) => $this->prependField($field))
             ->toString();

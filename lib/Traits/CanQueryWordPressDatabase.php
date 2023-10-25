@@ -2,13 +2,10 @@
 
 namespace Phoenix\Integrations\WordPress\Traits;
 
-use Phoenix\Database\Exceptions\DatabaseErrorException;
-use Phoenix\Database\Exceptions\DuplicateEntryException;
 use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
-use Phoenix\Database\Interfaces\QueryBuilder;
 use Phoenix\Database\Interfaces\Table;
-use Phoenix\Utils\Helpers\Str;
+use Phoenix\Datastore\Exceptions\DatastoreErrorException;
 
 trait CanQueryWordPressDatabase
 {
@@ -17,7 +14,7 @@ trait CanQueryWordPressDatabase
     /**
      * Gets a batch of rows using wpdb.
      * @return array<string, mixed>[]|array<int>
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
     protected function wpdbGetResults(): array
@@ -26,11 +23,11 @@ trait CanQueryWordPressDatabase
         try {
             $result = $wpdb->get_results($this->queryBuilder->build(), ARRAY_A);
         } catch (QueryBuilderException $e) {
-            throw new DatabaseErrorException('Get results failed. Invalid query', 500, $e);
+            throw new DatastoreErrorException('Get results failed. Invalid query', 500, $e);
         }
 
         if (is_null($result)) {
-            throw new DatabaseErrorException($wpdb->error);
+            throw new DatastoreErrorException($wpdb->error);
         }
 
         if (empty($result)) {
@@ -43,7 +40,7 @@ trait CanQueryWordPressDatabase
     /**
      * Gets a single row using wpdb.
      * @return array<string, mixed>
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
     protected function wpdbGetRow(): array
@@ -53,12 +50,12 @@ trait CanQueryWordPressDatabase
         try {
             $result = $wpdb->get_row($this->queryBuilder->build(), ARRAY_A);
         } catch (QueryBuilderException $e) {
-            throw new DatabaseErrorException('Get row failed. Invalid query', 500, $e);
+            throw new DatastoreErrorException('Get row failed. Invalid query', 500, $e);
         }
 
         if (!$result) {
             if(!empty($wpdb->last_error)){
-                throw new DatabaseErrorException('Get row failed - ' . $wpdb->last_error);
+                throw new DatastoreErrorException('Get row failed - ' . $wpdb->last_error);
             }
 
             throw new RecordNotFoundException('Could not get the specified row because it does not exist.');
@@ -72,14 +69,14 @@ trait CanQueryWordPressDatabase
      * @param string $table
      * @param array<string, float|int|string> $data
      * @return int
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      */
     protected function wpdbInsert(string $table, array $data): int
     {
         global $wpdb;
 
         if (false === $wpdb->insert($table, $data, $this->getFormats($data))) {
-            throw new DatabaseErrorException('Insert failed - ' . $wpdb->last_error);
+            throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
         }
 
         return $wpdb->insert_id;
@@ -90,7 +87,7 @@ trait CanQueryWordPressDatabase
      * @param array $data
      * @param array $where
      * @return int
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      */
     protected function wpdbUpdate(Table $table, array $data, array $where): int
     {
@@ -99,7 +96,7 @@ trait CanQueryWordPressDatabase
         $result = $wpdb->update($table->getName(), $data, $where, $this->getFormats($data), $this->getFormats($where));
 
         if (false === $result) {
-            throw new DatabaseErrorException('Update failed - ' . $wpdb->last_error);
+            throw new DatastoreErrorException('Update failed - ' . $wpdb->last_error);
         }
 
         // When no records were updated, we need to figure out if this is because the record couldn't be found.
@@ -130,14 +127,14 @@ trait CanQueryWordPressDatabase
      * @param string $table
      * @param array $where
      * @return void
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      */
     protected function wpdbDelete(string $table, array $where): void
     {
         global $wpdb;
 
         if (false === $wpdb->delete($table, $where, $this->getFormats($where))) {
-            throw new DatabaseErrorException('Delete failed - ' . $wpdb->last_error);
+            throw new DatastoreErrorException('Delete failed - ' . $wpdb->last_error);
         }
     }
 
@@ -145,7 +142,7 @@ trait CanQueryWordPressDatabase
      * Gets a single variable from the database.
      *
      * @return string
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
     protected function wpdbGetVar(): string
@@ -154,14 +151,14 @@ trait CanQueryWordPressDatabase
         try {
             $result = $wpdb->get_var($this->queryBuilder->build());
         } catch (QueryBuilderException $e) {
-            throw new DatabaseErrorException('Get var failed - Invalid query', 500, $e);
+            throw new DatastoreErrorException('Get var failed - Invalid query', 500, $e);
         }
 
         if (is_null($result)) {
             if (empty($wpdb->last_error)) {
                 throw new RecordNotFoundException();
             } else {
-                throw new DatabaseErrorException('Get var failed - ' . $wpdb->last_error);
+                throw new DatastoreErrorException('Get var failed - ' . $wpdb->last_error);
             }
         }
 

@@ -3,16 +3,16 @@
 namespace Phoenix\Integrations\WordPress\Strategies;
 
 use DateTime;
-use Phoenix\Database\Exceptions\DatabaseErrorException;
-use Phoenix\Database\Interfaces\CanConvertToDatabaseDateString;
-use Phoenix\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
+use Phoenix\Database\Interfaces\CanConvertToDatabaseDateString;
 use Phoenix\Database\Interfaces\QueryBuilder;
 use Phoenix\Database\Interfaces\Table;
+use Phoenix\Datastore\Exceptions\DatastoreErrorException;
+use Phoenix\Datastore\Interfaces\Datastore as CoreDatastore;
 use Phoenix\Integrations\WordPress\Traits\CanQueryWordPressDatabase;
 use Phoenix\Utils\Helpers\Arr;
 
-class QueryStrategy implements CoreQueryStrategy
+class Datastore implements CoreDatastore
 {
     use CanQueryWordPressDatabase;
 
@@ -26,18 +26,6 @@ class QueryStrategy implements CoreQueryStrategy
     }
 
     /** @inheritDoc */
-    public function prefix(): ?string
-    {
-        global $wpdb;
-
-        if (!isset($wpdb)) {
-            throw new DatabaseErrorException('The wpdb global is not set. This indicates you probably tried to access the database too early.');
-        }
-
-        return $wpdb->prefix;
-    }
-
-    /** @inheritDoc */
     public function find(Table $table, $id): array
     {
         $this->queryBuilder
@@ -47,17 +35,6 @@ class QueryStrategy implements CoreQueryStrategy
             ->where('id', '=', $id);
 
         return $this->wpdbGetRow();
-    }
-
-    /** @inheritDoc */
-    public function all(Table $table): array
-    {
-        $this->queryBuilder
-            ->useTable($table)
-            ->select('*')
-            ->from();
-
-        return $this->wpdbGetResults();
     }
 
     /** @inheritDoc */
@@ -123,7 +100,7 @@ class QueryStrategy implements CoreQueryStrategy
      * @param positive-int|null $limit
      * @param positive-int|null $offset
      * @return int[]
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
     protected function getResults(array $fields, Table $table, array $conditions, ?int $limit = null, ?int $offset = null)

@@ -2,19 +2,13 @@
 
 namespace Phoenix\Integrations\WordPress\Providers;
 
+use Phoenix\Cache\Interfaces\HasDefaultTtl;
 use Phoenix\Database\Interfaces\HasCharsetProvider;
 use Phoenix\Database\Interfaces\HasCollateProvider;
-use Phoenix\Database\Interfaces\HasDatabaseDefaultCacheTtl;
 use Phoenix\Database\Interfaces\HasGlobalDatabasePrefix;
 
-class DatabaseProvider implements HasGlobalDatabasePrefix, HasDatabaseDefaultCacheTtl, HasCollateProvider, HasCharsetProvider
+class DatabaseProvider implements HasGlobalDatabasePrefix, HasCollateProvider, HasCharsetProvider
 {
-    /** @inheritDoc */
-    public function getDatabaseDefaultCacheTtl(): int
-    {
-        return 604800;
-    }
-
     /** @inheritDoc */
     public function getGlobalDatabasePrefix(): string
     {

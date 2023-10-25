@@ -2,15 +2,16 @@
 
 namespace Phoenix\Integrations\WordPress\Traits;
 
-use Phoenix\Database\Exceptions\DatabaseErrorException;
+use Phoenix\Datastore\Exceptions\DatastoreErrorException;
 
 trait CanModifyWordPressDatabase
 {
     /**
      * @param string $query
      * @param ...$args
+     *
      * @return void
-     * @throws DatabaseErrorException
+     * @throws DatastoreErrorException
      */
     protected function wpdbQuery(string $query, ...$args): void
     {
@@ -19,7 +20,7 @@ trait CanModifyWordPressDatabase
         $wpdb->query($this->maybePrepare($query, ...$args));
 
         if ($wpdb->last_error) {
-            throw new DatabaseErrorException('Query responded with error: ' . $wpdb->last_error);
+            throw new DatastoreErrorException('Query responded with error: '.$wpdb->last_error);
         }
     }
 
