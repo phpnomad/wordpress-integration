@@ -81,7 +81,7 @@ trait CanQueryWordPressDatabase
             throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
         }
 
-        $fields = $table::getFieldsForIdentity();
+        $fields = $table->getFieldsForIdentity();
         $ids = Arr::process($fields)
             ->flip()
             ->intersect($data, $fields)
