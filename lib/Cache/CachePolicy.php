@@ -42,7 +42,7 @@ class CachePolicy implements CoreCachePolicy
     }
 
     /** @inheritDoc */
-    public function getTtl(string $operation, array $context = []): ?int
+    public function getTtl(array $context = []): ?int
     {
         return $this->defaultTtlProvider->getDefaultTtl();
     }

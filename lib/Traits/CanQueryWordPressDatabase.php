@@ -4,8 +4,10 @@ namespace Phoenix\Integrations\WordPress\Traits;
 
 use Phoenix\Database\Exceptions\QueryBuilderException;
 use Phoenix\Database\Exceptions\RecordNotFoundException;
+use Phoenix\Database\Interfaces\QueryBuilder;
 use Phoenix\Database\Interfaces\Table;
 use Phoenix\Datastore\Exceptions\DatastoreErrorException;
+use Phoenix\Utils\Helpers\Arr;
 
 trait CanQueryWordPressDatabase
 {
@@ -17,11 +19,11 @@ trait CanQueryWordPressDatabase
      * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
-    protected function wpdbGetResults(): array
+    protected function wpdbGetResults(QueryBuilder $queryBuilder): array
     {
         global $wpdb;
         try {
-            $result = $wpdb->get_results($this->queryBuilder->build(), ARRAY_A);
+            $result = $wpdb->get_results($queryBuilder->build(), ARRAY_A);
         } catch (QueryBuilderException $e) {
             throw new DatastoreErrorException('Get results failed. Invalid query', 500, $e);
         }
@@ -43,12 +45,12 @@ trait CanQueryWordPressDatabase
      * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
-    protected function wpdbGetRow(): array
+    protected function wpdbGetRow(QueryBuilder $queryBuilder): array
     {
         global $wpdb;
 
         try {
-            $result = $wpdb->get_row($this->queryBuilder->build(), ARRAY_A);
+            $result = $wpdb->get_row($queryBuilder->build(), ARRAY_A);
         } catch (QueryBuilderException $e) {
             throw new DatastoreErrorException('Get row failed. Invalid query', 500, $e);
         }
@@ -66,20 +68,30 @@ trait CanQueryWordPressDatabase
 
     /**
      * Insert a record into the database.
-     * @param string $table
+     * @param Table $table
      * @param array<string, float|int|string> $data
-     * @return int
+     * @return array<string, int>
      * @throws DatastoreErrorException
      */
-    protected function wpdbInsert(string $table, array $data): int
+    protected function wpdbInsert(Table $table, array $data): array
     {
         global $wpdb;
 
-        if (false === $wpdb->insert($table, $data, $this->getFormats($data))) {
+        if (false === $wpdb->insert($table->getName(), $data, $this->getFormats($data))) {
             throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
         }
 
-        return $wpdb->insert_id;
+        $fields = $table::getFieldsForIdentity();
+        $ids = Arr::process($fields)
+            ->flip()
+            ->intersect($data, $fields)
+            ->toArray();
+
+        if(count($ids) === count($fields)){
+            return $ids;
+        }
+
+        return ['id' => $wpdb->insert_id];
     }
 
     /**
@@ -89,7 +101,7 @@ trait CanQueryWordPressDatabase
      * @return int
      * @throws DatastoreErrorException
      */
-    protected function wpdbUpdate(Table $table, array $data, array $where): int
+    protected function wpdbUpdate(Table $table, array $data, array $where): void
     {
         global $wpdb;
 
@@ -104,22 +116,21 @@ trait CanQueryWordPressDatabase
             $firstItemKey = array_keys($where);
             $firstItem = array_values($where);
 
-            $this->queryBuilder
-                ->useTable($table)
+            $queryBuilder = new \Phoenix\Integrations\WordPress\Database\QueryBuilder();
+
+            $queryBuilder
                 ->count('id')
-                ->from()
+                ->from($table)
                 ->where(array_shift($firstItemKey), '=', array_shift($firstItem));
 
             foreach ($where as $key => $value) {
-                $this->queryBuilder->andWhere($key, '=', $value);
+                $queryBuilder->andWhere($key, '=', $value);
             }
 
-            if (0 === (int) $this->wpdbGetVar()) {
+            if (0 === (int) $this->wpdbGetVar($queryBuilder)) {
                 throw new RecordNotFoundException('The update failed because no record exists.');
             }
         }
-
-        return $wpdb->insert_id;
     }
 
     /**
@@ -129,11 +140,11 @@ trait CanQueryWordPressDatabase
      * @return void
      * @throws DatastoreErrorException
      */
-    protected function wpdbDelete(string $table, array $where): void
+    protected function wpdbDelete(Table $table, array $where): void
     {
         global $wpdb;
 
-        if (false === $wpdb->delete($table, $where, $this->getFormats($where))) {
+        if (false === $wpdb->delete($table->getName(), $where, $this->getFormats($where))) {
             throw new DatastoreErrorException('Delete failed - ' . $wpdb->last_error);
         }
     }
@@ -141,15 +152,16 @@ trait CanQueryWordPressDatabase
     /**
      * Gets a single variable from the database.
      *
+     * @param QueryBuilder $queryBuilder
      * @return string
      * @throws DatastoreErrorException
      * @throws RecordNotFoundException
      */
-    protected function wpdbGetVar(): string
+    protected function wpdbGetVar(QueryBuilder $queryBuilder): string
     {
         global $wpdb;
         try {
-            $result = $wpdb->get_var($this->queryBuilder->build());
+            $result = $wpdb->get_var($queryBuilder->build());
         } catch (QueryBuilderException $e) {
             throw new DatastoreErrorException('Get var failed - Invalid query', 500, $e);
         }

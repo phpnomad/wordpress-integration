@@ -39,7 +39,7 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
             EventStrategy::class => CoreEventStrategy::class,
             ObjectCacheStrategy::class => CacheStrategy::class,
             CachePolicy::class => CoreCachePolicy::class,
-            Datastore::class => CoreDatastore::class,
+            QueryStrategy::class => CoreDatastore::class,
             DefaultCacheTtlProvider::class => HasDefaultTtl::class,
             TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
             TableDeleteStrategy::class => CoreTableDeleteStrategyAlias::class,

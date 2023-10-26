@@ -3,18 +3,15 @@
 namespace Phoenix\Integrations\WordPress\Database;
 
 use Phoenix\Database\Exceptions\QueryBuilderException;
-use Phoenix\Database\Interfaces\HasUsableTable;
 use Phoenix\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
 use Phoenix\Database\Interfaces\Table;
-use Phoenix\Database\Traits\WithUseTable;
 use Phoenix\Integrations\WordPress\Traits\CanGetDataFormats;
 use Phoenix\Utils\Helpers\Arr;
 use wpdb;
 
-class QueryBuilder implements QueryBuilderInterface, HasUsableTable
+class QueryBuilder implements QueryBuilderInterface
 {
     use CanGetDataFormats;
-    use WithUseTable;
 
     protected array $select = [];
 
@@ -60,11 +57,40 @@ class QueryBuilder implements QueryBuilderInterface, HasUsableTable
     }
 
     /** @inheritDoc */
-    public function from()
+    public function from(Table $table)
     {
-        $this->from = ['FROM', $this->table->getName(), 'AS', $this->table->getAlias()];
+        $this->from = ['FROM', $table->getName(), 'AS', $table->getAlias()];
 
         return $this;
+    }
+
+    /** @inheritDoc */
+    public function compoundWhere(array $fields, array $valueSet, array ...$valueSets)
+    {
+        if (empty($this->where)) {
+            $this->where = ['WHERE'];
+        }
+
+        $this->operands[] = "IN";
+        $this->where = Arr::merge(
+            $this->where,
+            Arr::map($fields, fn(string $field) => '(' . $this->prependField($field) . ')'),
+            ["IN"]
+        );
+        $this->where[] = '(';
+
+        foreach (Arr::merge([$valueSet], $valueSets) as $valueSet) {
+            foreach ($valueSet as $field => $value) {
+                $this->where[] = '(';
+                $this->where[] = $this->prepareValue($field, $value);
+                $this->where[] = ')';
+            }
+            $this->where[] = ',';
+        }
+
+        // Pop off extra comma.
+        array_pop($this->where);
+        $this->where[] = ')';
     }
 
     /** @inheritDoc */
