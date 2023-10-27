@@ -57,6 +57,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/rooted-phoenix/db.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/rooted-phoenix/datastore.git"
         }
     ],
     "autoload": {
@@ -80,6 +84,7 @@
     },
     "require": {
         "phoenix/db": "dev-main",
+        "phoenix/datastore": "dev-main",
         "phoenix/event": "dev-main",
         "phoenix/cache": "dev-main",
         "phoenix/rest": "dev-main",

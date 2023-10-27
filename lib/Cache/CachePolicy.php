@@ -36,7 +36,7 @@ class CachePolicy implements CoreCachePolicy
     }
 
     /** @inheritDoc */
-    public function getCacheKey(array $context = []): string
+    public function getCacheKey(array $context): string
     {
         return $this->cacheKeyFactory->getCacheKey($context);
     }
