@@ -1,8 +1,8 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Rest;
+namespace PHPNomad\Integrations\WordPress\Rest;
 
-use Phoenix\Rest\Interfaces\Request as CoreRequest;
+use PHPNomad\Rest\Interfaces\Request as CoreRequest;
 use WP_REST_Request;
 
 final class Request implements CoreRequest

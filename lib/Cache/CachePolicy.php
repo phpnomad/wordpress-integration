@@ -1,11 +1,11 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Cache;
+namespace PHPNomad\Integrations\WordPress\Cache;
 
-use Phoenix\Cache\Enums\Operation;
-use Phoenix\Cache\Factories\HashedCacheKeyFactory;
-use Phoenix\Cache\Interfaces\CachePolicy as CoreCachePolicy;
-use Phoenix\Cache\Interfaces\HasDefaultTtl;
+use PHPNomad\Cache\Enums\Operation;
+use PHPNomad\Cache\Factories\HashedCacheKeyFactory;
+use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
+use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 
 class CachePolicy implements CoreCachePolicy
 {

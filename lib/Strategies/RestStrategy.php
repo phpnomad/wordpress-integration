@@ -1,13 +1,13 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Strategies;
+namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use Phoenix\Integrations\WordPress\Rest\Request;
-use Phoenix\Rest\Interfaces\Handler;
-use Phoenix\Rest\Interfaces\HasRestNamespace;
-use Phoenix\Rest\Interfaces\RestStrategy as CoreRestStrategy;
-use Phoenix\Rest\Interfaces\Validation;
-use Phoenix\Utils\Helpers\Arr;
+use PHPNomad\Integrations\WordPress\Rest\Request;
+use PHPNomad\Rest\Interfaces\Handler;
+use PHPNomad\Rest\Interfaces\HasRestNamespace;
+use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
+use PHPNomad\Rest\Interfaces\Validation;
+use PHPNomad\Utils\Helpers\Arr;
 use WP_REST_Request;
 use WP_REST_Response;
 
@@ -44,7 +44,7 @@ class RestStrategy implements CoreRestStrategy
      */
     private function wrapCallback(Handler $handler, WP_REST_Request $request): WP_REST_Response
     {
-        /** @var \Phoenix\Integrations\WordPress\Rest\Response $response */
+        /** @var \PHPNomad\Integrations\WordPress\Rest\Response $response */
         $response = $handler->getResponse(Request::fromRequest($request));
 
         return $response->getResponse();

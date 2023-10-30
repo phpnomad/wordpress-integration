@@ -1,11 +1,11 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Strategies;
+namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use Phoenix\Database\Exceptions\TableDropFailedException;
-use Phoenix\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategy;
-use Phoenix\Datastore\Exceptions\DatastoreErrorException;
-use Phoenix\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
+use PHPNomad\Database\Exceptions\TableDropFailedException;
+use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategy;
+use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
+use PHPNomad\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
 
 class TableDeleteStrategy implements CoreTableDeleteStrategy
 {

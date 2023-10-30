@@ -1,8 +1,8 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Rest;
+namespace PHPNomad\Integrations\WordPress\Rest;
 
-use Phoenix\Rest\Interfaces\Response as CoreResponse;
+use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use WP_REST_Response;
 
 class Response implements CoreResponse

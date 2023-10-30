@@ -1,8 +1,8 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Providers;
+namespace PHPNomad\Integrations\WordPress\Providers;
 
-use Phoenix\Cache\Interfaces\HasDefaultTtl;
+use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 
 class DefaultCacheTtlProvider implements HasDefaultTtl
 {

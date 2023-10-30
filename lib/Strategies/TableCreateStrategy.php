@@ -1,15 +1,15 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Strategies;
+namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use Phoenix\Database\Exceptions\TableCreateFailedException;
-use Phoenix\Database\Factories\Column;
-use Phoenix\Database\Factories\Index;
-use Phoenix\Database\Interfaces\Table;
-use Phoenix\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategy;
-use Phoenix\Datastore\Exceptions\DatastoreErrorException;
-use Phoenix\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
-use Phoenix\Utils\Helpers\Arr;
+use PHPNomad\Database\Exceptions\TableCreateFailedException;
+use PHPNomad\Database\Factories\Column;
+use PHPNomad\Database\Factories\Index;
+use PHPNomad\Database\Interfaces\Table;
+use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategy;
+use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
+use PHPNomad\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
+use PHPNomad\Utils\Helpers\Arr;
 
 class TableCreateStrategy implements CoreTableCreateStrategy
 {

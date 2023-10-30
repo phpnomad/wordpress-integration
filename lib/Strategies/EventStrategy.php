@@ -1,9 +1,9 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Strategies;
+namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use Phoenix\Events\Interfaces\EventStrategy as CoreEventStrategy;
-use Phoenix\Events\Interfaces\Event;
+use PHPNomad\Events\Interfaces\EventStrategy as CoreEventStrategy;
+use PHPNomad\Events\Interfaces\Event;
 
 class EventStrategy implements CoreEventStrategy
 {
@@ -13,7 +13,7 @@ class EventStrategy implements CoreEventStrategy
      */
     protected function getActionName($event): string
     {
-        return 'phoenix/' . $event::getId();
+        return 'phpnomad/' . $event::getId();
     }
 
     /**

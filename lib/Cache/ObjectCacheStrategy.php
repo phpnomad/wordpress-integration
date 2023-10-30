@@ -1,10 +1,10 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Cache;
+namespace PHPNomad\Integrations\WordPress\Cache;
 
-use Phoenix\Cache\Exceptions\CachedItemNotFoundException;
-use Phoenix\Cache\Interfaces\CacheStrategy;
-use Phoenix\Cache\Traits\WithExistsCheck;
+use PHPNomad\Cache\Exceptions\CachedItemNotFoundException;
+use PHPNomad\Cache\Interfaces\CacheStrategy;
+use PHPNomad\Cache\Traits\WithExistsCheck;
 
 class ObjectCacheStrategy implements CacheStrategy
 {

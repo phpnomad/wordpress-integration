@@ -1,11 +1,11 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Providers;
+namespace PHPNomad\Integrations\WordPress\Providers;
 
-use Phoenix\Cache\Interfaces\HasDefaultTtl;
-use Phoenix\Database\Interfaces\HasCharsetProvider;
-use Phoenix\Database\Interfaces\HasCollateProvider;
-use Phoenix\Database\Interfaces\HasGlobalDatabasePrefix;
+use PHPNomad\Cache\Interfaces\HasDefaultTtl;
+use PHPNomad\Database\Interfaces\HasCharsetProvider;
+use PHPNomad\Database\Interfaces\HasCollateProvider;
+use PHPNomad\Database\Interfaces\HasGlobalDatabasePrefix;
 
 class DatabaseProvider implements HasGlobalDatabasePrefix, HasCollateProvider, HasCharsetProvider
 {

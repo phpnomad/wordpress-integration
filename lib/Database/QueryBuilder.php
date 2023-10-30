@@ -1,12 +1,12 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Database;
+namespace PHPNomad\Integrations\WordPress\Database;
 
-use Phoenix\Database\Exceptions\QueryBuilderException;
-use Phoenix\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
-use Phoenix\Database\Interfaces\Table;
-use Phoenix\Integrations\WordPress\Traits\CanGetDataFormats;
-use Phoenix\Utils\Helpers\Arr;
+use PHPNomad\Database\Exceptions\QueryBuilderException;
+use PHPNomad\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
+use PHPNomad\Database\Interfaces\Table;
+use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
+use PHPNomad\Utils\Helpers\Arr;
 use wpdb;
 
 class QueryBuilder implements QueryBuilderInterface

@@ -1,9 +1,9 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Strategies;
+namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use Phoenix\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategy;
-use Phoenix\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
+use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategy;
+use PHPNomad\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
 
 class TableExistsStrategy implements CoreTableExistsStrategy
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Adapters;
+namespace PHPNomad\Integrations\WordPress\Adapters;
 
 use DateTime;
-use Phoenix\Database\Interfaces\CanConvertDatabaseStringToDateTime;
-use Phoenix\Database\Interfaces\CanConvertToDatabaseDateString;
+use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
+use PHPNomad\Database\Interfaces\CanConvertToDatabaseDateString;
 
 class DatabaseDateAdapter implements CanConvertToDatabaseDateString, CanConvertDatabaseStringToDateTime
 {

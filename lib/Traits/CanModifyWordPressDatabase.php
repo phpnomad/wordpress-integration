@@ -1,8 +1,8 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Traits;
+namespace PHPNomad\Integrations\WordPress\Traits;
 
-use Phoenix\Datastore\Exceptions\DatastoreErrorException;
+use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
 
 trait CanModifyWordPressDatabase
 {

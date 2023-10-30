@@ -1,13 +1,13 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Traits;
+namespace PHPNomad\Integrations\WordPress\Traits;
 
-use Phoenix\Database\Exceptions\QueryBuilderException;
-use Phoenix\Database\Exceptions\RecordNotFoundException;
-use Phoenix\Database\Interfaces\QueryBuilder;
-use Phoenix\Database\Interfaces\Table;
-use Phoenix\Datastore\Exceptions\DatastoreErrorException;
-use Phoenix\Utils\Helpers\Arr;
+use PHPNomad\Database\Exceptions\QueryBuilderException;
+use PHPNomad\Database\Exceptions\RecordNotFoundException;
+use PHPNomad\Database\Interfaces\QueryBuilder;
+use PHPNomad\Database\Interfaces\Table;
+use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
+use PHPNomad\Utils\Helpers\Arr;
 
 trait CanQueryWordPressDatabase
 {
@@ -116,7 +116,7 @@ trait CanQueryWordPressDatabase
             $firstItemKey = array_keys($where);
             $firstItem = array_values($where);
 
-            $queryBuilder = new \Phoenix\Integrations\WordPress\Database\QueryBuilder();
+            $queryBuilder = new \PHPNomad\Integrations\WordPress\Database\QueryBuilder();
 
             $queryBuilder
                 ->count('id')

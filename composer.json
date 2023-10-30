@@ -1,8 +1,8 @@
 {
-    "name": "phoenix/wordpress-integration",
+    "name": "phpnomad/wordpress-integration",
     "description": "",
     "type": "library",
-    "homepage": "https://github.com/phoenix/core",
+    "homepage": "https://github.com/phpnomad/core",
     "readme": "README.md",
     "license": "MIT",
     "minimum-stability": "dev",
@@ -12,65 +12,65 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/tests.git"
+            "url": "https://github.com/phpnomad/tests.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/di.git"
+            "url": "https://github.com/phpnomad/di.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/core.git"
+            "url": "https://github.com/phpnomad/core.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/event.git"
+            "url": "https://github.com/phpnomad/event.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/config.git"
+            "url": "https://github.com/phpnomad/config.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/core.git"
+            "url": "https://github.com/phpnomad/core.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/loader.git"
+            "url": "https://github.com/phpnomad/loader.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/utils.git"
+            "url": "https://github.com/phpnomad/utils.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/rest.git"
+            "url": "https://github.com/phpnomad/rest.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/cache.git"
+            "url": "https://github.com/phpnomad/cache.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/event.git"
+            "url": "https://github.com/phpnomad/event.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/db.git"
+            "url": "https://github.com/phpnomad/db.git"
         },
         {
             "type": "vcs",
-            "url": "https://github.com/rooted-phoenix/datastore.git"
+            "url": "https://github.com/phpnomad/datastore.git"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Phoenix\\Integrations\\WordPress\\": "lib/"
+            "PHPNomad\\Integrations\\WordPress\\": "lib/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Phoenix\\Integrations\\WordPress\\Tests\\": "tests/"
+            "PHPNomad\\Integrations\\WordPress\\Tests\\": "tests/"
         }
     },
     "authors": [
@@ -80,16 +80,16 @@
         }
     ],
     "require-dev": {
-        "phoenix/tests": "^0.1.0"
+        "phpnomad/tests": "^0.1.0"
     },
     "require": {
-        "phoenix/db": "dev-main",
-        "phoenix/datastore": "dev-main",
-        "phoenix/event": "dev-main",
-        "phoenix/cache": "dev-main",
-        "phoenix/rest": "dev-main",
-        "phoenix/utils": "dev-main",
-        "phoenix/loader": "dev-main",
+        "phpnomad/db": "dev-main",
+        "phpnomad/datastore": "dev-main",
+        "phpnomad/event": "dev-main",
+        "phpnomad/cache": "dev-main",
+        "phpnomad/rest": "dev-main",
+        "phpnomad/utils": "dev-main",
+        "phpnomad/loader": "dev-main",
         "ext-json": "*"
     },
     "config": {

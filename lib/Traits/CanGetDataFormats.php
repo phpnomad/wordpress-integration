@@ -1,8 +1,8 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Traits;
+namespace PHPNomad\Integrations\WordPress\Traits;
 
-use Phoenix\Utils\Helpers\Arr;
+use PHPNomad\Utils\Helpers\Arr;
 
 trait CanGetDataFormats
 {

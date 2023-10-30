@@ -1,11 +1,11 @@
 <?php
 
-namespace Phoenix\Integrations\WordPress\Strategies;
+namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use Phoenix\Database\Interfaces\QueryBuilder;
-use Phoenix\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
-use Phoenix\Database\Interfaces\Table;
-use Phoenix\Integrations\WordPress\Traits\CanQueryWordPressDatabase;
+use PHPNomad\Database\Interfaces\QueryBuilder;
+use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
+use PHPNomad\Database\Interfaces\Table;
+use PHPNomad\Integrations\WordPress\Traits\CanQueryWordPressDatabase;
 
 class QueryStrategy implements CoreQueryStrategy
 {
