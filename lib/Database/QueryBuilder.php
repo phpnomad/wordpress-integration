@@ -5,6 +5,7 @@ namespace PHPNomad\Integrations\WordPress\Database;
 use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
 use PHPNomad\Database\Interfaces\Table;
+use PHPNomad\Database\Traits\WithUseTable;
 use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
 use PHPNomad\Utils\Helpers\Arr;
 use wpdb;
@@ -12,6 +13,7 @@ use wpdb;
 class QueryBuilder implements QueryBuilderInterface
 {
     use CanGetDataFormats;
+    use WithUseTable;
 
     protected array $select = [];
 
@@ -59,6 +61,7 @@ class QueryBuilder implements QueryBuilderInterface
     /** @inheritDoc */
     public function from(Table $table)
     {
+        $this->useTable($table);
         $this->from = ['FROM', $table->getName(), 'AS', $table->getAlias()];
 
         return $this;
@@ -72,25 +75,34 @@ class QueryBuilder implements QueryBuilderInterface
         }
 
         $this->operands[] = "IN";
-        $this->where = Arr::merge(
-            $this->where,
-            Arr::map($fields, fn(string $field) => '(' . $this->prependField($field) . ')'),
-            ["IN"]
-        );
+        $this->where[] = '(';
+
+        foreach($fields as $field){
+            $this->where[] = $this->prependField($field);
+            $this->where[] = ',';
+        }
+        array_pop($this->where);
+
+        $this->where[] = ')';
+        $this->where[] = 'IN';
         $this->where[] = '(';
 
         foreach (Arr::merge([$valueSet], $valueSets) as $valueSet) {
+            $this->where[] = '(';
             foreach ($valueSet as $field => $value) {
-                $this->where[] = '(';
                 $this->where[] = $this->prepareValue($field, $value);
-                $this->where[] = ')';
+                $this->where[] = ',';
             }
+            array_pop($this->where);
+            $this->where[] = ')';
             $this->where[] = ',';
         }
 
         // Pop off extra comma.
         array_pop($this->where);
         $this->where[] = ')';
+
+        return $this;
     }
 
     /** @inheritDoc */

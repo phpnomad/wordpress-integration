@@ -83,8 +83,13 @@ trait CanQueryWordPressDatabase
 
         $fields = $table->getFieldsForIdentity();
         $ids = Arr::process($fields)
-            ->flip()
-            ->intersect($data, $fields)
+            ->reduce(function($acc, $field) use($data){
+                if(isset($data[$field])){
+                    $acc[$field] = $data[$field];
+                }
+
+                return $acc;
+            },[])
             ->toArray();
 
         if(count($ids) === count($fields)){
@@ -119,8 +124,8 @@ trait CanQueryWordPressDatabase
             $queryBuilder = new \PHPNomad\Integrations\WordPress\Database\QueryBuilder();
 
             $queryBuilder
-                ->count('id')
                 ->from($table)
+                ->count('id')
                 ->where(array_shift($firstItemKey), '=', array_shift($firstItem));
 
             foreach ($where as $key => $value) {
