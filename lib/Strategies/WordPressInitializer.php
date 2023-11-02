@@ -25,6 +25,7 @@ use PHPNomad\Integrations\WordPress\Providers\DefaultCacheTtlProvider;
 use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
+use \PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 
 class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
 {
@@ -37,6 +38,7 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
     {
         return [
             EventStrategy::class => CoreEventStrategy::class,
+            ActionBindingStrategy::class => CoreActionBindingStrategy::class,
             ObjectCacheStrategy::class => CacheStrategy::class,
             CachePolicy::class => CoreCachePolicy::class,
             QueryStrategy::class => CoreQueryStrategy::class,
