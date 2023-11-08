@@ -30,7 +30,7 @@ use \PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrate
 
 class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
 {
-    public const REQUIRED_WORDPRESS_VERSION = '6.3.1';
+    public const REQUIRED_WORDPRESS_VERSION = '6.3.0';
 
     /**
      * @return array
