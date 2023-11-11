@@ -326,6 +326,7 @@ class QueryBuilder implements QueryBuilderInterface
         $this->maybeAppend('group_by');
         $this->maybeAppend('order_by');
         $this->maybeAppend('limit');
+        $this->maybeAppend('offset');
 
         // Convert to string
         $sql = implode(' ', $this->sql);
