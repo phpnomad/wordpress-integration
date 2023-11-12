@@ -3,8 +3,14 @@
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Integrations\WordPress\Rest\Request;
-use PHPNomad\Rest\Interfaces\Handler;
+use PHPNomad\Integrations\WordPress\Rest\Response;
+use PHPNomad\Rest\Enums\Method;
+use PHPNomad\Rest\Exceptions\ValidationException;
+use PHPNomad\Rest\Interfaces\Controller;
+use PHPNomad\Rest\Interfaces\HasMiddleware;
 use PHPNomad\Rest\Interfaces\HasRestNamespace;
+use PHPNomad\Rest\Interfaces\HasValidations;
+use PHPNomad\Rest\Interfaces\Middleware;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use PHPNomad\Rest\Interfaces\Validation;
 use PHPNomad\Utils\Helpers\Arr;
@@ -23,29 +29,37 @@ class RestStrategy implements CoreRestStrategy
         $this->restNamespaceProvider = $restNamespaceProvider;
     }
 
-    /**
-     * Converts
-     *
-     * @param array $validations
-     * @return array
-     */
-    protected function convertValidationsToArgs(array $validations): array
+    protected function validate(HasValidations $validations, Request $request)
     {
-        return Arr::each($validations, fn(Validation $validation) => [
-            'validation_callback' => fn($param, $request, $key) => $validation->isValid($key, Request::fromRequest($request))
-        ]
-        );
+        foreach ($validations->getValidations() as $key => $validations) {
+            /** @var Validation $validation */
+            foreach ($validations as $validation) {
+                $validation->isValid($key, $request);
+            }
+        }
     }
 
     /**
-     * @param Handler $handler
+     * @param Controller $controller
      * @param WP_REST_Request $request
      * @return WP_REST_Response
+     * @throws ValidationException
      */
-    private function wrapCallback(Handler $handler, WP_REST_Request $request): WP_REST_Response
+    private function wrapCallback(Controller $controller, WP_REST_Request $request): WP_REST_Response
     {
-        /** @var \PHPNomad\Integrations\WordPress\Rest\Response $response */
-        $response = $handler->getResponse(Request::fromRequest($request));
+        $request = Request::fromRequest($request);
+
+        if ($controller instanceof HasValidations) {
+            $this->validate($controller, $request);
+        }
+
+        // Maybe process middleware.
+        if ($controller instanceof HasMiddleware) {
+            Arr::each($controller->getMiddleware(), fn(Middleware $middleware) => $middleware->process($request));
+        }
+
+        /** @var Response $response */
+        $response = $controller->getResponse($request);
 
         return $response->getResponse();
     }
@@ -61,63 +75,57 @@ class RestStrategy implements CoreRestStrategy
         return preg_replace('/\{([\w-]+)}/', '(?P<$1>[\w-]+)', $input);
     }
 
-    /**
-     * Register a route.
-     *
-     * @param string $endpoint
-     * @param array $validations
-     * @param Handler $handler
-     * @param string $method
-     * @return void
-     */
-    protected function registerRoute(string $endpoint, array $validations, Handler $handler, string $method)
+    /** @inheritDoc */
+    public function registerRoute(callable $controllerGetter)
     {
-        add_action('rest_api_init', fn() => register_rest_route(
-            $this->restNamespaceProvider->getRestNamespace(),
-            $this->convertEndpointFormat($endpoint),
-            [
-                'methods' => $method,
-                'callback' => fn(WP_REST_Request $request) => $this->wrapCallback($handler, $request),
-                'args' => [
-                    $this->convertValidationsToArgs($validations)
+        add_action('rest_api_init', function () use ($controllerGetter) {
+            /** @var Controller $controller */
+            $controller = $controllerGetter();
+
+            register_rest_route(
+                $this->restNamespaceProvider->getRestNamespace(),
+                $this->convertEndpointFormat($controller->getEndpoint()),
+                [
+                    'methods' => $controller->getMethod(),
+                    'callback' => fn(WP_REST_Request $request) => $this->wrapCallback($controller, $request),
                 ]
-            ]
-        ));
+            );
+        });
     }
 
     /** @inheritDoc */
-    public function get(string $endpoint, array $validations, Handler $handler): void
+    public function get(Controller $controller): void
     {
-        $this->registerRoute($endpoint, $validations, $handler, 'GET');
+        $this->registerRoute($controller, Method::Get);
     }
 
     /** @inheritDoc */
-    public function post(string $endpoint, array $validations, Handler $handler): void
+    public function post(Controller $controller): void
     {
-        $this->registerRoute($endpoint, $validations, $handler, 'POST');
+        $this->registerRoute($controller, Method::Post);
     }
 
     /** @inheritDoc */
-    public function put(string $endpoint, array $validations, Handler $handler): void
+    public function put(Controller $controller): void
     {
-        $this->registerRoute($endpoint, $validations, $handler, 'PUT');
+        $this->registerRoute($controller, Method::Put);
     }
 
     /** @inheritDoc */
-    public function delete(string $endpoint, array $validations, Handler $handler): void
+    public function delete(Controller $controller): void
     {
-        $this->registerRoute($endpoint, $validations, $handler, 'DELETE');
+        $this->registerRoute($controller, Method::Delete);
     }
 
     /** @inheritDoc */
-    public function patch(string $endpoint, array $validations, Handler $handler): void
+    public function patch(Controller $controller): void
     {
-        $this->registerRoute($endpoint, $validations, $handler, 'PATCH');
+        $this->registerRoute($controller, Method::Patch);
     }
 
     /** @inheritDoc */
-    public function options(string $endpoint, array $validations, Handler $handler): void
+    public function options(Controller $controller): void
     {
-        $this->registerRoute($endpoint, $validations, $handler, 'OPTIONS');
+        $this->registerRoute($controller, Method::Options);
     }
 }

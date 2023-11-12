@@ -22,9 +22,11 @@ use PHPNomad\Integrations\WordPress\Cache\ObjectCacheStrategy;
 use PHPNomad\Integrations\WordPress\Database\QueryBuilder;
 use PHPNomad\Integrations\WordPress\Providers\DatabaseProvider;
 use PHPNomad\Integrations\WordPress\Providers\DefaultCacheTtlProvider;
+use PHPNomad\Integrations\WordPress\Rest\Response;
 use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
+use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use \PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 
@@ -39,6 +41,7 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
     {
         return [
             EventStrategy::class => CoreEventStrategy::class,
+            Response::class => CoreResponse::class,
             MutationStrategy::class => CoreMutationStrategy::class,
             ActionBindingStrategy::class => CoreActionBindingStrategy::class,
             ObjectCacheStrategy::class => CacheStrategy::class,
