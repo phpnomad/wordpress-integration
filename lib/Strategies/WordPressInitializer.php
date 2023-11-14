@@ -15,6 +15,7 @@ use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyA
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
 use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
 use PHPNomad\Events\Interfaces\EventStrategy as CoreEventStrategy;
+use PHPNomad\Events\Interfaces\HasListeners;
 use PHPNomad\Integrations\WordPress\Adapters\DatabaseDateAdapter;
 use PHPNomad\Integrations\WordPress\Cache\CachePolicy;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
@@ -30,7 +31,7 @@ use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use \PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 
-class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
+class WordPressInitializer implements HasLoadCondition, HasClassDefinitions, HasListeners
 {
     public const REQUIRED_WORDPRESS_VERSION = '6.3.0';
 
@@ -68,5 +69,12 @@ class WordPressInitializer implements HasLoadCondition, HasClassDefinitions
         global $wp_version;
 
         return isset($wp_version) && version_compare($wp_version, static::REQUIRED_WORDPRESS_VERSION, '>=');
+    }
+
+    public function getListeners(): array
+    {
+        [
+            FrontEndRequestListener::class
+        ];
     }
 }

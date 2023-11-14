@@ -90,6 +90,7 @@
         "phpnomad/rest": "dev-main",
         "phpnomad/utils": "dev-main",
         "phpnomad/loader": "dev-main",
+        "phpnomad/framework": "dev-main",
         "ext-json": "*"
     },
     "config": {
