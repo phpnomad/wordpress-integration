@@ -16,6 +16,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/phpnomad/translate.git"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/phpnomad/di.git"
         },
         {
@@ -89,6 +93,7 @@
         "phpnomad/cache": "dev-main",
         "phpnomad/rest": "dev-main",
         "phpnomad/utils": "dev-main",
+        "phpnomad/translate": "dev-main",
         "phpnomad/loader": "dev-main",
         "phpnomad/framework": "dev-main",
         "ext-json": "*"
