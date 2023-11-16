@@ -20,7 +20,10 @@ class ActionBindingStrategy implements ActionBindingStrategyInterface
 
         add_action($actionToBind, function (...$args) use ($transformer, $eventClass) {
             $eventInstance = $transformer ? $transformer(...$args) : new $eventClass(...$args);
-            Event::broadcast($eventInstance);
+
+            if ($eventInstance) {
+                Event::broadcast($eventInstance);
+            }
         }, PHP_INT_MIN, $numArgs);
     }
 }
