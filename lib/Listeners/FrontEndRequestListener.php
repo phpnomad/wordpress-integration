@@ -29,7 +29,10 @@ class FrontEndRequestListener implements CanListen
                 return;
             }
 
-            $this->eventStrategy->broadcast(new SiteVisited());
+            $userId = get_current_user_id();
+            $userId = $userId <= 0 ? null : $userId;
+
+            $this->eventStrategy->broadcast(new SiteVisited($userId));
         });
     }
 }
