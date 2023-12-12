@@ -20,7 +20,7 @@ class FrontEndRequestListener implements CanListen
             $isNotFrontendRequest =
                 is_admin()
                 || wp_doing_ajax()
-                || rest_doing_request()
+                || defined('REST_REQUEST') && REST_REQUEST
                 || (defined('WP_CLI') && WP_CLI)
                 || defined('XMLRPC_REQUEST') && XMLRPC_REQUEST
                 || defined('DOING_CRON') && DOING_CRON;
