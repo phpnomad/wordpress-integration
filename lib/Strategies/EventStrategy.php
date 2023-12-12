@@ -35,7 +35,7 @@ class EventStrategy implements CoreEventStrategy
      * @param int|null $priority
      * @return void
      */
-    public function attach(string $event, callable $action, ?int $priority): void
+    public function attach(string $event, callable $action, ?int $priority = null): void
     {
         add_action($this->getActionName($event), $action, is_null($priority) ? 10 : $priority, 1);
     }
@@ -48,7 +48,7 @@ class EventStrategy implements CoreEventStrategy
      * @param int|null $priority
      * @return void
      */
-    public function detach(string $event, callable $action, ?int $priority): void
+    public function detach(string $event, callable $action, ?int $priority = null): void
     {
         remove_action($this->getActionName($event), $action, is_null($priority) ? 10 : $priority);
     }
