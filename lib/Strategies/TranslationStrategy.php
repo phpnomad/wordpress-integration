@@ -2,7 +2,7 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use PHPNomad\Integrations\WordPress\Interfaces\HasTextDomain;
+use PHPNomad\Translations\Interfaces\HasTextDomain;
 use PHPNomad\Translations\Interfaces\TranslationStrategy as TranslationStrategyInterface;
 
 class TranslationStrategy implements TranslationStrategyInterface
