@@ -33,7 +33,7 @@ trait CanQueryWordPressDatabase
         }
 
         if (empty($result)) {
-            throw new RecordNotFoundException();
+             throw new RecordNotFoundException();
         }
 
         return $result;
