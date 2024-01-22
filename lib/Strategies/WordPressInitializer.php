@@ -2,6 +2,7 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
+use PHPNomad\Asset\Interfaces\AssetStrategy as AssetStrategyInterface;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 use PHPNomad\Database\Events\RecordDeleted;
@@ -63,7 +64,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             QueryBuilder::class => CoreQueryBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
             DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
-            DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class]
+            DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class],
+            AssetStrategy::class => AssetStrategyInterface::class
         ];
     }
 
