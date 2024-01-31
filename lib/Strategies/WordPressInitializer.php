@@ -36,6 +36,7 @@ use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use \PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
+use PHPNomad\Translations\Interfaces\TranslationStrategy as CoreTranslationStrategyAlias;
 use PHPNomad\Utils\Helpers\Arr;
 
 class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClassDefinitions, HasEventBindings
@@ -61,6 +62,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
             TableDeleteStrategy::class => CoreTableDeleteStrategyAlias::class,
             TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
+            TranslationStrategy::class => CoreTranslationStrategyAlias::class,
             QueryBuilder::class => CoreQueryBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
             DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
