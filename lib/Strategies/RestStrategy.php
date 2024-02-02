@@ -92,40 +92,4 @@ class RestStrategy implements CoreRestStrategy
             );
         });
     }
-
-    /** @inheritDoc */
-    public function get(Controller $controller): void
-    {
-        $this->registerRoute($controller, Method::Get);
-    }
-
-    /** @inheritDoc */
-    public function post(Controller $controller): void
-    {
-        $this->registerRoute($controller, Method::Post);
-    }
-
-    /** @inheritDoc */
-    public function put(Controller $controller): void
-    {
-        $this->registerRoute($controller, Method::Put);
-    }
-
-    /** @inheritDoc */
-    public function delete(Controller $controller): void
-    {
-        $this->registerRoute($controller, Method::Delete);
-    }
-
-    /** @inheritDoc */
-    public function patch(Controller $controller): void
-    {
-        $this->registerRoute($controller, Method::Patch);
-    }
-
-    /** @inheritDoc */
-    public function options(Controller $controller): void
-    {
-        $this->registerRoute($controller, Method::Options);
-    }
 }
