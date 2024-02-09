@@ -2,55 +2,71 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use PHPNomad\Integrations\WordPress\Rest\Request;
-use PHPNomad\Integrations\WordPress\Rest\Response;
-use PHPNomad\Rest\Enums\Method;
+use PHPNomad\Integrations\WordPress\Rest\Request as WordPressRequest;
+use PHPNomad\Rest\Factories\ValidationSet;
+use PHPNomad\Rest\Exceptions\RestException;
 use PHPNomad\Rest\Exceptions\ValidationException;
 use PHPNomad\Rest\Interfaces\Controller;
 use PHPNomad\Rest\Interfaces\HasMiddleware;
 use PHPNomad\Rest\Interfaces\HasRestNamespace;
 use PHPNomad\Rest\Interfaces\HasValidations;
 use PHPNomad\Rest\Interfaces\Middleware;
+use PHPNomad\Rest\Interfaces\Request;
+use PHPNomad\Rest\Interfaces\Response;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
-use PHPNomad\Rest\Interfaces\Validation;
 use PHPNomad\Utils\Helpers\Arr;
 use WP_REST_Request;
 use WP_REST_Response;
 
+//TODO: EXTRACT VALIDATION AND MIDDLEWARE SO THIS LOGIC CAN BE RE-USED IN OTHER SERVICES.
 class RestStrategy implements CoreRestStrategy
 {
     /**
      * @var HasRestNamespace
      */
     protected HasRestNamespace $restNamespaceProvider;
+    protected Response $response;
 
-    public function __construct(HasRestNamespace $restNamespaceProvider)
+    public function __construct(HasRestNamespace $restNamespaceProvider, Response $response)
     {
         $this->restNamespaceProvider = $restNamespaceProvider;
+        $this->response = $response;
     }
 
-    protected function validate(HasValidations $validations, Request $request)
+    /**
+     * Validates the request using the provided validations.
+     *
+     * @param HasValidations $validations
+     * @param Request $request
+     * @return array<string, string[]> array of failed keys with failure messages.
+     */
+    protected function validate(HasValidations $validations, Request $request): array
     {
-        foreach ($validations->getValidations() as $key => $validations) {
-            /** @var Validation $validation */
-            foreach ($validations as $validation) {
-                $validation->isValid($key, $request);
+        $failures = [];
+        foreach ($validations->getValidations() as $key => $validationSet) {
+            $newFailures = $validationSet->getValidationFailures($key, $request);
+            if(!empty($newFailures)) {
+                $failures = Arr::merge($failures, $newFailures);
             }
         }
+
+        return $failures;
     }
 
     /**
      * @param Controller $controller
-     * @param WP_REST_Request $request
+     * @param Response $request
      * @return WP_REST_Response
-     * @throws ValidationException
+     * @throws RestException
      */
-    private function wrapCallback(Controller $controller, WP_REST_Request $request): WP_REST_Response
+    private function wrapCallback(Controller $controller, Request $request): Response
     {
-        $request = Request::fromRequest($request);
-
         if ($controller instanceof HasValidations) {
-            $this->validate($controller, $request);
+            $failures = $this->validate($controller, $request);
+
+            if (!empty($failures)) {
+                throw new ValidationException('Validations failed.', $failures);
+            }
         }
 
         // Maybe process middleware.
@@ -58,10 +74,10 @@ class RestStrategy implements CoreRestStrategy
             Arr::each($controller->getMiddleware(), fn(Middleware $middleware) => $middleware->process($request));
         }
 
-        /** @var Response $response */
+        /** @var \PHPNomad\Integrations\WordPress\Rest\Response $response */
         $response = $controller->getResponse($request);
 
-        return $response->getResponse();
+        return $response;
     }
 
     /**
@@ -73,6 +89,24 @@ class RestStrategy implements CoreRestStrategy
     private function convertEndpointFormat(string $input): string
     {
         return preg_replace('/\{([\w-]+)}/', '(?P<$1>[\w-]+)', $input);
+    }
+
+    protected function handleRequest(Controller $controller, Request $request)
+    {
+        try {
+            $response = $this->wrapCallback($controller, $request);
+        } catch (RestException $e){
+            $response = $this->response->setStatus($e->getCode())->setJson(
+                [
+                    'error' => [
+                        'message' => $e->getMessage(),
+                        'context' => $e->getContext()
+                    ],
+                ]
+            );
+        }
+
+        return $response->getResponse();
     }
 
     /** @inheritDoc */
@@ -87,7 +121,7 @@ class RestStrategy implements CoreRestStrategy
                 $this->convertEndpointFormat($controller->getEndpoint()),
                 [
                     'methods' => $controller->getMethod(),
-                    'callback' => fn(WP_REST_Request $request) => $this->wrapCallback($controller, $request),
+                    'callback' => fn(WP_REST_Request $request) => $this->handleRequest($controller, new WordPressRequest($request))
                 ]
             );
         });

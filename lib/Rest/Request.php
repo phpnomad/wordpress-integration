@@ -9,12 +9,9 @@ final class Request implements CoreRequest
 {
     private WP_REST_Request $request;
 
-    public static function fromRequest(WP_REST_Request $request): Request
+    public function __construct(WP_REST_Request $request)
     {
-        $instance = new Request();
-        $instance->request = $request;
-
-        return $instance;
+        $this->request = $request;
     }
 
     /** @inheritDoc */
@@ -59,5 +56,13 @@ final class Request implements CoreRequest
     public function getRequest(): WP_REST_Request
     {
         return $this->request;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasParam(string $name): bool
+    {
+        return isset($this->request->get_params()[$name]);
     }
 }
