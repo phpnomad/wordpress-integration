@@ -20,7 +20,7 @@ class ActionToCapabilityAdapter
      */
     public function getCapability(Action $action): string
     {
-        return $this->prefix . json_encode(['action' => $action->getAction(), 'targetType' => $action->getTargetType()]);
+        return $this->prefix . $action->getAction() . '__' . $action->getTargetType();
     }
 
     /**
@@ -32,12 +32,12 @@ class ActionToCapabilityAdapter
      */
     public function getAction(string $capability): Action
     {
-        $jsonAction = Str::after($capability, $this->prefix);
-        $actionArray = json_decode($jsonAction, true);
+        $action = Str::after($capability, $this->prefix);
+        [$action, $targetType] = explode('__', $action);
 
         return new ActionModel(
-            Arr::get($actionArray, 'action'),
-            Arr::get($actionArray, 'targetType')
+            $action,
+            $targetType
         );
     }
 }
