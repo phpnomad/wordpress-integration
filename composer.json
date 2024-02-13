@@ -16,6 +16,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/phpnomad/auth.git"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/phpnomad/tests.git"
         },
         {
@@ -91,6 +95,7 @@
         "phpnomad/tests": "^0.1.0"
     },
     "require": {
+        "phpnomad/auth": "dev-main",
         "phpnomad/asset": "dev-main",
         "phpnomad/db": "dev-main",
         "phpnomad/datastore": "dev-main",

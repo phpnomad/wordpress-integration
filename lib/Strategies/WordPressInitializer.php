@@ -3,6 +3,10 @@
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Asset\Interfaces\AssetStrategy as AssetStrategyInterface;
+use PHPNomad\Auth\Events\UserPermissionsInitialized;
+use PHPNomad\Auth\Interfaces\CurrentContextResolverStrategy as CurrentContextResolverStrategyInterface;
+use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy as CurrentUserResolverStrategyInterface;
+use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 use PHPNomad\Database\Events\RecordDeleted;
@@ -16,15 +20,16 @@ use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyAlias;
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
 use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
-use PHPNomad\Di\Exceptions\DiException;
 use PHPNomad\Di\Interfaces\CanSetContainer;
 use PHPNomad\Di\Traits\HasSettableContainer;
+use PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 use PHPNomad\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use PHPNomad\Events\Interfaces\HasEventBindings;
 use PHPNomad\Framework\Events\SiteVisited;
 use PHPNomad\Integrations\WordPress\Adapters\DatabaseDateAdapter;
+use PHPNomad\Integrations\WordPress\Auth\User;
+use PHPNomad\Integrations\WordPress\Bindings\SiteVisitedBinding;
 use PHPNomad\Integrations\WordPress\Cache\CachePolicy;
-use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Integrations\WordPress\Cache\ObjectCacheStrategy;
 use PHPNomad\Integrations\WordPress\Database\QueryBuilder;
 use PHPNomad\Integrations\WordPress\Providers\DatabaseProvider;
@@ -35,7 +40,6 @@ use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
-use \PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 use PHPNomad\Translations\Interfaces\TranslationStrategy as CoreTranslationStrategyAlias;
 use PHPNomad\Utils\Helpers\Arr;
 
@@ -65,6 +69,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             TranslationStrategy::class => CoreTranslationStrategyAlias::class,
             QueryBuilder::class => CoreQueryBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
+            CurrentContextResolverStrategy::class => CurrentContextResolverStrategyInterface::class,
+            CurrentUserResolverStrategy::class => CurrentUserResolverStrategyInterface::class,
             DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
             DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class],
             AssetStrategy::class => AssetStrategyInterface::class
@@ -90,32 +96,11 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
                 ['action' => 'deleted_user', 'transformer' => fn(int $id) => new RecordDeleted('user', Arr::wrap($id))]
             ],
             SiteVisited::class => [
-                ['action' => 'init', 'transformer' => fn() => $this->handleSiteVisitedBinding()]
+                ['action' => 'init', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
+            ],
+            UserPermissionsInitialized::class => [
+                ['action' => 'init', 'transformer' => fn() => new UserPermissionsInitialized(new User(wp_get_current_user()))]
             ]
         ];
-    }
-
-    /**
-     * @return void
-     * @throws DiException
-     */
-    private function handleSiteVisitedBinding(): void
-    {
-        $isNotFrontendRequest =
-            is_admin()
-            || wp_doing_ajax()
-            || defined('REST_REQUEST') && REST_REQUEST
-            || (defined('WP_CLI') && WP_CLI)
-            || defined('XMLRPC_REQUEST') && XMLRPC_REQUEST
-            || defined('DOING_CRON') && DOING_CRON;
-
-        if($isNotFrontendRequest){
-            return;
-        }
-
-        $userId = get_current_user_id();
-        $userId = $userId <= 0 ? null : $userId;
-
-        $this->container->get(CoreEventStrategy::class)->broadcast(new SiteVisited($userId));
     }
 }

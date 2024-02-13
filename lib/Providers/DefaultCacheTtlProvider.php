@@ -8,6 +8,6 @@ class DefaultCacheTtlProvider implements HasDefaultTtl
 {
     public function getDefaultTtl(): ?int
     {
-        return defined('SIREN_CACHE_TTL') ? (int) SIREN_CACHE_TTL : 604800;
+        return defined('NOMADIC_CACHE_TTL') ? (int) NOMADIC_CACHE_TTL : 604800;
     }
 }

@@ -2,14 +2,12 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
+use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy;
 use PHPNomad\Integrations\WordPress\Rest\Request as WordPressRequest;
-use PHPNomad\Rest\Factories\ValidationSet;
 use PHPNomad\Rest\Exceptions\RestException;
-use PHPNomad\Rest\Exceptions\ValidationException;
 use PHPNomad\Rest\Interfaces\Controller;
 use PHPNomad\Rest\Interfaces\HasMiddleware;
 use PHPNomad\Rest\Interfaces\HasRestNamespace;
-use PHPNomad\Rest\Interfaces\HasValidations;
 use PHPNomad\Rest\Interfaces\Middleware;
 use PHPNomad\Rest\Interfaces\Request;
 use PHPNomad\Rest\Interfaces\Response;
@@ -26,31 +24,13 @@ class RestStrategy implements CoreRestStrategy
      */
     protected HasRestNamespace $restNamespaceProvider;
     protected Response $response;
+    protected CurrentUserResolverStrategy $currentUserResolver;
 
-    public function __construct(HasRestNamespace $restNamespaceProvider, Response $response)
+    public function __construct(HasRestNamespace $restNamespaceProvider, Response $response, CurrentUserResolverStrategy $currentUserResolverStrategy)
     {
         $this->restNamespaceProvider = $restNamespaceProvider;
         $this->response = $response;
-    }
-
-    /**
-     * Validates the request using the provided validations.
-     *
-     * @param HasValidations $validations
-     * @param Request $request
-     * @return array<string, string[]> array of failed keys with failure messages.
-     */
-    protected function validate(HasValidations $validations, Request $request): array
-    {
-        $failures = [];
-        foreach ($validations->getValidations() as $key => $validationSet) {
-            $newFailures = $validationSet->getValidationFailures($key, $request);
-            if(!empty($newFailures)) {
-                $failures = Arr::merge($failures, $newFailures);
-            }
-        }
-
-        return $failures;
+        $this->currentUserResolver = $currentUserResolverStrategy;
     }
 
     /**
@@ -61,14 +41,6 @@ class RestStrategy implements CoreRestStrategy
      */
     private function wrapCallback(Controller $controller, Request $request): Response
     {
-        if ($controller instanceof HasValidations) {
-            $failures = $this->validate($controller, $request);
-
-            if (!empty($failures)) {
-                throw new ValidationException('Validations failed.', $failures);
-            }
-        }
-
         // Maybe process middleware.
         if ($controller instanceof HasMiddleware) {
             Arr::each($controller->getMiddleware(), fn(Middleware $middleware) => $middleware->process($request));
@@ -121,7 +93,7 @@ class RestStrategy implements CoreRestStrategy
                 $this->convertEndpointFormat($controller->getEndpoint()),
                 [
                     'methods' => $controller->getMethod(),
-                    'callback' => fn(WP_REST_Request $request) => $this->handleRequest($controller, new WordPressRequest($request))
+                    'callback' => fn(WP_REST_Request $request) => $this->handleRequest($controller, new WordPressRequest($request, $this->currentUserResolver->getCurrentUser()))
                 ]
             );
         });

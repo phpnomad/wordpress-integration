@@ -2,16 +2,19 @@
 
 namespace PHPNomad\Integrations\WordPress\Rest;
 
+use PHPNomad\Auth\Interfaces\User;
 use PHPNomad\Rest\Interfaces\Request as CoreRequest;
 use WP_REST_Request;
 
 final class Request implements CoreRequest
 {
     private WP_REST_Request $request;
+    protected ?User $user;
 
-    public function __construct(WP_REST_Request $request)
+    public function __construct(WP_REST_Request $request, ?User $user = null)
     {
         $this->request = $request;
+        $this->user = $user;
     }
 
     /** @inheritDoc */
@@ -51,18 +54,18 @@ final class Request implements CoreRequest
     }
 
     /**
-     * @return WP_REST_Request
-     */
-    public function getRequest(): WP_REST_Request
-    {
-        return $this->request;
-    }
-
-    /**
      * @inheritDoc
      */
     public function hasParam(string $name): bool
     {
         return isset($this->request->get_params()[$name]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
     }
 }
