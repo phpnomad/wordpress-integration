@@ -67,7 +67,7 @@ class RestStrategy implements CoreRestStrategy
     {
         try {
             $response = $this->wrapCallback($controller, $request);
-        } catch (RestException $e){
+        } catch (RestException $e) {
             $response = $this->response->setStatus($e->getCode())->setJson(
                 [
                     'error' => [
@@ -93,7 +93,8 @@ class RestStrategy implements CoreRestStrategy
                 $this->convertEndpointFormat($controller->getEndpoint()),
                 [
                     'methods' => $controller->getMethod(),
-                    'callback' => fn(WP_REST_Request $request) => $this->handleRequest($controller, new WordPressRequest($request, $this->currentUserResolver->getCurrentUser()))
+                    'callback' => fn(WP_REST_Request $request) => $this->handleRequest($controller, new WordPressRequest($request, $this->currentUserResolver->getCurrentUser())),
+                    'permission_callback' => '__return_true'
                 ]
             );
         });
