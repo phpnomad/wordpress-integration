@@ -323,8 +323,8 @@ class QueryBuilder implements QueryBuilderInterface
         $this->sql = Arr::merge($this->select, $this->from);
         $this->maybeAppend('join');
         $this->maybeAppend('where');
-        $this->maybeAppend('group_by');
-        $this->maybeAppend('order_by');
+        $this->maybeAppend('groupBy');
+        $this->maybeAppend('orderBy');
         $this->maybeAppend('limit');
         $this->maybeAppend('offset');
 
