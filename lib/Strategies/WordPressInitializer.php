@@ -99,7 +99,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
                 ['action' => 'init', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
             ],
             UserPermissionsInitialized::class => [
-                ['action' => 'init', 'transformer' => fn() => new UserPermissionsInitialized(new User(wp_get_current_user()))]
+                ['action' => 'set_current_user', 'transformer' => fn() => new UserPermissionsInitialized(new User(wp_get_current_user()))]
             ]
         ];
     }
