@@ -75,9 +75,14 @@ class TableCreateStrategy implements CoreTableCreateStrategy
      */
     protected function convertColumnToSchemaString(Column $column): string
     {
+        $type = $column->getType();
+        if ($args = $column->getTypeArgs()) {
+            $type .= '(' . implode(',', $args) . ')';
+        }
+
         return Arr::process([
             $column->getName(),
-            is_null($column->getLength()) ? $column->getType() : $column->getType() . "({$column->getLength()})",
+            $type,
         ])
             ->merge($column->getAttributes())
             ->whereNotNull()
