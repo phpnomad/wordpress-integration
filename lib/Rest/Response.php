@@ -3,6 +3,7 @@
 namespace PHPNomad\Integrations\WordPress\Rest;
 
 use PHPNomad\Rest\Interfaces\Response as CoreResponse;
+use PHPNomad\Utils\Helpers\Arr;
 use WP_REST_Response;
 
 class Response implements CoreResponse
@@ -56,5 +57,15 @@ class Response implements CoreResponse
     public function getResponse(): WP_REST_Response
     {
         return $this->response;
+    }
+
+    public function getJson(): array
+    {
+        return Arr::wrap($this->response->get_data());
+    }
+
+    public function getBody(): string
+    {
+        return json_encode($this->getJson());
     }
 }
