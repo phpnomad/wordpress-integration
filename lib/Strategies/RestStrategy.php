@@ -2,12 +2,16 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
+use Exception;
 use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy;
 use PHPNomad\Integrations\WordPress\Rest\Request as WordPressRequest;
+use PHPNomad\Logger\Interfaces\LoggerStrategy;
 use PHPNomad\Rest\Exceptions\RestException;
 use PHPNomad\Rest\Interfaces\Controller;
+use PHPNomad\Rest\Interfaces\HasInterceptors;
 use PHPNomad\Rest\Interfaces\HasMiddleware;
 use PHPNomad\Rest\Interfaces\HasRestNamespace;
+use PHPNomad\Rest\Interfaces\Interceptor;
 use PHPNomad\Rest\Interfaces\Middleware;
 use PHPNomad\Rest\Interfaces\Request;
 use PHPNomad\Rest\Interfaces\Response;
@@ -25,9 +29,11 @@ class RestStrategy implements CoreRestStrategy
     protected HasRestNamespace $restNamespaceProvider;
     protected Response $response;
     protected CurrentUserResolverStrategy $currentUserResolver;
+    protected LoggerStrategy $logger;
 
-    public function __construct(HasRestNamespace $restNamespaceProvider, Response $response, CurrentUserResolverStrategy $currentUserResolverStrategy)
+    public function __construct(HasRestNamespace $restNamespaceProvider, Response $response, CurrentUserResolverStrategy $currentUserResolverStrategy, LoggerStrategy $loggerStrategy)
     {
+        $this->logger = $loggerStrategy;
         $this->restNamespaceProvider = $restNamespaceProvider;
         $this->response = $response;
         $this->currentUserResolver = $currentUserResolverStrategy;
@@ -43,11 +49,16 @@ class RestStrategy implements CoreRestStrategy
     {
         // Maybe process middleware.
         if ($controller instanceof HasMiddleware) {
-            Arr::each($controller->getMiddleware(), fn(Middleware $middleware) => $middleware->process($request));
+            Arr::each($controller->getMiddleware($request), fn(Middleware $middleware) => $middleware->process($request));
         }
 
         /** @var \PHPNomad\Integrations\WordPress\Rest\Response $response */
         $response = $controller->getResponse($request);
+
+        // Maybe process interceptors.
+        if ($controller instanceof HasInterceptors) {
+            Arr::each($controller->getInterceptors($request, $response), fn(Interceptor $interceptor) => $interceptor->process($request, $response));
+        }
 
         return $response;
     }
@@ -76,6 +87,15 @@ class RestStrategy implements CoreRestStrategy
                     ],
                 ]
             );
+        } catch(Exception $e){
+            $this->logger->logException($e);
+            $response = $this->response->setStatus(500)->setJson(
+        		[
+        			'error' => [
+        				'message' => 'An unexpected error occurred. Sorry, that is all I know.',
+        			],
+        		]
+        	);
         }
 
         return $response->getResponse();

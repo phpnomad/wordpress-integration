@@ -4,6 +4,7 @@ namespace PHPNomad\Integrations\WordPress\Rest;
 
 use PHPNomad\Auth\Interfaces\User;
 use PHPNomad\Rest\Interfaces\Request as CoreRequest;
+use PHPNomad\Utils\Helpers\Arr;
 use WP_REST_Request;
 
 final class Request implements CoreRequest
@@ -38,7 +39,7 @@ final class Request implements CoreRequest
     /** @inheritDoc */
     public function getParam(string $name)
     {
-        return $this->request->get_param($name);
+        return Arr::dot($this->request->get_params(), $name);
     }
 
     /** @inheritDoc */
@@ -58,7 +59,7 @@ final class Request implements CoreRequest
      */
     public function hasParam(string $name): bool
     {
-        return isset($this->request->get_params()[$name]);
+        return Arr::has($this->request->get_params(), $name);
     }
 
     /**
