@@ -80,6 +80,35 @@ class ClauseBuilder implements ClauseBuilderInterface
     }
 
     /**
+     * Gets the field string, filtering invalid fields.
+     *
+     * @param $field
+     * @return string|null
+     */
+    protected function getFieldString($field): ?string
+    {
+        $result = null;
+
+        if (!is_array($field) && $this->tableHasField($field)) {
+            $result = $this->prependField($field);
+        }
+
+        if (is_array($field)) {
+            $fieldStr = Arr::process($field)
+                ->filter(fn($field) => $this->tableHasField($field))
+                ->map(fn($field) => $this->prependField($field))
+                ->setSeparator(', ')
+                ->toString();
+
+            if (!empty($fieldStr)) {
+                $result = "($fieldStr)";
+            }
+        }
+
+        return $result;
+    }
+
+    /**
      * Adds a condition to the clause builder.
      *
      * @param string|string[] $field The field, or fields to be compared.
@@ -97,7 +126,8 @@ class ClauseBuilder implements ClauseBuilderInterface
         }
 
         $placeholder = $this->generatePlaceholder($field, $values, $operator);
-        $fieldStr = is_array($field) ? '(' . implode(', ', array_map([$this, 'prependField'], $field)) . ')' : $this->prependField($field);
+
+        $fieldStr = $this->getFieldString($field);
 
         if (!empty($this->clauses) && $logic && in_array(strtoupper($logic), ['AND', 'OR'])) {
             $this->clauses[] = strtoupper($logic);
