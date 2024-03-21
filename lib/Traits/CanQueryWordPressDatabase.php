@@ -7,6 +7,8 @@ use PHPNomad\Database\Exceptions\RecordNotFoundException;
 use PHPNomad\Database\Interfaces\QueryBuilder;
 use PHPNomad\Database\Interfaces\Table;
 use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
+use PHPNomad\Integrations\WordPress\Database\ClauseBuilder;
+use PHPNomad\Integrations\WordPress\Database\QueryBuilder as WordPressQueryBuilder;
 use PHPNomad\Utils\Helpers\Arr;
 
 trait CanQueryWordPressDatabase
@@ -121,16 +123,19 @@ trait CanQueryWordPressDatabase
             $firstItemKey = array_keys($where);
             $firstItem = array_values($where);
 
-            $queryBuilder = new \PHPNomad\Integrations\WordPress\Database\QueryBuilder();
+            $queryBuilder = new WordPressQueryBuilder();
+            $clauseBuilder = (new ClauseBuilder())
+                ->useTable($table)
+                ->where(array_shift($firstItemKey), '=', array_shift($firstItem));
+
+            foreach ($where as $key => $value) {
+                $clauseBuilder->andWhere($key, '=', $value);
+            }
 
             $queryBuilder
                 ->from($table)
                 ->count('id')
-                ->where(array_shift($firstItemKey), '=', array_shift($firstItem));
-
-            foreach ($where as $key => $value) {
-                $queryBuilder->andWhere($key, '=', $value);
-            }
+                ->where($clauseBuilder);
 
             if (0 === (int) $this->wpdbGetVar($queryBuilder)) {
                 throw new RecordNotFoundException('The update failed because no record exists.');

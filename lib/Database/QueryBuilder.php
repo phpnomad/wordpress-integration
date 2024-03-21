@@ -3,9 +3,10 @@
 namespace PHPNomad\Integrations\WordPress\Database;
 
 use PHPNomad\Database\Exceptions\QueryBuilderException;
+use PHPNomad\Database\Interfaces\ClauseBuilder;
 use PHPNomad\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
 use PHPNomad\Database\Interfaces\Table;
-use PHPNomad\Database\Traits\WithUseTable;
+use PHPNomad\Database\Traits\WithPrependedFields;
 use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
 use PHPNomad\Utils\Helpers\Arr;
 use wpdb;
@@ -13,11 +14,9 @@ use wpdb;
 class QueryBuilder implements QueryBuilderInterface
 {
     use CanGetDataFormats;
-    use WithUseTable;
+    use WithPrependedFields;
 
     protected array $select = [];
-
-    protected array $where = [];
 
     protected array $from = [];
 
@@ -38,6 +37,8 @@ class QueryBuilder implements QueryBuilderInterface
     protected array $offset = [];
 
     protected array $orderBy = [];
+
+    protected ?ClauseBuilder $clauseBuilder = null;
 
     /** @inheritDoc */
     public function select(string $field, string ...$fields)
@@ -68,92 +69,10 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /** @inheritDoc */
-    public function compoundWhere(array $fields, array $valueSet, array ...$valueSets)
+    public function where(?ClauseBuilder $clauseBuilder)
     {
-        if (empty($this->where)) {
-            $this->where = ['WHERE'];
-        }
+        $this->clauseBuilder = $clauseBuilder->useTable($this->table);
 
-        $this->operands[] = "IN";
-        $this->where[] = '(';
-
-        foreach($fields as $field){
-            $this->where[] = $this->prependField($field);
-            $this->where[] = ',';
-        }
-        array_pop($this->where);
-
-        $this->where[] = ')';
-        $this->where[] = 'IN';
-        $this->where[] = '(';
-
-        foreach (Arr::merge([$valueSet], $valueSets) as $valueSet) {
-            $this->where[] = '(';
-            foreach ($valueSet as $field => $value) {
-                $this->where[] = $this->prepareValue($field, $value);
-                $this->where[] = ',';
-            }
-            array_pop($this->where);
-            $this->where[] = ')';
-            $this->where[] = ',';
-        }
-
-        // Pop off extra comma.
-        array_pop($this->where);
-        $this->where[] = ')';
-
-        return $this;
-    }
-
-    /** @inheritDoc */
-    public function where(string $field, string $operand, $value, ...$values)
-    {
-        if (empty($this->where)) {
-            $this->where = ['WHERE'];
-        }
-
-        $this->operands[] = $operand;
-        $this->where = Arr::merge($this->where, [$this->prependField($field), $operand]);
-
-        // Add the value to the list of values to prepare via wpdb->prepare
-        if ($operand === 'NOT IN' || $operand === 'IN') {
-            $this->where[] = '(';
-
-            foreach (Arr::merge([$value], $values) as $value) {
-                $this->where[] = $this->prepareValue($field, $value);
-                $this->where[] = ',';
-            }
-
-            // Pop off extra comma.
-            array_pop($this->where);
-            $this->where[] = ')';
-        } elseif ('LIKE' === $operand) {
-            $this->where[] = $this->prependField($field);
-            $this->where[] = 'LIKE';
-            $this->where[] = $this->wpdb()->esc_like($value);
-        } else {
-            $this->where[] = $this->prepareValue($field, $value);
-        }
-
-        return $this;
-    }
-
-    /** @inheritDoc */
-    public function andWhere(string $field, string $operand, $value, ...$values)
-    {
-        $this->operands[] = $operand;
-        $this->where[] = 'AND';
-        $this->where($field, $operand, $value, ...$values);
-
-        return $this;
-    }
-
-    /** @inheritDoc */
-    public function orWhere(string $field, string $operand, $value, ...$values)
-    {
-        $this->operands[] = $operand;
-        $this->where[] = 'OR';
-        $this->where($field, $operand, $value, ...$values);
 
         return $this;
     }
@@ -322,7 +241,16 @@ class QueryBuilder implements QueryBuilderInterface
 
         $this->sql = Arr::merge($this->select, $this->from);
         $this->maybeAppend('join');
-        $this->maybeAppend('where');
+
+        // ClauseBuilder handles its own sanitization, so it's not double-processed.
+        if ($this->clauseBuilder !== null) {
+            $whereClause = $this->clauseBuilder->build();
+
+            if (!empty($whereClause)) {
+                $this->sql[] = 'WHERE ' . $whereClause;
+            }
+        }
+
         $this->maybeAppend('groupBy');
         $this->maybeAppend('orderBy');
         $this->maybeAppend('limit');
@@ -345,7 +273,7 @@ class QueryBuilder implements QueryBuilderInterface
     public function reset()
     {
         $this->select = [];
-        $this->where = [];
+        $this->clauseBuilder = null;
         $this->from = [];
         $this->sql = [];
         $this->preparedValues = [];
@@ -408,28 +336,6 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /**
-     * Prepares a value to be processed by wpdb->prepare.
-     * This doesn't actually do any processing, just formats the value in a way that allows the build method
-     * to detect if it is a field, and process it accordingly.
-     *
-     * @param string $field The field to process
-     * @param string|int|float $value The value to set
-     * @return array{type:string, value:string|int|float} Array containing the expected field type for wpdb->prepare, as well as the unprocessed value.
-     *
-     */
-    public function prepareValue(string $field, $value): array
-    {
-        if (!isset($this->preparedValues[$field])) {
-            $this->preparedValues[$field] = [
-                'type' => $this->getFieldSprintfType($value),
-                'value' => $value,
-            ];
-        }
-
-        return $this->preparedValues[$field];
-    }
-
-    /**
      * Gets the WPDB object.
      * @return wpdb
      */
@@ -438,19 +344,5 @@ class QueryBuilder implements QueryBuilderInterface
         global $wpdb;
 
         return $wpdb;
-    }
-
-    /**
-     * Prepends the specified field with the current table's alias.
-     *
-     * @param string $field
-     * @param Table $table
-     * @return string
-     */
-    protected function prependField(string $field, Table $table = null): string
-    {
-        $table = $table ?? $this->table;
-
-        return $table->getAlias() . '.' . $field;
     }
 }

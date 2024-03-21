@@ -16,6 +16,7 @@ use PHPNomad\Database\Interfaces\HasCharsetProvider;
 use PHPNomad\Database\Interfaces\HasCollateProvider;
 use PHPNomad\Database\Interfaces\HasGlobalDatabasePrefix;
 use PHPNomad\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
+use PHPNomad\Database\Interfaces\ClauseBuilder as CoreClauseBuilder;
 use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyAlias;
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
@@ -31,6 +32,7 @@ use PHPNomad\Integrations\WordPress\Auth\User;
 use PHPNomad\Integrations\WordPress\Bindings\SiteVisitedBinding;
 use PHPNomad\Integrations\WordPress\Cache\CachePolicy;
 use PHPNomad\Integrations\WordPress\Cache\ObjectCacheStrategy;
+use PHPNomad\Integrations\WordPress\Database\ClauseBuilder;
 use PHPNomad\Integrations\WordPress\Database\QueryBuilder;
 use PHPNomad\Integrations\WordPress\Providers\DatabaseProvider;
 use PHPNomad\Integrations\WordPress\Providers\DefaultCacheTtlProvider;
@@ -68,6 +70,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
             TranslationStrategy::class => CoreTranslationStrategyAlias::class,
             QueryBuilder::class => CoreQueryBuilder::class,
+            ClauseBuilder::class => CoreClauseBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
             CurrentContextResolverStrategy::class => CurrentContextResolverStrategyInterface::class,
             CurrentUserResolverStrategy::class => CurrentUserResolverStrategyInterface::class,
