@@ -5,6 +5,7 @@ namespace PHPNomad\Integrations\WordPress\Database;
 use PHPNomad\Database\Interfaces\ClauseBuilder as ClauseBuilderInterface;
 use PHPNomad\Database\Traits\WithPrependedFields;
 use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
+use PHPNomad\Utils\Helpers\Arr;
 
 class ClauseBuilder implements ClauseBuilderInterface
 {
@@ -12,6 +13,9 @@ class ClauseBuilder implements ClauseBuilderInterface
 
     protected array $clauses = [];
     protected array $preparedValues = [];
+    protected array $validOperators = ["=", "<", ">", "<=", ">=", "<>", "!=",
+        "LIKE", "NOT LIKE", "IN", "NOT IN", "BETWEEN",
+        "NOT BETWEEN", "IS NULL", "IS NOT NULL"];
 
     /**
      * @inheritDoc
@@ -56,7 +60,7 @@ class ClauseBuilder implements ClauseBuilderInterface
      */
     public function andGroup(string $logic, ClauseBuilderInterface ...$clauses)
     {
-        if(!empty($this->clauses)) {
+        if (!empty($this->clauses)) {
             $this->clauses[] = 'AND';
         }
 
@@ -68,7 +72,7 @@ class ClauseBuilder implements ClauseBuilderInterface
      */
     public function orGroup(string $logic, ClauseBuilderInterface ...$clauses)
     {
-        if(!empty($this->clauses)) {
+        if (!empty($this->clauses)) {
             $this->clauses[] = 'OR';
         }
 
@@ -86,10 +90,16 @@ class ClauseBuilder implements ClauseBuilderInterface
      */
     protected function addCondition($field, string $operator, array $values, ?string $logic = null): self
     {
-        $placeholder = $this->generatePlaceholder($field, $operator);
+        $operator = strtoupper($operator);
+
+        if (!in_array(strtoupper($operator), $this->validOperators)) {
+            return $this;
+        }
+
+        $placeholder = $this->generatePlaceholder($field, $values, $operator);
         $fieldStr = is_array($field) ? '(' . implode(', ', array_map([$this, 'prependField'], $field)) . ')' : $this->prependField($field);
 
-        if(!empty($this->clauses) && $logic && in_array(strtoupper($logic), ['AND', 'OR'])){
+        if (!empty($this->clauses) && $logic && in_array(strtoupper($logic), ['AND', 'OR'])) {
             $this->clauses[] = strtoupper($logic);
         }
 
@@ -98,7 +108,11 @@ class ClauseBuilder implements ClauseBuilderInterface
         $this->clauses[] = $placeholder;
 
         foreach ($values as $value) {
-            $this->preparedValues[] = $value;
+            if (is_array($value)) {
+                $this->preparedValues = Arr::merge($this->preparedValues, array_values($value));
+            } else {
+                $this->preparedValues[] = $value;
+            }
         }
 
         return $this;
@@ -179,12 +193,12 @@ class ClauseBuilder implements ClauseBuilderInterface
         return $this;
     }
 
-    protected function generatePlaceholder($values, string $operator): string
+    protected function generatePlaceholder($field, array $values, string $operator): string
     {
         if (strtoupper($operator) === 'IN' || strtoupper($operator) === 'NOT IN') {
-            if(is_array($values)) {
-                $placeholderGroup = '(' . implode(', ', array_fill(0, count($values), '%s')) . ')';
-            } else{
+            if (is_array($field)) {
+                $placeholderGroup = "(" . implode(', ', array_fill(0, count($field), '%s')) . ")";
+            } else {
                 $placeholderGroup = implode(', ', array_fill(0, count($values), '%s'));
             }
 
