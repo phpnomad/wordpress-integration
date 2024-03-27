@@ -112,6 +112,10 @@ trait CanQueryWordPressDatabase
     {
         global $wpdb;
 
+        if(empty($data)){
+            throw new DatastoreErrorException('Update failed - no update data provided.');
+        }
+
         $result = $wpdb->update($table->getName(), $data, $where, $this->getFormats($data), $this->getFormats($where));
 
         if (false === $result) {
@@ -124,9 +128,10 @@ trait CanQueryWordPressDatabase
             $firstItem = array_values($where);
 
             $queryBuilder = new WordPressQueryBuilder();
+            $firstKey = array_shift($firstItemKey);
             $clauseBuilder = (new ClauseBuilder())
                 ->useTable($table)
-                ->where(array_shift($firstItemKey), '=', array_shift($firstItem));
+                ->where($firstKey, '=', array_shift($firstItem));
 
             foreach ($where as $key => $value) {
                 $clauseBuilder->andWhere($key, '=', $value);
@@ -134,7 +139,7 @@ trait CanQueryWordPressDatabase
 
             $queryBuilder
                 ->from($table)
-                ->count('id')
+                ->count($firstKey)
                 ->where($clauseBuilder);
 
             if (0 === (int) $this->wpdbGetVar($queryBuilder)) {
