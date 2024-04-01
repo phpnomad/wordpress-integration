@@ -69,4 +69,9 @@ final class Request implements CoreRequest
     {
         return $this->user;
     }
+
+    public function removeParam(string $name): void
+    {
+        $this->request->offsetUnset($name);
+    }
 }
