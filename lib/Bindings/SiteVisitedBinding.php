@@ -12,6 +12,7 @@ class SiteVisitedBinding
 {
     protected CurrentContextResolverStrategy $contextResolver;
     protected CurrentUserResolverStrategy $userResolver;
+    private static bool $ran = false;
 
     public function __construct(CurrentContextResolverStrategy $contextResolver, CurrentUserResolverStrategy $currentUserResolver)
     {
@@ -29,6 +30,13 @@ class SiteVisitedBinding
 
     public function __invoke(): ?SiteVisited
     {
+        // Ensure this binding only runs once per request.
+        if(static::$ran){
+            return null;
+        }
+
+        static::$ran = true;
+
         $context = $this->contextResolver->getCurrentContext();
         $user    = $this->userResolver->getCurrentUser();
 
@@ -36,6 +44,6 @@ class SiteVisitedBinding
             return null;
         }
 
-        return new SiteVisited($user->getId());
+        return new SiteVisited($user ? $user->getId() : null);
     }
 }

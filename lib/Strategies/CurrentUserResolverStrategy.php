@@ -17,6 +17,6 @@ class CurrentUserResolverStrategy implements CurrentUserResolverStrategyInterfac
     public function getCurrentUser(): ?User
     {
         $user = wp_get_current_user();
-        return new $user ? new User($user) : null;
+        return $user->ID > 0 ? new User($user) : null;
     }
 }

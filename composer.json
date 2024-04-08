@@ -73,6 +73,10 @@
         {
             "type": "vcs",
             "url": "https://github.com/phpnomad/datastore.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/phpnomad/privacy.git"
         }
     ],
     "autoload": {
@@ -106,6 +110,7 @@
         "phpnomad/translate": "dev-main",
         "phpnomad/loader": "dev-main",
         "phpnomad/framework": "dev-main",
+        "phpnomad/privacy": "dev-main",
         "ext-json": "*"
     },
     "config": {

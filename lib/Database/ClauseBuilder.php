@@ -121,7 +121,7 @@ class ClauseBuilder implements ClauseBuilderInterface
     {
         $operator = strtoupper($operator);
 
-        if (!in_array(strtoupper($operator), $this->validOperators)) {
+        if (!in_array($operator, $this->validOperators)) {
             return $this;
         }
 
@@ -172,24 +172,19 @@ class ClauseBuilder implements ClauseBuilderInterface
                         $marker++;
                         $uniqueMarker = '__NOMADIC_SUBQUERY__' . $marker;
                         $builtClause = $groupClause->build();
-                        // Store built clause for later replacement to prevent double processing
                         $subQueryReplacements[$uniqueMarker] = $builtClause;
                         $groupParts[] = $uniqueMarker;
-                        // Assume $groupClause->build() also prepares values correctly
                     }
                 }
                 if (!empty($groupParts)) {
-                    // Combine group parts with the group's logic
                     $queryParts[] = '(' . implode(" {$clause['logic']} ", $groupParts) . ')';
                 }
             } elseif ($clause instanceof ClauseBuilderInterface) {
-                // Process individual ClauseBuilder instances
                 $marker++;
                 $uniqueMarker = '__NOMADIC_SUBQUERY__' . $marker;
                 $builtClause = $clause->build();
                 $subQueryReplacements[$uniqueMarker] = $builtClause;
                 $queryParts[] = $uniqueMarker;
-                // Prepared values should be already correctly handled within each ClauseBuilder instance's build method
             }
         }
 

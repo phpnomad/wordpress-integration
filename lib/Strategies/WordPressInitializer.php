@@ -3,6 +3,8 @@
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Asset\Interfaces\AssetStrategy as AssetStrategyInterface;
+use PHPNomad\Auth\Events\UserLoggedIn;
+use PHPNomad\Auth\Events\UserLoggedOut;
 use PHPNomad\Auth\Events\UserPermissionsInitialized;
 use PHPNomad\Auth\Interfaces\CurrentContextResolverStrategy as CurrentContextResolverStrategyInterface;
 use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy as CurrentUserResolverStrategyInterface;
@@ -12,11 +14,11 @@ use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 use PHPNomad\Database\Events\RecordDeleted;
 use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
 use PHPNomad\Database\Interfaces\CanConvertToDatabaseDateString;
+use PHPNomad\Database\Interfaces\ClauseBuilder as CoreClauseBuilder;
 use PHPNomad\Database\Interfaces\HasCharsetProvider;
 use PHPNomad\Database\Interfaces\HasCollateProvider;
 use PHPNomad\Database\Interfaces\HasGlobalDatabasePrefix;
 use PHPNomad\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
-use PHPNomad\Database\Interfaces\ClauseBuilder as CoreClauseBuilder;
 use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyAlias;
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
@@ -40,10 +42,12 @@ use PHPNomad\Integrations\WordPress\Rest\Response;
 use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
+use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermissionStrategyInterface;
 use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use PHPNomad\Translations\Interfaces\TranslationStrategy as CoreTranslationStrategyAlias;
 use PHPNomad\Utils\Helpers\Arr;
+use WP_User;
 
 class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClassDefinitions, HasEventBindings
 {
@@ -76,7 +80,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             CurrentUserResolverStrategy::class => CurrentUserResolverStrategyInterface::class,
             DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
             DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class],
-            AssetStrategy::class => AssetStrategyInterface::class
+            AssetStrategy::class => AssetStrategyInterface::class,
+            TrackingPermissionStrategy::class => TrackingPermissionStrategyInterface::class
         ];
     }
 
@@ -99,10 +104,16 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
                 ['action' => 'deleted_user', 'transformer' => fn(int $id) => new RecordDeleted('user', Arr::wrap($id))]
             ],
             SiteVisited::class => [
-                ['action' => 'init', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
+                ['action' => 'wp_loaded', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
             ],
             UserPermissionsInitialized::class => [
                 ['action' => 'set_current_user', 'transformer' => fn() => new UserPermissionsInitialized(new User(wp_get_current_user()))]
+            ],
+            UserLoggedIn::class => [
+                ['action' => 'wp_login', 'transformer' => fn(string $userLogin, WP_User $user) => new UserLoggedIn(new User($user))]
+            ],
+            UserLoggedOut::class => [
+                ['action' => 'wp_logout', 'transformer' => fn($id) => new UserLoggedOut(new User(new WP_User($id)))]
             ]
         ];
     }
