@@ -221,8 +221,11 @@ class ClauseBuilder implements ClauseBuilderInterface
     protected function generatePlaceholder($field, array $values, string $operator): string
     {
         if (strtoupper($operator) === 'IN' || strtoupper($operator) === 'NOT IN') {
+
+            // Group fields with multiple $field values (%s,%s),(%s,%s), else just flatten them %s,%s,%s,%s
             if (is_array($field)) {
-                $placeholderGroup = "(" . implode(', ', array_fill(0, count($field), '%s')) . ")";
+                $subgroup = "(" . implode(', ', array_fill(0, count($field), '%s')) . ")";
+                $placeholderGroup = implode(', ', array_fill(0, count($values), $subgroup));
             } else {
                 $placeholderGroup = implode(', ', array_fill(0, count($values), '%s'));
             }
