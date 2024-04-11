@@ -168,8 +168,12 @@ class QueryBuilder implements QueryBuilderInterface
     {
         $alias = $alias ?: $fieldToCount . '_count';
 
+        if($fieldToCount !== '*'){
+            $fieldToCount = $this->prependField($fieldToCount);
+        }
+
         // Prepare select
-        $select = ['COUNT(' . $this->prependField($fieldToCount) . ')', 'as', $alias];
+        $select = ['COUNT(' . $fieldToCount . ')', 'as', $alias];
 
         // Add a comma to the end if it isn't the only field
         if (count($this->select) > 1) {
