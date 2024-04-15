@@ -45,6 +45,9 @@ use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermissionStrategyInterface;
 use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
+use PHPNomad\Template\Interfaces\CanRender;
+use PHPNomad\Template\Interfaces\ScreenResolverStrategy;
+use PHPNomad\Template\Strategies\PhpEngine;
 use PHPNomad\Translations\Interfaces\TranslationStrategy as CoreTranslationStrategyAlias;
 use PHPNomad\Utils\Helpers\Arr;
 use WP_User;
@@ -81,7 +84,9 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
             DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class],
             AssetStrategy::class => AssetStrategyInterface::class,
-            TrackingPermissionStrategy::class => TrackingPermissionStrategyInterface::class
+            TrackingPermissionStrategy::class => TrackingPermissionStrategyInterface::class,
+            PhpEngine::class => CanRender::class,
+            AdminScreenResolver::class => ScreenResolverStrategy::class
         ];
     }
 
