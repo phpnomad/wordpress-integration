@@ -35,7 +35,7 @@ trait CanQueryWordPressDatabase
         }
 
         if (empty($result)) {
-             throw new RecordNotFoundException();
+            throw new RecordNotFoundException();
         }
 
         return $result;
@@ -58,7 +58,7 @@ trait CanQueryWordPressDatabase
         }
 
         if (!$result) {
-            if(!empty($wpdb->last_error)){
+            if (!empty($wpdb->last_error)) {
                 throw new DatastoreErrorException('Get row failed - ' . $wpdb->last_error);
             }
 
@@ -79,22 +79,28 @@ trait CanQueryWordPressDatabase
     {
         global $wpdb;
 
-        if (false === $wpdb->insert($table->getName(), $data, $this->getFormats($data))) {
+        if (empty($data)) {
+            $inserted = $wpdb->query('INSERT INTO ' . $table->getName() . '() VALUES ();');
+        } else {
+            $inserted = $wpdb->insert($table->getName(), $data, $this->getFormats($data));
+        }
+
+        if (false === $inserted) {
             throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
         }
 
         $fields = $table->getFieldsForIdentity();
         $ids = Arr::process($fields)
-            ->reduce(function($acc, $field) use($data){
-                if(isset($data[$field])){
+            ->reduce(function ($acc, $field) use ($data) {
+                if (isset($data[$field])) {
                     $acc[$field] = $data[$field];
                 }
 
                 return $acc;
-            },[])
+            }, [])
             ->toArray();
 
-        if(count($ids) === count($fields)){
+        if (count($ids) === count($fields)) {
             return $ids;
         }
 
@@ -112,7 +118,7 @@ trait CanQueryWordPressDatabase
     {
         global $wpdb;
 
-        if(empty($data)){
+        if (empty($data)) {
             throw new DatastoreErrorException('Update failed - no update data provided.');
         }
 
@@ -142,7 +148,7 @@ trait CanQueryWordPressDatabase
                 ->count($firstKey)
                 ->where($clauseBuilder);
 
-            if (0 === (int) $this->wpdbGetVar($queryBuilder)) {
+            if (0 === (int)$this->wpdbGetVar($queryBuilder)) {
                 throw new RecordNotFoundException('The update failed because no record exists.');
             }
         }

@@ -220,7 +220,13 @@ class ClauseBuilder implements ClauseBuilderInterface
 
     protected function generatePlaceholder($field, array $values, string $operator): string
     {
-        if (strtoupper($operator) === 'IN' || strtoupper($operator) === 'NOT IN') {
+        $operator = strtoupper($operator);
+
+        if($operator === 'IS NULL' || $operator === 'IS NOT NULL'){
+            return "";
+        }
+
+        if ($operator === 'IN' || $operator === 'NOT IN') {
 
             // Group fields with multiple $field values (%s,%s),(%s,%s), else just flatten them %s,%s,%s,%s
             if (is_array($field)) {
