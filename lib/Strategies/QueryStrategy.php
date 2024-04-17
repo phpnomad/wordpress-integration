@@ -40,8 +40,7 @@ class QueryStrategy implements CoreQueryStrategy
     public function estimatedCount(Table $table): int
     {
         global $wpdb;
-        $sql = $wpdb->prepare("SELECT COUNT(*) FROM " . $table->getName(), );
-        $rows = $wpdb->get_var($sql);
+        $rows = $wpdb->get_var("SELECT COUNT(*) FROM " . $table->getName());
 
         if ($rows !== null) {
             return (int)$rows;
