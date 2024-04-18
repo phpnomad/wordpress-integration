@@ -8,6 +8,7 @@ use PHPNomad\Auth\Events\UserLoggedOut;
 use PHPNomad\Auth\Events\UserPermissionsInitialized;
 use PHPNomad\Auth\Interfaces\CurrentContextResolverStrategy as CurrentContextResolverStrategyInterface;
 use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy as CurrentUserResolverStrategyInterface;
+use PHPNomad\Auth\Interfaces\HashStrategy as HashStrategyInterface;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
@@ -25,6 +26,7 @@ use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyA
 use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
 use PHPNomad\Di\Interfaces\CanSetContainer;
 use PHPNomad\Di\Traits\HasSettableContainer;
+use PHPNomad\Email\Interfaces\EmailStrategy as EmailStrategyInterface;
 use PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 use PHPNomad\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use PHPNomad\Events\Interfaces\HasEventBindings;
@@ -86,7 +88,9 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             AssetStrategy::class => AssetStrategyInterface::class,
             TrackingPermissionStrategy::class => TrackingPermissionStrategyInterface::class,
             PhpEngine::class => CanRender::class,
-            AdminScreenResolver::class => ScreenResolverStrategy::class
+            AdminScreenResolver::class => ScreenResolverStrategy::class,
+            HashStrategy::class => HashStrategyInterface::class,
+            EmailStrategy::class => EmailStrategyInterface::class
         ];
     }
 
