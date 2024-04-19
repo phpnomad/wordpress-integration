@@ -9,6 +9,7 @@ use PHPNomad\Auth\Events\UserPermissionsInitialized;
 use PHPNomad\Auth\Interfaces\CurrentContextResolverStrategy as CurrentContextResolverStrategyInterface;
 use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy as CurrentUserResolverStrategyInterface;
 use PHPNomad\Auth\Interfaces\HashStrategy as HashStrategyInterface;
+use PHPNomad\Auth\Interfaces\SecretProvider as SecretProviderInterface;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
@@ -40,6 +41,7 @@ use PHPNomad\Integrations\WordPress\Database\ClauseBuilder;
 use PHPNomad\Integrations\WordPress\Database\QueryBuilder;
 use PHPNomad\Integrations\WordPress\Providers\DatabaseProvider;
 use PHPNomad\Integrations\WordPress\Providers\DefaultCacheTtlProvider;
+use PHPNomad\Integrations\WordPress\Providers\SecretProvider;
 use PHPNomad\Integrations\WordPress\Rest\Response;
 use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
@@ -90,7 +92,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             PhpEngine::class => CanRender::class,
             AdminScreenResolver::class => ScreenResolverStrategy::class,
             HashStrategy::class => HashStrategyInterface::class,
-            EmailStrategy::class => EmailStrategyInterface::class
+            EmailStrategy::class => EmailStrategyInterface::class,
+            SecretProvider::class => SecretProviderInterface::class
         ];
     }
 

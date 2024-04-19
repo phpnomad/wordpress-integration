@@ -28,4 +28,9 @@ class User implements UserInterface
 
         return $this->wpUser->has_cap($adapter->getCapability($action));
     }
+
+    public function getEmail(): string
+    {
+        return $this->wpUser->user_email;
+    }
 }
