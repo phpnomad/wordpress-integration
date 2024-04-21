@@ -9,10 +9,13 @@ use PHPNomad\Auth\Events\UserPermissionsInitialized;
 use PHPNomad\Auth\Interfaces\CurrentContextResolverStrategy as CurrentContextResolverStrategyInterface;
 use PHPNomad\Auth\Interfaces\CurrentUserResolverStrategy as CurrentUserResolverStrategyInterface;
 use PHPNomad\Auth\Interfaces\HashStrategy as HashStrategyInterface;
+use PHPNomad\Auth\Interfaces\LoginUrlProvider as LoginUrlProviderInterface;
+use PHPNomad\Auth\Interfaces\PasswordResetStrategy as PasswordResetStrategyInterface;
 use PHPNomad\Auth\Interfaces\SecretProvider as SecretProviderInterface;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
+use PHPNomad\Database\Events\RecordCreated;
 use PHPNomad\Database\Events\RecordDeleted;
 use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
 use PHPNomad\Database\Interfaces\CanConvertToDatabaseDateString;
@@ -93,7 +96,9 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             AdminScreenResolver::class => ScreenResolverStrategy::class,
             HashStrategy::class => HashStrategyInterface::class,
             EmailStrategy::class => EmailStrategyInterface::class,
-            SecretProvider::class => SecretProviderInterface::class
+            SecretProvider::class => SecretProviderInterface::class,
+            PasswordResetStrategy::class => PasswordResetStrategyInterface::class,
+            LoginUrlProvider::class => LoginUrlProviderInterface::class
         ];
     }
 
@@ -113,7 +118,10 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
     {
         return [
             RecordDeleted::class => [
-                ['action' => 'deleted_user', 'transformer' => fn(int $id) => new RecordDeleted('user', Arr::wrap($id))]
+                ['action' => 'deleted_user', 'transformer' => fn(int $id) => new RecordDeleted(WP_User::class, ['id' => $id])]
+            ],
+            RecordCreated::class => [
+                ['action' => 'user_register', 'transformer' => fn(int $id) => new RecordCreated(new User(new WP_User($id)))]
             ],
             SiteVisited::class => [
                 ['action' => 'wp_loaded', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]

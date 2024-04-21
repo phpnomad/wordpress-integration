@@ -4,12 +4,15 @@ namespace PHPNomad\Integrations\WordPress\Auth;
 
 use PHPNomad\Auth\Interfaces\Action;
 use PHPNomad\Auth\Interfaces\User as UserInterface;
+use PHPNomad\Datastore\Traits\WithSingleIntIdentity;
 use PHPNomad\Integrations\WordPress\Adapters\ActionToCapabilityAdapter;
 use WP_User;
 
 
 class User implements UserInterface
 {
+    use WithSingleIntIdentity;
+
     protected WP_User $wpUser;
 
     public function __construct(WP_User $user)
