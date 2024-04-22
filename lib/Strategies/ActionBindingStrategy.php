@@ -24,6 +24,6 @@ class ActionBindingStrategy implements ActionBindingStrategyInterface
             if ($eventInstance) {
                 Event::broadcast($eventInstance);
             }
-        }, PHP_INT_MIN, $numArgs);
+        }, 0, $numArgs);
     }
 }
