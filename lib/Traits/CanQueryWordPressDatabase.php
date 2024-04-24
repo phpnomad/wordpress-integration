@@ -27,7 +27,7 @@ trait CanQueryWordPressDatabase
         try {
             $result = $wpdb->get_results($queryBuilder->build(), ARRAY_A);
         } catch (QueryBuilderException $e) {
-            throw new DatastoreErrorException('Get results failed. Invalid query', 500, $e);
+            throw new DatastoreErrorException('Get results failed. Invalid query: ' . $e->getMessage(), 500, $e);
         }
 
         if (is_null($result)) {
