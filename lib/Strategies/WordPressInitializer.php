@@ -34,9 +34,12 @@ use PHPNomad\Email\Interfaces\EmailStrategy as EmailStrategyInterface;
 use PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 use PHPNomad\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use PHPNomad\Events\Interfaces\HasEventBindings;
+use PHPNomad\Framework\Events\PostVisited;
 use PHPNomad\Framework\Events\SiteVisited;
+use PHPNomad\Framework\Interfaces\PageAuthorResolver;
 use PHPNomad\Integrations\WordPress\Adapters\DatabaseDateAdapter;
 use PHPNomad\Integrations\WordPress\Auth\User;
+use PHPNomad\Integrations\WordPress\Bindings\PostVisitedBinding;
 use PHPNomad\Integrations\WordPress\Bindings\SiteVisitedBinding;
 use PHPNomad\Integrations\WordPress\Cache\CachePolicy;
 use PHPNomad\Integrations\WordPress\Cache\ObjectCacheStrategy;
@@ -56,7 +59,6 @@ use PHPNomad\Template\Interfaces\CanRender;
 use PHPNomad\Template\Interfaces\ScreenResolverStrategy;
 use PHPNomad\Template\Strategies\PhpEngine;
 use PHPNomad\Translations\Interfaces\TranslationStrategy as CoreTranslationStrategyAlias;
-use PHPNomad\Utils\Helpers\Arr;
 use WP_User;
 
 class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClassDefinitions, HasEventBindings
@@ -88,6 +90,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             RestStrategy::class => CoreRestStrategy::class,
             CurrentContextResolverStrategy::class => CurrentContextResolverStrategyInterface::class,
             CurrentUserResolverStrategy::class => CurrentUserResolverStrategyInterface::class,
+            PostAuthorResolver::class => PageAuthorResolver::class,
             DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
             DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class],
             AssetStrategy::class => AssetStrategyInterface::class,
@@ -125,6 +128,9 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             ],
             SiteVisited::class => [
                 ['action' => 'wp_loaded', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
+            ],
+            PostVisited::class => [
+                ['action' => 'wp', 'transformer' => fn() => $this->container->get(PostVisitedBinding::class)()]
             ],
             UserPermissionsInitialized::class => [
                 ['action' => 'set_current_user', 'transformer' => fn() => new UserPermissionsInitialized(new User(wp_get_current_user()))]

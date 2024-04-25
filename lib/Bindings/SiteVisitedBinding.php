@@ -20,14 +20,6 @@ class SiteVisitedBinding
         $this->userResolver = $currentUserResolver;
     }
 
-    protected function isInvalidContext(): bool
-    {
-        $context = $this->contextResolver->getCurrentContext();
-        $contexts = Arr::filter(SessionContexts::getValues(), fn(string $context) => $context !== SessionContexts::Web);
-
-        return in_array($context, $contexts);
-    }
-
     public function __invoke(): ?SiteVisited
     {
         // Ensure this binding only runs once per request.
