@@ -137,7 +137,7 @@ class ClauseBuilder implements ClauseBuilderInterface
         $this->clauses[] = $operator;
         $this->clauses[] = $placeholder;
 
-        foreach ($values as $value) {
+        foreach (Arr::whereNotNull($values) as $value) {
             if (is_array($value)) {
                 $this->preparedValues = Arr::merge($this->preparedValues, array_values($value));
             } else {
