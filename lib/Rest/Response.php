@@ -68,4 +68,26 @@ class Response implements CoreResponse
     {
         return json_encode($this->getJson());
     }
+
+    public function getStatus(): int
+    {
+        return $this->response->get_status();
+    }
+
+    public function getHeader(string $name)
+    {
+        $headers = $this->response->get_headers();
+
+        return Arr::get($headers, $name);
+    }
+
+    public function getErrorMessage(): ?string
+    {
+        $error = Arr::get($this->getJson(), 'error');
+        if ($error) {
+            return $error;
+        }
+
+        return null;
+    }
 }

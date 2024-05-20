@@ -16,6 +16,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/phpnomad/tasks.git"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/phpnomad/email.git"
         },
         {
@@ -109,6 +113,7 @@
         "phpnomad/datastore": "dev-main",
         "phpnomad/event": "dev-main",
         "phpnomad/email": "dev-main",
+        "phpnomad/tasks": "dev-main",
         "phpnomad/cache": "dev-main",
         "phpnomad/rest": "dev-main",
         "phpnomad/utils": "dev-main",
