@@ -53,9 +53,10 @@ use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermissionStrategyInterface;
+use PHPNomad\Rest\Interfaces\FetchStrategy as FetchStrategyInterface;
 use PHPNomad\Rest\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
-use PHPNomad\Tasks\CanScheduleTasks;
+use PHPNomad\Tasks\Interfaces\CanScheduleTasks;
 use PHPNomad\Template\Interfaces\CanRender;
 use PHPNomad\Template\Interfaces\ScreenResolverStrategy;
 use PHPNomad\Template\Strategies\PhpEngine;
@@ -103,7 +104,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             SecretProvider::class => SecretProviderInterface::class,
             PasswordResetStrategy::class => PasswordResetStrategyInterface::class,
             LoginUrlProvider::class => LoginUrlProviderInterface::class,
-            TaskScheduler::class => CanScheduleTasks::class
+            TaskScheduler::class => CanScheduleTasks::class,
+            FetchStrategy::class => FetchStrategyInterface::class
         ];
     }
 

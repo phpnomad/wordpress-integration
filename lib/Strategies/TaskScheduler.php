@@ -2,7 +2,7 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use PHPNomad\Tasks\CanScheduleTasks;
+use PHPNomad\Tasks\Interfaces\CanScheduleTasks;
 
 class TaskScheduler implements CanScheduleTasks
 {
