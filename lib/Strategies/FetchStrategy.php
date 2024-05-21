@@ -3,6 +3,7 @@
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Integrations\WordPress\Rest\Response;
+use PHPNomad\Rest\Enums\Method;
 use PHPNomad\Rest\Interfaces\FetchStrategy as FetchStrategyInterface;
 use PHPNomad\Rest\Models\FetchPayload;
 
@@ -19,6 +20,11 @@ class FetchStrategy implements FetchStrategyInterface
             'body' => $payload->getBody(),
             'data' => $payload->getParams(),
         ];
+
+        $params = $payload->getParams();
+        if (!empty($params)) {
+            $url = add_query_arg($params, $url);
+        }
 
         // Use WordPress's wp_remote_request function to make the HTTP request
         $response = wp_remote_request($url, $args);
