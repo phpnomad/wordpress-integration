@@ -28,6 +28,7 @@ use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyAlias;
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
 use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
+use PHPNomad\Database\Interfaces\TableUpdateStrategy as CoreTableUpdateStrategy;
 use PHPNomad\Di\Interfaces\CanSetContainer;
 use PHPNomad\Di\Traits\HasSettableContainer;
 use PHPNomad\Email\Interfaces\EmailStrategy as EmailStrategyInterface;
@@ -84,6 +85,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             QueryStrategy::class => CoreQueryStrategy::class,
             DefaultCacheTtlProvider::class => HasDefaultTtl::class,
             TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
+            TableUpdateStrategy::class => CoreTableUpdateStrategy::class,
             TableDeleteStrategy::class => CoreTableDeleteStrategyAlias::class,
             TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
             TranslationStrategy::class => CoreTranslationStrategyAlias::class,

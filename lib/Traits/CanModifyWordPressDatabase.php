@@ -20,7 +20,7 @@ trait CanModifyWordPressDatabase
         $wpdb->query($this->maybePrepare($query, ...$args));
 
         if ($wpdb->last_error) {
-            throw new DatastoreErrorException('Query responded with error: '.$wpdb->last_error);
+            throw new DatastoreErrorException('Query responded with error: ' . $wpdb->last_error);
         }
     }
 
