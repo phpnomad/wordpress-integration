@@ -86,7 +86,7 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
         }
 
         // Check if the types are different
-        if (strtolower($currentType) !== strtolower($newType)) {
+        if (str_contains(strtolower($currentType), strtolower($newType))) {
             return true;
         }
 
