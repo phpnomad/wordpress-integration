@@ -31,9 +31,9 @@ class QueryStrategy implements CoreQueryStrategy
     }
 
     /** @inheritDoc */
-    public function update(Table $table, array $ids, array $data): void
+    public function update(Table $table, array $where, array $data): void
     {
-        $this->wpdbUpdate($table, $data, $ids);
+        $this->wpdbUpdate($table, $data, $where);
     }
 
     /** @inheritDoc */
