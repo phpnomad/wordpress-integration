@@ -86,7 +86,7 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
         }
 
         // Check if the types are different
-        if (str_contains(strtolower($currentType), strtolower($newType))) {
+        if (!str_contains(strtolower($currentType), strtolower($newType))) {
             return true;
         }
 
@@ -138,10 +138,9 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
         }
 
         return <<<SQL
-        ALTER TABLE {$table->getName()} 
-        $args 
-        CHARACTER SET {$table->getCharset()} COLLATE {$table->getCollation()};
-    SQL;
+            ALTER TABLE {$table->getName()} 
+            $args 
+        SQL;
     }
 
     protected function convertColumnsToSqlString(Table $table): string
