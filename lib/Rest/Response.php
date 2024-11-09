@@ -81,6 +81,11 @@ class Response implements CoreResponse
         return Arr::get($headers, $name);
     }
 
+    public function getHeaders(): array
+    {
+        return $this->response->get_headers();
+    }
+
     public function getErrorMessage(): ?string
     {
         $error = Arr::get($this->getJson(), 'error');
