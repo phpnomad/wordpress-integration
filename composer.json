@@ -9,84 +9,6 @@
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/asset.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/tasks.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/email.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/auth.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/tests.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/translate.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/di.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/core.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/event.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/config.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/core.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/loader.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/utils.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/rest.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/cache.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/event.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/db.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/datastore.git"
-        },
-        {
-            "type": "vcs",
-            "url": "https://github.com/phpnomad/privacy.git"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "PHPNomad\\Integrations\\WordPress\\": "lib/"
@@ -107,20 +29,20 @@
         "phpnomad/tests": "^0.1.0"
     },
     "require": {
-        "phpnomad/auth": "dev-main",
-        "phpnomad/asset": "dev-main",
-        "phpnomad/db": "dev-main",
-        "phpnomad/datastore": "dev-main",
-        "phpnomad/event": "dev-main",
-        "phpnomad/email": "dev-main",
-        "phpnomad/tasks": "dev-main",
-        "phpnomad/cache": "dev-main",
-        "phpnomad/rest": "dev-main",
-        "phpnomad/utils": "dev-main",
-        "phpnomad/translate": "dev-main",
-        "phpnomad/loader": "dev-main",
-        "phpnomad/framework": "dev-main",
-        "phpnomad/privacy": "dev-main",
+        "phpnomad/auth": "^1.0",
+        "phpnomad/asset": "^1.0",
+        "phpnomad/db": "^1.0",
+        "phpnomad/datastore": "^1.0",
+        "phpnomad/event": "^1.0",
+        "phpnomad/email": "^1.0",
+        "phpnomad/tasks": "^1.0",
+        "phpnomad/cache": "^1.0",
+        "phpnomad/rest": "^1.0",
+        "phpnomad/utils": "^1.0",
+        "phpnomad/translate": "^1.0",
+        "phpnomad/loader": "^1.0",
+        "phpnomad/framework": "^1.0",
+        "phpnomad/privacy": "^1.0",
         "ext-json": "*"
     },
     "config": {
