@@ -2,7 +2,6 @@
 
 namespace PHPNomad\Integrations\WordPress\Providers;
 
-use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 use PHPNomad\Database\Interfaces\HasCharsetProvider;
 use PHPNomad\Database\Interfaces\HasCollateProvider;
 use PHPNomad\Database\Interfaces\HasGlobalDatabasePrefix;

@@ -3,7 +3,7 @@
 namespace PHPNomad\Integrations\WordPress\Traits;
 
 use PHPNomad\Database\Exceptions\QueryBuilderException;
-use PHPNomad\Database\Exceptions\RecordNotFoundException;
+use PHPNomad\Datastore\Exceptions\RecordNotFoundException;
 use PHPNomad\Database\Interfaces\QueryBuilder;
 use PHPNomad\Database\Interfaces\Table;
 use PHPNomad\Datastore\Exceptions\DatastoreErrorException;

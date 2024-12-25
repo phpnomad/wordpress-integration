@@ -5,6 +5,7 @@
     "homepage": "https://github.com/phpnomad/core",
     "readme": "README.md",
     "license": "MIT",
+    "prefer-stable": true,
     "minimum-stability": "dev",
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix"
@@ -31,8 +32,8 @@
     "require": {
         "phpnomad/auth": "^1.0",
         "phpnomad/asset": "^1.0",
-        "phpnomad/db": "^1.0",
-        "phpnomad/datastore": "^1.0",
+        "phpnomad/db": "^2.0",
+        "phpnomad/datastore": "^2.0",
         "phpnomad/event": "^1.0",
         "phpnomad/email": "^1.0",
         "phpnomad/tasks": "^1.0",
@@ -41,9 +42,10 @@
         "phpnomad/utils": "^1.0",
         "phpnomad/translate": "^1.0",
         "phpnomad/loader": "^1.0",
-        "phpnomad/framework": "^1.0",
+        "phpnomad/framework": "^2.0",
         "phpnomad/privacy": "^1.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "phpnomad/template": "^1.0"
     },
     "config": {
         "allow-plugins": {

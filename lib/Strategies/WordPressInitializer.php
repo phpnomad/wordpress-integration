@@ -15,8 +15,6 @@ use PHPNomad\Auth\Interfaces\SecretProvider as SecretProviderInterface;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
-use PHPNomad\Database\Events\RecordCreated;
-use PHPNomad\Database\Events\RecordDeleted;
 use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
 use PHPNomad\Database\Interfaces\CanConvertToDatabaseDateString;
 use PHPNomad\Database\Interfaces\ClauseBuilder as CoreClauseBuilder;
@@ -29,6 +27,8 @@ use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyA
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
 use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
 use PHPNomad\Database\Interfaces\TableUpdateStrategy as CoreTableUpdateStrategy;
+use PHPNomad\Datastore\Events\RecordCreated;
+use PHPNomad\Datastore\Events\RecordDeleted;
 use PHPNomad\Di\Interfaces\CanSetContainer;
 use PHPNomad\Di\Traits\HasSettableContainer;
 use PHPNomad\Email\Interfaces\EmailStrategy as EmailStrategyInterface;
