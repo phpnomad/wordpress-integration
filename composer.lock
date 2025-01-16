@@ -92,16 +92,16 @@
         },
         {
             "name": "phpnomad/cache",
-            "version": "1.0.1",
+            "version": "1.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/cache.git",
-                "reference": "b645e87aaef9088a8064250035b6519a80d80a44"
+                "reference": "5304a5cc0444e7ee3171b9dad43ee2d563e40a09"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/cache/zipball/b645e87aaef9088a8064250035b6519a80d80a44",
-                "reference": "b645e87aaef9088a8064250035b6519a80d80a44",
+                "url": "https://api.github.com/repos/phpnomad/cache/zipball/5304a5cc0444e7ee3171b9dad43ee2d563e40a09",
+                "reference": "5304a5cc0444e7ee3171b9dad43ee2d563e40a09",
                 "shasum": ""
             },
             "require": {
@@ -131,9 +131,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/cache/issues",
-                "source": "https://github.com/phpnomad/cache/tree/1.0.1"
+                "source": "https://github.com/phpnomad/cache/tree/1.0.2"
             },
-            "time": "2025-01-13T13:59:22+00:00"
+            "time": "2025-01-15T11:37:08+00:00"
         },
         {
             "name": "phpnomad/datastore",
