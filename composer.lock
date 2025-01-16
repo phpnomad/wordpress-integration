@@ -48,16 +48,16 @@
         },
         {
             "name": "phpnomad/auth",
-            "version": "1.0.0",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/auth.git",
-                "reference": "a9da134a4b8f739a754345116ed45f3a7650e2cd"
+                "reference": "2acc9915834c271044ff6c3c4c033590f7d4a43f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/auth/zipball/a9da134a4b8f739a754345116ed45f3a7650e2cd",
-                "reference": "a9da134a4b8f739a754345116ed45f3a7650e2cd",
+                "url": "https://api.github.com/repos/phpnomad/auth/zipball/2acc9915834c271044ff6c3c4c033590f7d4a43f",
+                "reference": "2acc9915834c271044ff6c3c4c033590f7d4a43f",
                 "shasum": ""
             },
             "require": {
@@ -65,7 +65,7 @@
                 "phpnomad/event": "^1.0"
             },
             "require-dev": {
-                "phpnomad/tests": "^0.1.0"
+                "phpnomad/tests": "^0.1.0 || ^0.3.0"
             },
             "type": "library",
             "autoload": {
@@ -86,9 +86,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/auth/issues",
-                "source": "https://github.com/phpnomad/auth/tree/1.0.0"
+                "source": "https://github.com/phpnomad/auth/tree/1.0.1"
             },
-            "time": "2024-12-18T17:04:00+00:00"
+            "time": "2025-01-15T11:36:19+00:00"
         },
         {
             "name": "phpnomad/cache",
