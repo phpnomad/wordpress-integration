@@ -3,9 +3,8 @@
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Integrations\WordPress\Rest\Response;
-use PHPNomad\Rest\Enums\Method;
-use PHPNomad\Rest\Interfaces\FetchStrategy as FetchStrategyInterface;
 use PHPNomad\Rest\Models\FetchPayload;
+use PHPNomad\Rest\Interfaces\FetchStrategy as FetchStrategyInterface;
 
 class FetchStrategy implements FetchStrategyInterface
 {
