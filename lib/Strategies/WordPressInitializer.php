@@ -55,7 +55,7 @@ use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermissionStrategyInterface;
 use PHPNomad\Integrations\WordPress\Strategies\FetchStrategy as FetchStrategyInterface;
-use PHPNomad\Rest\Interfaces\Response as CoreResponse;
+use PHPNomad\Http\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
 use PHPNomad\Tasks\Interfaces\CanScheduleTasks;
 use PHPNomad\Template\Interfaces\CanRender;
