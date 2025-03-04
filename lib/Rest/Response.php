@@ -2,7 +2,7 @@
 
 namespace PHPNomad\Integrations\WordPress\Rest;
 
-use PHPNomad\Rest\Interfaces\Response as CoreResponse;
+use PHPNomad\Http\Interfaces\Response as CoreResponse;
 use PHPNomad\Utils\Helpers\Arr;
 use WP_REST_Response;
 

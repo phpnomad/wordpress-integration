@@ -40,6 +40,7 @@
         "phpnomad/tasks": "^1.0",
         "phpnomad/cache": "^1.0",
         "phpnomad/rest": "^1.0",
+        "phpnomad/http": "^1.0",
         "phpnomad/utils": "^1.0",
         "phpnomad/translate": "^1.0",
         "phpnomad/loader": "^1.0",
