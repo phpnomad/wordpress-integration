@@ -3,7 +3,7 @@
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Integrations\WordPress\Rest\Response;
-use PHPNomad\Rest\Models\FetchPayload;
+use PHPNomad\Fetch\Models\FetchPayload;
 
 class FetchStrategy
 {
