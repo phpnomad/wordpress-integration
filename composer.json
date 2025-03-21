@@ -1,7 +1,6 @@
 {
     "name": "phpnomad/wordpress-integration",
     "description": "",
-    "version": "1.0.0",
     "type": "library",
     "homepage": "https://github.com/phpnomad/core",
     "readme": "README.md",
