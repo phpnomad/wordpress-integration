@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "41e99a38fe658d8c8dfd6aa4bdd7142a",
+    "content-hash": "8c219a77a8eedd8fb1abd020a4dd6a70",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -137,16 +137,16 @@
         },
         {
             "name": "phpnomad/datastore",
-            "version": "2.0.0",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/datastore.git",
-                "reference": "1fcee29c6bf8e29ca490c86f21e0bb49b3f70d9f"
+                "reference": "af603fb6cfc5cbf7e531083ca842a5309ee4c194"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/datastore/zipball/1fcee29c6bf8e29ca490c86f21e0bb49b3f70d9f",
-                "reference": "1fcee29c6bf8e29ca490c86f21e0bb49b3f70d9f",
+                "url": "https://api.github.com/repos/phpnomad/datastore/zipball/af603fb6cfc5cbf7e531083ca842a5309ee4c194",
+                "reference": "af603fb6cfc5cbf7e531083ca842a5309ee4c194",
                 "shasum": ""
             },
             "require-dev": {
@@ -171,9 +171,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/datastore/issues",
-                "source": "https://github.com/phpnomad/datastore/tree/2.0.0"
+                "source": "https://github.com/phpnomad/datastore/tree/2.0.2"
             },
-            "time": "2024-12-28T14:35:23+00:00"
+            "time": "2025-03-26T17:17:49+00:00"
         },
         {
             "name": "phpnomad/db",
@@ -431,6 +431,50 @@
             "time": "2024-12-18T17:11:21+00:00"
         },
         {
+            "name": "phpnomad/fetch",
+            "version": "1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpnomad/fetch.git",
+                "reference": "6c965690e8b97e26f179bd8ae42976e9950a5f80"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpnomad/fetch/zipball/6c965690e8b97e26f179bd8ae42976e9950a5f80",
+                "reference": "6c965690e8b97e26f179bd8ae42976e9950a5f80",
+                "shasum": ""
+            },
+            "require": {
+                "phpnomad/http": "^1.0"
+            },
+            "require-dev": {
+                "phpnomad/tests": "^0.1.0 || ^0.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPNomad\\Fetch\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "description": "Client-side HTTP requests and strategies.",
+            "homepage": "https://github.com/phpnomad/core",
+            "support": {
+                "issues": "https://github.com/phpnomad/fetch/issues",
+                "source": "https://github.com/phpnomad/fetch/tree/1.0.1"
+            },
+            "time": "2025-01-15T11:37:58+00:00"
+        },
+        {
             "name": "phpnomad/framework",
             "version": "2.0.0",
             "source": {
@@ -476,6 +520,51 @@
                 "source": "https://github.com/phpnomad/framework/tree/2.0.0"
             },
             "time": "2024-12-25T20:30:43+00:00"
+        },
+        {
+            "name": "phpnomad/http",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpnomad/http.git",
+                "reference": "523d2aeb79b78d924352cc5aef3bf8d74a639339"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpnomad/http/zipball/523d2aeb79b78d924352cc5aef3bf8d74a639339",
+                "reference": "523d2aeb79b78d924352cc5aef3bf8d74a639339",
+                "shasum": ""
+            },
+            "require": {
+                "phpnomad/auth": "^1.0",
+                "phpnomad/enum-polyfill": "^1.0"
+            },
+            "require-dev": {
+                "phpnomad/tests": "^0.1.0 || ^0.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPNomad\\Http\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "description": "Foundational components for working with HTTP request/responses.",
+            "homepage": "https://github.com/phpnomad/core",
+            "support": {
+                "issues": "https://github.com/phpnomad/http/issues",
+                "source": "https://github.com/phpnomad/http/tree/1.0.2"
+            },
+            "time": "2025-01-15T16:37:07+00:00"
         },
         {
             "name": "phpnomad/loader",
