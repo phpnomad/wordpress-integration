@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c219a77a8eedd8fb1abd020a4dd6a70",
+    "content-hash": "4fe0e78b182388c38c2593988ee4b0e2",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -476,16 +476,16 @@
         },
         {
             "name": "phpnomad/framework",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/framework.git",
-                "reference": "c1e033b6b76de19ce1a007378d57954c8e9d6fc2"
+                "reference": "fadfd08c1af99dbe121227b57f0c9f83fa5d2774"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/framework/zipball/c1e033b6b76de19ce1a007378d57954c8e9d6fc2",
-                "reference": "c1e033b6b76de19ce1a007378d57954c8e9d6fc2",
+                "url": "https://api.github.com/repos/phpnomad/framework/zipball/fadfd08c1af99dbe121227b57f0c9f83fa5d2774",
+                "reference": "fadfd08c1af99dbe121227b57f0c9f83fa5d2774",
                 "shasum": ""
             },
             "require": {
@@ -493,7 +493,7 @@
                 "phpnomad/di": "^1.0",
                 "phpnomad/event": "^1.0",
                 "phpnomad/logger": "^1.0",
-                "phpnomad/rest": "^1.0"
+                "phpnomad/rest": "^2.0"
             },
             "require-dev": {
                 "phpnomad/tests": "^0.1.0 || ^0.3.0"
@@ -517,9 +517,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/framework/issues",
-                "source": "https://github.com/phpnomad/framework/tree/2.0.0"
+                "source": "https://github.com/phpnomad/framework/tree/2.0.1"
             },
-            "time": "2024-12-25T20:30:43+00:00"
+            "time": "2025-03-28T06:10:07+00:00"
         },
         {
             "name": "phpnomad/http",
@@ -738,26 +738,28 @@
         },
         {
             "name": "phpnomad/rest",
-            "version": "1.0.0",
+            "version": "2.0.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/rest.git",
-                "reference": "bb392757bbccb532ac04b92f683f1fbca7f56d45"
+                "reference": "4992954efd81ddf0d458725623a776683f2c3e75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/rest/zipball/bb392757bbccb532ac04b92f683f1fbca7f56d45",
-                "reference": "bb392757bbccb532ac04b92f683f1fbca7f56d45",
+                "url": "https://api.github.com/repos/phpnomad/rest/zipball/4992954efd81ddf0d458725623a776683f2c3e75",
+                "reference": "4992954efd81ddf0d458725623a776683f2c3e75",
                 "shasum": ""
             },
             "require": {
                 "phpnomad/auth": "^1.0",
                 "phpnomad/cache": "^1.0",
                 "phpnomad/enum-polyfill": "^1.0",
-                "phpnomad/event": "^1.0"
+                "phpnomad/event": "^1.0",
+                "phpnomad/http": "^1.0",
+                "phpnomad/utils": "^1.0"
             },
             "require-dev": {
-                "phpnomad/tests": "^0.1.0"
+                "phpnomad/tests": "^0.1.0 || ^0.3.0"
             },
             "type": "library",
             "autoload": {
@@ -778,9 +780,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/rest/issues",
-                "source": "https://github.com/phpnomad/rest/tree/1.0.0"
+                "source": "https://github.com/phpnomad/rest/tree/2.0.2"
             },
-            "time": "2024-12-18T17:24:32+00:00"
+            "time": "2025-03-27T10:10:19+00:00"
         },
         {
             "name": "phpnomad/singleton",
