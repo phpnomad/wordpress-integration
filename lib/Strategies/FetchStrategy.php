@@ -4,8 +4,9 @@ namespace PHPNomad\Integrations\WordPress\Strategies;
 
 use PHPNomad\Integrations\WordPress\Rest\Response;
 use PHPNomad\Fetch\Models\FetchPayload;
+use PHPNomad\Fetch\Interfaces\FetchStrategy as FetchStrategyInterface;
 
-class FetchStrategy
+class FetchStrategy implements FetchStrategyInterface
 {
     public function fetch(FetchPayload $payload): Response
     {
