@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4fe0e78b182388c38c2593988ee4b0e2",
+    "content-hash": "f2207532d5c3466f4fbff7dc03302301",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -432,16 +432,16 @@
         },
         {
             "name": "phpnomad/fetch",
-            "version": "1.0.1",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/fetch.git",
-                "reference": "6c965690e8b97e26f179bd8ae42976e9950a5f80"
+                "reference": "56a4013c47ef44dd491c0a201e227bcd82b83121"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/fetch/zipball/6c965690e8b97e26f179bd8ae42976e9950a5f80",
-                "reference": "6c965690e8b97e26f179bd8ae42976e9950a5f80",
+                "url": "https://api.github.com/repos/phpnomad/fetch/zipball/56a4013c47ef44dd491c0a201e227bcd82b83121",
+                "reference": "56a4013c47ef44dd491c0a201e227bcd82b83121",
                 "shasum": ""
             },
             "require": {
@@ -470,9 +470,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/fetch/issues",
-                "source": "https://github.com/phpnomad/fetch/tree/1.0.1"
+                "source": "https://github.com/phpnomad/fetch/tree/1.0.3"
             },
-            "time": "2025-01-15T11:37:58+00:00"
+            "time": "2025-04-14T19:09:47+00:00"
         },
         {
             "name": "phpnomad/framework",
@@ -5659,12 +5659,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "ext-json": "*"
     },
-    "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "platform-dev": [],
+    "plugin-api-version": "2.3.0"
 }
