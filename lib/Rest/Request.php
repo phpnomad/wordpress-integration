@@ -3,7 +3,7 @@
 namespace PHPNomad\Integrations\WordPress\Rest;
 
 use PHPNomad\Auth\Interfaces\User;
-use PHPNomad\Rest\Interfaces\Request as CoreRequest;
+use PHPNomad\Http\Interfaces\Request as CoreRequest;
 use PHPNomad\Utils\Helpers\Arr;
 use WP_REST_Request;
 

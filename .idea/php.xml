@@ -85,12 +85,45 @@
       <path value="$PROJECT_DIR$/vendor/phoenix/rest" />
       <path value="$PROJECT_DIR$/vendor/phoenix/loader" />
       <path value="$PROJECT_DIR$/vendor/phoenix/event" />
+      <path value="$PROJECT_DIR$/vendor/evenement/evenement" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/logger" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/enum-polyfill" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/mutator" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/asset" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/rest" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/event" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/di" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/singleton" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/datastore" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/translate" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/db" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/facade" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/privacy" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/cache" />
+      <path value="$PROJECT_DIR$/vendor/react/child-process" />
+      <path value="$PROJECT_DIR$/vendor/clue/ndjson-react" />
+      <path value="$PROJECT_DIR$/vendor/fidry/cpu-core-counter" />
+      <path value="$PROJECT_DIR$/vendor/react/socket" />
+      <path value="$PROJECT_DIR$/vendor/react/event-loop" />
+      <path value="$PROJECT_DIR$/vendor/react/dns" />
+      <path value="$PROJECT_DIR$/vendor/react/cache" />
+      <path value="$PROJECT_DIR$/vendor/react/promise" />
+      <path value="$PROJECT_DIR$/vendor/react/stream" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/email" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/tasks" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/utils" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/loader" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/framework" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/auth" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/tests" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/update" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="a69a904b-db14-4cf2-a647-4a54088b94ec" name="Ubuntu" home="\\wsl$\Ubuntu/usr/bin/php" debugger_id="php.debugger.XDebug">
-        <remote_data INTERPRETER_PATH="/usr/bin/php" HELPERS_PATH="" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DISTRIBUTION_ID="Ubuntu" />
+      <interpreter id="a69a904b-db14-4cf2-a647-4a54088b94ec" name="Ubuntu" home="\\wsl$\Ubuntu/usr/bin/php" auto="false" debugger_id="php.debugger.XDebug">
+        <remote_data INTERPRETER_PATH="/usr/bin/php" HELPERS_PATH="" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DISTRIBUTION_ID="Ubuntu" />
       </interpreter>
     </interpreters>
   </component>

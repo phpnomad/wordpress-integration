@@ -1,10 +1,12 @@
 {
     "name": "phpnomad/wordpress-integration",
     "description": "",
+    "version": "2.0.4",
     "type": "library",
     "homepage": "https://github.com/phpnomad/core",
     "readme": "README.md",
     "license": "MIT",
+    "prefer-stable": true,
     "minimum-stability": "dev",
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix"
@@ -111,22 +113,25 @@
         "phpnomad/tests": "^0.1.0"
     },
     "require": {
-        "phpnomad/auth": "dev-main",
-        "phpnomad/asset": "dev-main",
-        "phpnomad/db": "dev-main",
-        "phpnomad/datastore": "dev-main",
-        "phpnomad/event": "dev-main",
-        "phpnomad/email": "dev-main",
-        "phpnomad/tasks": "dev-main",
-        "phpnomad/cache": "dev-main",
-        "phpnomad/rest": "dev-main",
-        "phpnomad/console": "dev-main",
-        "phpnomad/utils": "dev-main",
-        "phpnomad/translate": "dev-main",
-        "phpnomad/loader": "dev-main",
-        "phpnomad/framework": "dev-main",
-        "phpnomad/privacy": "dev-main",
-        "ext-json": "*"
+        "phpnomad/auth": "^1.0",
+        "phpnomad/asset": "^1.0",
+        "phpnomad/db": "^2.0",
+        "phpnomad/datastore": "^2.0",
+        "phpnomad/event": "^1.0",
+        "phpnomad/email": "^1.0",
+        "phpnomad/tasks": "^1.0",
+        "phpnomad/cache": "^1.0",
+        "phpnomad/rest": "^2.0",
+        "phpnomad/http": "^1.0",
+        "phpnomad/console": "^1.0",
+        "phpnomad/fetch": "^1.0",
+        "phpnomad/utils": "^1.0",
+        "phpnomad/translate": "^1.0",
+        "phpnomad/loader": "^1.0",
+        "phpnomad/framework": "^2.0",
+        "phpnomad/privacy": "^1.0",
+        "ext-json": "*",
+        "phpnomad/template": "^1.0"
     },
     "config": {
         "allow-plugins": {
