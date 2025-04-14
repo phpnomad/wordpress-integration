@@ -15,6 +15,8 @@ use PHPNomad\Auth\Interfaces\SecretProvider as SecretProviderInterface;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
+use PHPNomad\Console\Interfaces\ConsoleStrategy as CoreConsoleStrategy;
+use PHPNomad\Console\Interfaces\OutputStrategy as CoreOutputStrategy;
 use PHPNomad\Database\Events\RecordCreated;
 use PHPNomad\Database\Events\RecordDeleted;
 use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
@@ -92,6 +94,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             QueryBuilder::class => CoreQueryBuilder::class,
             ClauseBuilder::class => CoreClauseBuilder::class,
             RestStrategy::class => CoreRestStrategy::class,
+            ConsoleStrategy::class => CoreConsoleStrategy::class,
+            ConsoleOutputStrategy::class => CoreOutputStrategy::class,
             CurrentContextResolverStrategy::class => CurrentContextResolverStrategyInterface::class,
             CurrentUserResolverStrategy::class => CurrentUserResolverStrategyInterface::class,
             PostAuthorResolver::class => PageAuthorResolver::class,

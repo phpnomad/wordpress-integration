@@ -16,6 +16,10 @@
         },
         {
             "type": "vcs",
+            "url": "https://github.com/phpnomad/console.git"
+        },
+        {
+            "type": "vcs",
             "url": "https://github.com/phpnomad/tasks.git"
         },
         {
@@ -116,6 +120,7 @@
         "phpnomad/tasks": "dev-main",
         "phpnomad/cache": "dev-main",
         "phpnomad/rest": "dev-main",
+        "phpnomad/console": "dev-main",
         "phpnomad/utils": "dev-main",
         "phpnomad/translate": "dev-main",
         "phpnomad/loader": "dev-main",
