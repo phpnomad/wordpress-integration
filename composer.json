@@ -1,7 +1,7 @@
 {
     "name": "phpnomad/wordpress-integration",
     "description": "",
-    "version": "2.0.5",
+    "version": "2.0.6",
     "type": "library",
     "homepage": "https://github.com/phpnomad/core",
     "readme": "README.md",
@@ -28,7 +28,7 @@
         }
     ],
     "require-dev": {
-        "phpnomad/tests": "^0.1.0"
+        "phpnomad/tests": "^0.3.0"
     },
     "require": {
         "phpnomad/auth": "^1.0",
@@ -40,7 +40,7 @@
         "phpnomad/tasks": "^1.0",
         "phpnomad/cache": "^1.0",
         "phpnomad/rest": "^2.0",
-        "phpnomad/http": "^1.0",
+        "phpnomad/http": "^1.1",
         "phpnomad/console": "^1.0",
         "phpnomad/fetch": "^1.0",
         "phpnomad/utils": "^1.0",

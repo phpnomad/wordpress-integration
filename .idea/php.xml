@@ -20,6 +20,7 @@
   </component>
   <component name="PhpIncludePathManager">
     <include_path>
+      <path value="$PROJECT_DIR$/../wordpress" />
       <path value="$PROJECT_DIR$/vendor/composer" />
       <path value="$PROJECT_DIR$/vendor" />
       <path value="$PROJECT_DIR$/vendor/phpstan/phpstan" />
@@ -117,7 +118,7 @@
       <path value="$PROJECT_DIR$/vendor/phpnomad/auth" />
       <path value="$PROJECT_DIR$/vendor/phpnomad/tests" />
       <path value="$PROJECT_DIR$/vendor/phpnomad/update" />
-      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/template" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

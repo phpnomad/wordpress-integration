@@ -74,4 +74,9 @@ final class Request implements CoreRequest
     {
         $this->request->offsetUnset($name);
     }
+
+    public function getBody(): string
+    {
+        return $this->request->get_body();
+    }
 }
