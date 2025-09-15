@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c37892c406ce75ba27bb040fcd357d53",
+    "content-hash": "cb2e332ab4965c2eee70e889c291371a",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -866,20 +866,17 @@
         },
         {
             "name": "phpnomad/tasks",
-            "version": "1.0.0",
+            "version": "2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/tasks.git",
-                "reference": "05c40976b8100b412c6f3be430ac73bab561db23"
+                "reference": "5b29183bcc110927d9f3077cec606b2b8b2d1882"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/tasks/zipball/05c40976b8100b412c6f3be430ac73bab561db23",
-                "reference": "05c40976b8100b412c6f3be430ac73bab561db23",
+                "url": "https://api.github.com/repos/phpnomad/tasks/zipball/5b29183bcc110927d9f3077cec606b2b8b2d1882",
+                "reference": "5b29183bcc110927d9f3077cec606b2b8b2d1882",
                 "shasum": ""
-            },
-            "require-dev": {
-                "phpnomad/tests": "^0.1.0"
             },
             "type": "library",
             "autoload": {
@@ -900,9 +897,9 @@
             "homepage": "https://github.com/phpnomad/tasks",
             "support": {
                 "issues": "https://github.com/phpnomad/tasks/issues",
-                "source": "https://github.com/phpnomad/tasks/tree/1.0.0"
+                "source": "https://github.com/phpnomad/tasks/tree/2.0.0"
             },
-            "time": "2024-12-18T17:26:47+00:00"
+            "time": "2025-05-28T16:38:34+00:00"
         },
         {
             "name": "phpnomad/template",
