@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c37892c406ce75ba27bb040fcd357d53",
+    "content-hash": "2fc4922ab3da13a511726b7a8cbe45d1",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -472,20 +472,20 @@
         },
         {
             "name": "phpnomad/fetch",
-            "version": "1.0.1",
+            "version": "1.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/fetch.git",
-                "reference": "6c965690e8b97e26f179bd8ae42976e9950a5f80"
+                "reference": "0cd88fece1b2f6607437f4edcaa44ee7255c1975"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/fetch/zipball/6c965690e8b97e26f179bd8ae42976e9950a5f80",
-                "reference": "6c965690e8b97e26f179bd8ae42976e9950a5f80",
+                "url": "https://api.github.com/repos/phpnomad/fetch/zipball/0cd88fece1b2f6607437f4edcaa44ee7255c1975",
+                "reference": "0cd88fece1b2f6607437f4edcaa44ee7255c1975",
                 "shasum": ""
             },
             "require": {
-                "phpnomad/http": "^1.0"
+                "phpnomad/http": "^1.1"
             },
             "require-dev": {
                 "phpnomad/tests": "^0.1.0 || ^0.3.0"
@@ -510,9 +510,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/fetch/issues",
-                "source": "https://github.com/phpnomad/fetch/tree/1.0.1"
+                "source": "https://github.com/phpnomad/fetch/tree/1.0.4"
             },
-            "time": "2025-01-15T11:37:58+00:00"
+            "time": "2025-09-13T16:09:05+00:00"
         },
         {
             "name": "phpnomad/framework",
