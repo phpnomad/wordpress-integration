@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c37892c406ce75ba27bb040fcd357d53",
+    "content-hash": "2fc4922ab3da13a511726b7a8cbe45d1",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -778,16 +778,16 @@
         },
         {
             "name": "phpnomad/rest",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/rest.git",
-                "reference": "4992954efd81ddf0d458725623a776683f2c3e75"
+                "reference": "d1e908b2d4c50b0b6f5247139a4a06fa4f571430"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/rest/zipball/4992954efd81ddf0d458725623a776683f2c3e75",
-                "reference": "4992954efd81ddf0d458725623a776683f2c3e75",
+                "url": "https://api.github.com/repos/phpnomad/rest/zipball/d1e908b2d4c50b0b6f5247139a4a06fa4f571430",
+                "reference": "d1e908b2d4c50b0b6f5247139a4a06fa4f571430",
                 "shasum": ""
             },
             "require": {
@@ -795,7 +795,7 @@
                 "phpnomad/cache": "^1.0",
                 "phpnomad/enum-polyfill": "^1.0",
                 "phpnomad/event": "^1.0",
-                "phpnomad/http": "^1.0",
+                "phpnomad/http": "^1.1",
                 "phpnomad/utils": "^1.0"
             },
             "require-dev": {
@@ -820,9 +820,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/rest/issues",
-                "source": "https://github.com/phpnomad/rest/tree/2.0.2"
+                "source": "https://github.com/phpnomad/rest/tree/2.0.3"
             },
-            "time": "2025-03-27T10:10:19+00:00"
+            "time": "2025-09-13T16:09:05+00:00"
         },
         {
             "name": "phpnomad/singleton",
