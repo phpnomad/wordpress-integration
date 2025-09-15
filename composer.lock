@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c37892c406ce75ba27bb040fcd357d53",
+    "content-hash": "2fc4922ab3da13a511726b7a8cbe45d1",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -608,16 +608,16 @@
         },
         {
             "name": "phpnomad/loader",
-            "version": "1.0.0",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/loader.git",
-                "reference": "34daf60b0b086588fb3adf84dbd224c7d787682d"
+                "reference": "92deb4022fad56e497847ed86b7212a5c847be57"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/loader/zipball/34daf60b0b086588fb3adf84dbd224c7d787682d",
-                "reference": "34daf60b0b086588fb3adf84dbd224c7d787682d",
+                "url": "https://api.github.com/repos/phpnomad/loader/zipball/92deb4022fad56e497847ed86b7212a5c847be57",
+                "reference": "92deb4022fad56e497847ed86b7212a5c847be57",
                 "shasum": ""
             },
             "require": {
@@ -628,7 +628,7 @@
                 "phpnomad/utils": "^1.0"
             },
             "require-dev": {
-                "phpnomad/tests": "^0.1.0"
+                "phpnomad/tests": "^0.1.0 || ^0.3.0"
             },
             "type": "library",
             "autoload": {
@@ -649,9 +649,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/loader/issues",
-                "source": "https://github.com/phpnomad/loader/tree/1.0.0"
+                "source": "https://github.com/phpnomad/loader/tree/1.0.3"
             },
-            "time": "2024-12-18T17:16:39+00:00"
+            "time": "2025-05-28T16:50:24+00:00"
         },
         {
             "name": "phpnomad/logger",
