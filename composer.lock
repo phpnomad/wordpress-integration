@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c37892c406ce75ba27bb040fcd357d53",
+    "content-hash": "2fc4922ab3da13a511726b7a8cbe45d1",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -217,16 +217,16 @@
         },
         {
             "name": "phpnomad/db",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/db.git",
-                "reference": "e0e4b22549a2f3101f8145b9ebbeef83fabba815"
+                "reference": "93773f261e5b3160a6d74a3fec71a36553c559ad"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/db/zipball/e0e4b22549a2f3101f8145b9ebbeef83fabba815",
-                "reference": "e0e4b22549a2f3101f8145b9ebbeef83fabba815",
+                "url": "https://api.github.com/repos/phpnomad/db/zipball/93773f261e5b3160a6d74a3fec71a36553c559ad",
+                "reference": "93773f261e5b3160a6d74a3fec71a36553c559ad",
                 "shasum": ""
             },
             "require": {
@@ -258,9 +258,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/db/issues",
-                "source": "https://github.com/phpnomad/db/tree/2.0.3"
+                "source": "https://github.com/phpnomad/db/tree/2.0.4"
             },
-            "time": "2025-03-27T10:06:14+00:00"
+            "time": "2025-05-23T16:30:25+00:00"
         },
         {
             "name": "phpnomad/di",
