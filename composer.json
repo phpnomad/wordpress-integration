@@ -37,7 +37,7 @@
         "phpnomad/datastore": "^2.0",
         "phpnomad/event": "^1.0",
         "phpnomad/email": "^1.0",
-        "phpnomad/tasks": "^1.0",
+        "phpnomad/tasks": "^1.0 || ^2.0",
         "phpnomad/cache": "^1.0",
         "phpnomad/rest": "^2.0",
         "phpnomad/http": "^1.1",
