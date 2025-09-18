@@ -37,9 +37,11 @@ use PHPNomad\Email\Interfaces\EmailStrategy as EmailStrategyInterface;
 use PHPNomad\Events\Interfaces\ActionBindingStrategy as CoreActionBindingStrategy;
 use PHPNomad\Events\Interfaces\EventStrategy as CoreEventStrategy;
 use PHPNomad\Events\Interfaces\HasEventBindings;
+use PHPNomad\Fetch\Interfaces\FetchStrategy as FetchStrategyInterface;
 use PHPNomad\Framework\Events\PostVisited;
 use PHPNomad\Framework\Events\SiteVisited;
 use PHPNomad\Framework\Interfaces\PageAuthorResolver;
+use PHPNomad\Http\Interfaces\Response as CoreResponse;
 use PHPNomad\Integrations\WordPress\Adapters\DatabaseDateAdapter;
 use PHPNomad\Integrations\WordPress\Auth\User;
 use PHPNomad\Integrations\WordPress\Bindings\PostVisitedBinding;
@@ -56,10 +58,8 @@ use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermissionStrategyInterface;
-use PHPNomad\Fetch\Interfaces\FetchStrategy as FetchStrategyInterface;
-use PHPNomad\Http\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
-use PHPNomad\Tasks\Interfaces\CanScheduleTasks;
+use PHPNomad\Tasks\Interfaces\TaskStrategy;
 use PHPNomad\Template\Interfaces\CanRender;
 use PHPNomad\Template\Interfaces\ScreenResolverStrategy;
 use PHPNomad\Template\Strategies\PhpEngine;
@@ -109,8 +109,8 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             EmailStrategy::class => EmailStrategyInterface::class,
             SecretProvider::class => SecretProviderInterface::class,
             PasswordResetStrategy::class => PasswordResetStrategyInterface::class,
+            TaskScheduler::class => TaskStrategy::class,
             LoginUrlProvider::class => LoginUrlProviderInterface::class,
-            TaskScheduler::class => CanScheduleTasks::class,
             FetchStrategy::class => FetchStrategyInterface::class
         ];
     }

@@ -119,6 +119,10 @@
       <path value="$PROJECT_DIR$/vendor/phpnomad/tests" />
       <path value="$PROJECT_DIR$/vendor/phpnomad/update" />
       <path value="$PROJECT_DIR$/vendor/phpnomad/template" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/http" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/console" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/fetch" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php73" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

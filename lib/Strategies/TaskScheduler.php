@@ -2,18 +2,42 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
-use PHPNomad\Tasks\Interfaces\CanScheduleTasks;
+use InvalidArgumentException;
+use PHPNomad\Tasks\Interfaces\Task;
+use PHPNomad\Tasks\Interfaces\TaskStrategy;
 
-class TaskScheduler implements CanScheduleTasks
+class TaskScheduler implements TaskStrategy
 {
-    public function runEvery(string $interval, string $identifier, callable $callback): void
+    /**
+     * @inheritDoc
+     */
+    public function dispatch(object $task): void
     {
-        $identifier = 'siren_scheduled_event_' . $identifier;
-
-        if (!wp_next_scheduled($identifier)) {
-            wp_schedule_event(time(), $interval, $identifier);
+        if (!$task instanceof Task) {
+            throw new InvalidArgumentException('Task must implement Task interface');
         }
 
-        add_action($identifier, $callback);
+        if (!wp_next_scheduled($this->getActionName(get_class($task)), [$task])) {
+            wp_schedule_single_event(time(), $this->getActionName(get_class($task)), [$task]);
+        }
+    }
+
+    /**
+     * Gets the name of the WordPress action for the given task class.
+     *
+     * @param class-string<Task> $taskClass
+     * @return string
+     */
+    protected function getActionName(string $taskClass): string
+    {
+        return 'phpnomad_task__' . $taskClass::getId();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function attach(string $taskClass, callable $handler): void
+    {
+        add_action($this->getActionName($taskClass), $handler);
     }
 }
