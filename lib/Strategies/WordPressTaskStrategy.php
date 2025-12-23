@@ -55,12 +55,6 @@ class WordPressTaskStrategy implements TaskStrategy
             throw new TaskDispatchFailedException('Task payload is not JSON-encodable.');
         }
 
-        if ($task instanceof IsIdempotent) {
-            if ($this->idempotencyStore->isDone($task) || !$this->idempotencyStore->acquire($task, 600)) {
-                return;
-            }
-        }
-
         // Enqueue the task for async execution via Action Scheduler
         as_enqueue_async_action($hookName, [$payload, $task::class, $sig], 'phpnomad');
     }
@@ -90,34 +84,78 @@ class WordPressTaskStrategy implements TaskStrategy
      * @param string $sig
      * @return void
      */
-    public function handleTask(array $payload, string $task, string $sig): void
+    public function handleTask(array $payload, string $taskClass, string $sig): void
     {
-        if (!is_subclass_of($task, Task::class)) {
+        if (!is_subclass_of($taskClass, Task::class)) {
             return;
         }
 
-        $expected = $this->generateSignature($task, $payload);
-
-        if (!$expected) {
-            return;
-        }
-
-        if (!hash_equals($expected, $sig)) {
-            $this->logger->notice('Invalid task signature for ' . $task::getId());
+        $expected = $this->generateSignature($taskClass, $payload);
+        if ($expected === null || !hash_equals($expected, $sig)) {
+            $this->logger->notice('Invalid task signature for ' . $taskClass::getId());
             return;
         }
 
         try {
-            $task = $task::fromPayload($payload);
+            $task = $taskClass::fromPayload($payload);
         } catch (TaskCreateFailedException $e) {
             $this->logger->logException($e);
             return;
         }
 
-        foreach ($this->registry->getHandlers($task) as $handler) {
-            $handler($task);
+        $locked = false;
+
+        try {
+            if ($task instanceof IsIdempotent) {
+                if ($this->idempotencyStore->isDone($task)) {
+                    return;
+                }
+
+                if (!$this->idempotencyStore->acquire($task, 600)) {
+                    return;
+                }
+
+                $locked = true;
+            }
+
+            foreach ($this->registry->getHandlers($task) as $handler) {
+                try {
+                    $handler($task);
+                } catch (\Throwable $e) {
+                    $this->logger->logException($e);
+                    throw $e;
+                }
+            }
+
+            if ($task instanceof IsIdempotent) {
+                $this->idempotencyStore->markDone($task, $task->idempotencyTtlSeconds());
+            }
+        } catch (\Throwable $e) {
+            throw $e;
+        } finally {
+            if ($locked && $task instanceof IsIdempotent) {
+                $this->idempotencyStore->release($task);
+            }
         }
     }
+
+    /**
+     * @param class-string<Task> $task
+     * @param array $payload
+     * @return string|null
+     */
+    private function generateSignature(string $taskClass, array $payload): ?string
+    {
+        $json = wp_json_encode($payload);
+        if ($json === false) {
+            return null;
+        }
+
+        $message = $taskClass . '|' . $taskClass . '|' . $json;
+
+        return hash_hmac('sha256', $message, $this->secretProvider->getSecret());
+    }
+
 
     /**
      * Generate the WordPress hook name for a task.
@@ -128,20 +166,5 @@ class WordPressTaskStrategy implements TaskStrategy
     protected function getHookName(Task|string $task): string
     {
         return 'phpnomad_task_' . $task::getId();
-    }
-
-    /**
-     * @param class-string<Task> $task
-     * @param array $payload
-     * @return string|null
-     */
-    private function generateSignature(string $task, array $payload): ?string
-    {
-        $json = wp_json_encode($payload);
-        if ($json === false) {
-            return null;
-        }
-
-        return hash_hmac('sha256', $task::getId() . '|' . $json, $this->secretProvider->getSecret() . '|' . $task);
     }
 }
