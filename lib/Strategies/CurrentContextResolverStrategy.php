@@ -9,8 +9,9 @@ class CurrentContextResolverStrategy implements CurrentContextResolverStrategyIn
 {
     public function getCurrentContext(): string
     {
+        global $wp;
         $contextChecks = [
-            SessionContexts::Rest => fn() => defined('REST_REQUEST') && REST_REQUEST,
+            SessionContexts::Rest => fn() => !empty($wp->query_vars['rest_route']),
             SessionContexts::Ajax => fn() => defined('DOING_AJAX') && DOING_AJAX,
             SessionContexts::CommandLine => fn() => defined('WP_CLI') && WP_CLI,
             SessionContexts::XmlRpc => fn() => defined('XMLRPC_REQUEST') && XMLRPC_REQUEST,

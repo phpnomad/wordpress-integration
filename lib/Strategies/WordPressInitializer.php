@@ -143,7 +143,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
                 ['action' => 'user_register', 'transformer' => fn(int $id) => new RecordCreated(new User(new WP_User($id)))]
             ],
             SiteVisited::class => [
-                ['action' => 'wp_loaded', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
+                ['action' => 'parse_request', 'transformer' => fn() => $this->container->get(SiteVisitedBinding::class)()]
             ],
             PostVisited::class => [
                 ['action' => 'wp', 'transformer' => fn() => $this->container->get(PostVisitedBinding::class)()]
