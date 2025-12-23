@@ -145,3 +145,4 @@ vendor
 
 ### Caches ###
 *.cache
+/.aiassistant/redis-task-integration/

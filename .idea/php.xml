@@ -119,6 +119,11 @@
       <path value="$PROJECT_DIR$/vendor/phpnomad/tests" />
       <path value="$PROJECT_DIR$/vendor/phpnomad/update" />
       <path value="$PROJECT_DIR$/vendor/phpnomad/template" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/http" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/console" />
+      <path value="$PROJECT_DIR$/vendor/phpnomad/fetch" />
+      <path value="$PROJECT_DIR$/vendor/woocommerce/action-scheduler" />
+      <path value="$PROJECT_DIR$/vendor/symfony/polyfill-php84" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -186,7 +191,7 @@
       </interpreter>
     </phpInfoCache>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
+  <component name="PhpProjectSharedConfiguration" php_language_level="8.1">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpStan">
