@@ -2,6 +2,7 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
+use Composer\InstalledVersions;
 use PHPNomad\Asset\Interfaces\AssetStrategy as AssetStrategyInterface;
 use PHPNomad\Auth\Events\UserLoggedIn;
 use PHPNomad\Auth\Events\UserLoggedOut;
@@ -54,6 +55,7 @@ use PHPNomad\Integrations\WordPress\Providers\SecretProvider;
 use PHPNomad\Integrations\WordPress\Rest\Response;
 use PHPNomad\Loader\Interfaces\HasClassDefinitions;
 use PHPNomad\Loader\Interfaces\HasLoadCondition;
+use PHPNomad\Loader\Interfaces\Loadable;
 use PHPNomad\Mutator\Interfaces\MutationStrategy as CoreMutationStrategy;
 use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermissionStrategyInterface;
 use PHPNomad\Fetch\Interfaces\FetchStrategy as FetchStrategyInterface;
@@ -68,7 +70,7 @@ use PHPNomad\Template\Strategies\PhpEngine;
 use PHPNomad\Translations\Interfaces\TranslationStrategy as CoreTranslationStrategyAlias;
 use WP_User;
 
-class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClassDefinitions, HasEventBindings
+class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClassDefinitions, HasEventBindings, Loadable
 {
     use HasSettableContainer;
 
@@ -156,5 +158,24 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
                 ['action' => 'wp_logout', 'transformer' => fn($id) => new UserLoggedOut(new User(new WP_User($id)))]
             ]
         ];
+    }
+
+    /**
+     * Load Action Scheduler if it's installed via Composer.
+     *
+     * @return void
+     */
+    public function load(): void
+    {
+        if (class_exists(InstalledVersions::class)) {
+            $path = InstalledVersions::getInstallPath('woocommerce/action-scheduler');
+
+            if (is_string($path) && $path !== '') {
+                $file = $path . '/action-scheduler.php';
+                if (is_file($file)) {
+                    require_once $file;
+                }
+            }
+        }
     }
 }
