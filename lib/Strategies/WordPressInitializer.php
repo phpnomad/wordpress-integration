@@ -59,7 +59,9 @@ use PHPNomad\Privacy\Interfaces\TrackingPermissionStrategy as TrackingPermission
 use PHPNomad\Fetch\Interfaces\FetchStrategy as FetchStrategyInterface;
 use PHPNomad\Http\Interfaces\Response as CoreResponse;
 use PHPNomad\Rest\Interfaces\RestStrategy as CoreRestStrategy;
-use PHPNomad\Tasks\Interfaces\CanScheduleTasks;
+use PHPNomad\Tasks\Interfaces\IdempotencyStore;
+use PHPNomad\Tasks\Interfaces\TaskStrategy as TaskStrategyInterface;
+use PHPNomad\Integrations\WordPress\Registries\WordPressTaskHandlerRegistry;
 use PHPNomad\Template\Interfaces\CanRender;
 use PHPNomad\Template\Interfaces\ScreenResolverStrategy;
 use PHPNomad\Template\Strategies\PhpEngine;
@@ -110,7 +112,9 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             SecretProvider::class => SecretProviderInterface::class,
             PasswordResetStrategy::class => PasswordResetStrategyInterface::class,
             LoginUrlProvider::class => LoginUrlProviderInterface::class,
-            TaskScheduler::class => CanScheduleTasks::class,
+            WordPressTaskStrategy::class => TaskStrategyInterface::class,
+            WordPressObjectCacheIdempotencyStore::class => IdempotencyStore::class,
+            WordPressTaskHandlerRegistry::class => WordPressTaskHandlerRegistry::class,
             FetchStrategy::class => FetchStrategyInterface::class
         ];
     }
