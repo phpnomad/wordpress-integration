@@ -11,6 +11,12 @@
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix"
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/woocommerce/action-scheduler"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "PHPNomad\\Integrations\\WordPress\\": "lib/"
@@ -37,7 +43,7 @@
         "phpnomad/datastore": "^2.0",
         "phpnomad/event": "^1.0",
         "phpnomad/email": "^1.0",
-        "phpnomad/tasks": "^1.0",
+        "phpnomad/tasks": "^2.1",
         "phpnomad/cache": "^1.0",
         "phpnomad/rest": "^2.0",
         "phpnomad/http": "^1.1",
@@ -49,6 +55,7 @@
         "phpnomad/framework": "^2.0",
         "phpnomad/privacy": "^1.0",
         "ext-json": "*",
+        "woocommerce/action-scheduler": "^3.9",
         "phpnomad/template": "^1.0"
     },
     "config": {
