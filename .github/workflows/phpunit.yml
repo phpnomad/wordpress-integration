@@ -10,8 +10,12 @@ jobs:
       - uses: actions/checkout@v3
 
       - uses: php-actions/composer@v6
+        with:
+          php_version: "8.3"
 
       - name: PHPUnit Tests
         uses: php-actions/phpunit@v3
         with:
+          php_version: "8.3"
+          version: "9.6"
           configuration: phpunit.xml

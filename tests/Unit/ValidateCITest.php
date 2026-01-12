@@ -1,8 +1,8 @@
 <?php
 
-namespace PHPNomad\Tests\Unit;
+namespace PHPNomad\Integrations\WordPress\Tests\Unit;
 
-use PHPNomad\Core\Tests\TestCase;
+use PHPNomad\Integrations\WordPress\Tests\TestCase;
 
 class ValidateCITest extends TestCase
 {

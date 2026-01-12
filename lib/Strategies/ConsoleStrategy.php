@@ -109,7 +109,7 @@ class ConsoleStrategy implements CoreConsoleStrategy
                 }
 
                 if ($isOption) {
-                    $name = Str::trimLeading($raw, '-');
+                    $name = Str::trimLeading($raw, '--');
 
                     if (Str::contains($name, '=')) {
                         [$name, $default] = explode('=', $name, 2);
