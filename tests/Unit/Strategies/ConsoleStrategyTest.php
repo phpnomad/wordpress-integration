@@ -117,7 +117,7 @@ class ConsoleStrategyTest extends TestCase
         $this->assertEquals($expectedDefault, $result['definitions'][0]['default']);
     }
 
-    public function optionWithDefaultProvider(): \Generator
+    public static function optionWithDefaultProvider(): \Generator
     {
         yield 'numeric default' => ['command {--count=1:Number of items}', '1'];
         yield 'string default' => ['command {--name=default:Name}', 'default'];
@@ -207,7 +207,7 @@ class ConsoleStrategyTest extends TestCase
         $this->assertEquals($expectedDescription, $result['definitions'][0]['description']);
     }
 
-    public function descriptionProvider(): \Generator
+    public static function descriptionProvider(): \Generator
     {
         yield 'option with description' => [
             'command {--count=1:Number of items to process}',
@@ -318,7 +318,7 @@ class ConsoleStrategyTest extends TestCase
         $this->assertEquals($expectedName, $result['definitions'][0]['name']);
     }
 
-    public function camelCaseOptionProvider(): \Generator
+    public static function camelCaseOptionProvider(): \Generator
     {
         yield 'fullName' => ['command {--fullName=:Full name}', 'fullName'];
         yield 'apiKey' => ['command {--apiKey=:API key}', 'apiKey'];
@@ -400,7 +400,7 @@ class ConsoleStrategyTest extends TestCase
         $this->assertEquals($expectedValue, $result[$paramName]);
     }
 
-    public function associativeOptionsProvider(): \Generator
+    public static function associativeOptionsProvider(): \Generator
     {
         yield 'count option' => [
             ['count' => '5', 'email' => 'test@example.com'],
