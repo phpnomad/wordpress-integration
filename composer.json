@@ -1,7 +1,7 @@
 {
     "name": "phpnomad/wordpress-integration",
     "description": "",
-    "version": "3.0.2",
+    "version": "4.0.0",
     "type": "library",
     "homepage": "https://github.com/phpnomad/core",
     "readme": "README.md",
@@ -50,7 +50,7 @@
         "phpnomad/console": "^1.0",
         "phpnomad/fetch": "^1.0",
         "phpnomad/utils": "^1.0",
-        "phpnomad/translate": "^1.0",
+        "phpnomad/translate": "^2.0",
         "phpnomad/loader": "^1.0",
         "phpnomad/framework": "^2.0",
         "phpnomad/privacy": "^1.0",
