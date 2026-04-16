@@ -31,7 +31,8 @@ trait CanQueryWordPressDatabase
         }
 
         if (is_null($result)) {
-            throw new DatastoreErrorException($wpdb->error);
+            $message = $wpdb->last_error ?: ($wpdb->error ?? 'Get results failed.');
+            throw new DatastoreErrorException($message);
         }
 
         if (empty($result)) {
