@@ -25,18 +25,18 @@ trait CanQueryWordPressDatabase
     {
         global $wpdb;
         try {
-            $result = $wpdb->get_results($queryBuilder->build(), ARRAY_A);
+            $query = $queryBuilder->build();
+            $result = $wpdb->get_results($query, ARRAY_A);
         } catch (QueryBuilderException $e) {
             throw new DatastoreErrorException('Get results failed. Invalid query: ' . $e->getMessage(), 500, $e);
         }
 
         if (is_null($result)) {
-            $message = $wpdb->last_error ?: ($wpdb->error ?? 'Get results failed.');
-            throw new DatastoreErrorException($message);
+            throw new DatastoreErrorException('Get results failed - ' . $wpdb->last_error);
         }
 
         if (empty($result)) {
-            throw new RecordNotFoundException();
+            throw new RecordNotFoundException('No records found for query: ' . $query);
         }
 
         return $result;
@@ -53,7 +53,8 @@ trait CanQueryWordPressDatabase
         global $wpdb;
 
         try {
-            $result = $wpdb->get_row($queryBuilder->build(), ARRAY_A);
+            $query = $queryBuilder->build();
+            $result = $wpdb->get_row($query, ARRAY_A);
         } catch (QueryBuilderException $e) {
             throw new DatastoreErrorException('Get row failed. Invalid query', 500, $e);
         }
@@ -63,7 +64,7 @@ trait CanQueryWordPressDatabase
                 throw new DatastoreErrorException('Get row failed - ' . $wpdb->last_error);
             }
 
-            throw new RecordNotFoundException('Could not get the specified row because it does not exist.');
+            throw new RecordNotFoundException('No record found for query: ' . $query);
         }
 
         return $result;
@@ -150,7 +151,12 @@ trait CanQueryWordPressDatabase
                 ->where($clauseBuilder);
 
             if (0 === (int)$this->wpdbGetVar($queryBuilder)) {
-                throw new RecordNotFoundException('The update failed because no record exists.');
+                throw new RecordNotFoundException(sprintf(
+                    'Update failed because no record exists in table "%s" for identity %s. Requested changes: %s.',
+                    $table->getName(),
+                    $this->encodeExceptionContext($where),
+                    $this->encodeExceptionContext($data)
+                ));
             }
         }
     }
@@ -183,19 +189,33 @@ trait CanQueryWordPressDatabase
     {
         global $wpdb;
         try {
-            $result = $wpdb->get_var($queryBuilder->build());
+            $query = $queryBuilder->build();
+            $result = $wpdb->get_var($query);
         } catch (QueryBuilderException $e) {
             throw new DatastoreErrorException('Get var failed - Invalid query', 500, $e);
         }
 
         if (is_null($result)) {
             if (empty($wpdb->last_error)) {
-                throw new RecordNotFoundException();
+                throw new RecordNotFoundException('No value found for query: ' . $query);
             } else {
                 throw new DatastoreErrorException('Get var failed - ' . $wpdb->last_error);
             }
         }
 
         return $result;
+    }
+
+    /**
+     * Formats exception context so datastore errors carry the table identity and payloads
+     * that triggered the failing operation.
+     *
+     * @param array<string, mixed> $context
+     */
+    protected function encodeExceptionContext(array $context): string
+    {
+        $encoded = json_encode($context, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+        return $encoded === false ? '[unserializable context]' : $encoded;
     }
 }
