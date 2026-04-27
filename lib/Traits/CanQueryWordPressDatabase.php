@@ -104,7 +104,24 @@ trait CanQueryWordPressDatabase
             return $ids;
         }
 
-        return ['id' => $wpdb->insert_id];
+        if (count($fields) !== 1) {
+            throw new DatastoreErrorException(sprintf(
+                'Insert succeeded for table "%s", but the record identity could not be resolved. Expected identity fields: %s.',
+                $table->getName(),
+                json_encode($fields, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) ?: '[unserializable fields]'
+            ));
+        }
+
+        $insertId = (int)$wpdb->insert_id;
+
+        if ($insertId <= 0) {
+            throw new DatastoreErrorException(sprintf(
+                'Insert succeeded for table "%s", but WordPress did not report an insert ID.',
+                $table->getName()
+            ));
+        }
+
+        return [Arr::first($fields) => $insertId];
     }
 
     /**
