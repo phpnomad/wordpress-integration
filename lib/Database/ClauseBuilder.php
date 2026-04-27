@@ -94,14 +94,18 @@ class ClauseBuilder implements ClauseBuilderInterface
         }
 
         if (is_array($field)) {
-            $fieldStr = Arr::process($field)
-                ->filter(fn($field) => $this->tableHasField($field))
-                ->map(fn($field) => $this->prependField($field))
-                ->setSeparator(', ')
-                ->toString();
+            $fields = [];
 
-            if (!empty($fieldStr)) {
-                $result = "($fieldStr)";
+            foreach ($field as $fieldName) {
+                if ($this->tableHasField($fieldName)) {
+                    $fields[] = $this->prependField($fieldName);
+                }
+            }
+
+            if (count($fields) === 1) {
+                $result = Arr::first($fields);
+            } elseif (!empty($fields)) {
+                $result = '(' . implode(', ', $fields) . ')';
             }
         }
 
@@ -229,11 +233,17 @@ class ClauseBuilder implements ClauseBuilderInterface
         if ($operator === 'IN' || $operator === 'NOT IN') {
 
             // Group fields with multiple $field values (%s,%s),(%s,%s), else just flatten them %s,%s,%s,%s
-            if (is_array($field)) {
+            if (is_array($field) && count($field) > 1) {
                 $subgroup = "(" . implode(', ', array_fill(0, count($field), '%s')) . ")";
                 $placeholderGroup = implode(', ', array_fill(0, count($values), $subgroup));
             } else {
-                $placeholderGroup = implode(', ', array_fill(0, count($values), '%s'));
+                $placeholderCount = 0;
+
+                foreach ($values as $value) {
+                    $placeholderCount += is_array($value) ? count($value) : 1;
+                }
+
+                $placeholderGroup = implode(', ', array_fill(0, $placeholderCount, '%s'));
             }
 
             return "($placeholderGroup)";
