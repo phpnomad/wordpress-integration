@@ -58,6 +58,56 @@ class CanQueryWordPressDatabaseTest extends TestCase
         $subject->getResults($queryBuilder);
     }
 
+    public function testWpdbInsertResolvesInsertIdInsideTransaction(): void
+    {
+        $table = $this->createMock(Table::class);
+        $table->method('getName')->willReturn('wp_test_records');
+        $table->method('getFieldsForIdentity')->willReturn(['id']);
+
+        $GLOBALS['wpdb'] = new class {
+            public int $insert_id = 123;
+            public string $last_error = '';
+            public array $queries = [];
+            public bool $insertedInTransaction = false;
+            private bool $inTransaction = false;
+
+            public function query(string $query): bool
+            {
+                $this->queries[] = $query;
+
+                if ($query === 'START TRANSACTION') {
+                    $this->inTransaction = true;
+                }
+
+                if ($query === 'COMMIT' || $query === 'ROLLBACK') {
+                    $this->inTransaction = false;
+                }
+
+                return true;
+            }
+
+            public function insert(string $table, array $data, array $formats): int
+            {
+                $this->insertedInTransaction = $this->inTransaction;
+
+                return 1;
+            }
+        };
+
+        $subject = new class {
+            use CanQueryWordPressDatabase;
+
+            public function insertRecord(Table $table, array $data): array
+            {
+                return $this->wpdbInsert($table, $data);
+            }
+        };
+
+        $this->assertSame(['id' => 123], $subject->insertRecord($table, ['name' => 'Example']));
+        $this->assertTrue($GLOBALS['wpdb']->insertedInTransaction);
+        $this->assertSame(['START TRANSACTION', 'COMMIT'], $GLOBALS['wpdb']->queries);
+    }
+
     public function testWpdbUpdateIncludesTableIdentityAndPayloadWhenRecordIsMissing(): void
     {
         $table = $this->createMock(Table::class);

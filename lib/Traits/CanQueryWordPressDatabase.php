@@ -10,6 +10,7 @@ use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
 use PHPNomad\Integrations\WordPress\Database\ClauseBuilder;
 use PHPNomad\Integrations\WordPress\Database\QueryBuilder as WordPressQueryBuilder;
 use PHPNomad\Utils\Helpers\Arr;
+use Throwable;
 
 trait CanQueryWordPressDatabase
 {
@@ -40,6 +41,43 @@ trait CanQueryWordPressDatabase
         }
 
         return $result;
+    }
+
+    /**
+     * Gets a batch of rows using a writer-consistent read path after a write.
+     *
+     * @param QueryBuilder $queryBuilder
+     * @return array<string, mixed>[]|array<int>
+     * @throws DatastoreErrorException
+     * @throws RecordNotFoundException
+     */
+    protected function wpdbGetResultsAfterWrite(QueryBuilder $queryBuilder): array
+    {
+        global $wpdb;
+
+        if (method_exists($wpdb, 'send_reads_to_masters')) {
+            $wpdb->send_reads_to_masters();
+
+            return $this->wpdbGetResults($queryBuilder);
+        }
+
+        if (false === $wpdb->query('START TRANSACTION')) {
+            throw new DatastoreErrorException('Consistent read failed - could not start transaction: ' . $wpdb->last_error);
+        }
+
+        try {
+            $result = $this->wpdbGetResults($queryBuilder);
+
+            if (false === $wpdb->query('COMMIT')) {
+                throw new DatastoreErrorException('Consistent read failed - could not commit transaction: ' . $wpdb->last_error);
+            }
+
+            return $result;
+        } catch (Throwable $e) {
+            $wpdb->query('ROLLBACK');
+
+            throw $e;
+        }
     }
 
     /**
@@ -81,32 +119,46 @@ trait CanQueryWordPressDatabase
     {
         global $wpdb;
 
-        if (empty($data)) {
-            $inserted = $wpdb->query('INSERT INTO ' . $table->getName() . '() VALUES ();');
-        } else {
-            $inserted = $wpdb->insert($table->getName(), $data, $this->getFormats($data));
+        if (false === $wpdb->query('START TRANSACTION')) {
+            throw new DatastoreErrorException('Insert failed - could not start transaction: ' . $wpdb->last_error);
         }
 
-        if (false === $inserted) {
-            throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
-        }
+        try {
+            if (empty($data)) {
+                $inserted = $wpdb->query('INSERT INTO ' . $table->getName() . '() VALUES ();');
+            } else {
+                $inserted = $wpdb->insert($table->getName(), $data, $this->getFormats($data));
+            }
 
-        $fields = $table->getFieldsForIdentity();
-        $ids = Arr::process($fields)
-            ->reduce(function ($acc, $field) use ($data) {
-                if (isset($data[$field])) {
-                    $acc[$field] = $data[$field];
-                }
+            if (false === $inserted) {
+                throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
+            }
 
-                return $acc;
-            }, [])
-            ->toArray();
+            $fields = $table->getFieldsForIdentity();
+            $ids = Arr::process($fields)
+                ->reduce(function ($acc, $field) use ($data) {
+                    if (isset($data[$field])) {
+                        $acc[$field] = $data[$field];
+                    }
 
-        if (count($ids) === count($fields)) {
+                    return $acc;
+                }, [])
+                ->toArray();
+
+            if (count($ids) !== count($fields)) {
+                $ids = ['id' => $wpdb->insert_id];
+            }
+
+            if (false === $wpdb->query('COMMIT')) {
+                throw new DatastoreErrorException('Insert failed - could not commit transaction: ' . $wpdb->last_error);
+            }
+
             return $ids;
-        }
+        } catch (Throwable $e) {
+            $wpdb->query('ROLLBACK');
 
-        return ['id' => $wpdb->insert_id];
+            throw $e;
+        }
     }
 
     /**
