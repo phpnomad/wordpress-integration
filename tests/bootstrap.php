@@ -46,3 +46,53 @@ if (!function_exists('_nx')) {
         return "[$form|$count|$context|$domain]";
     }
 }
+
+/**
+ * WordPress chrono function stubs for testing.
+ *
+ * Each stub honors a global override when set by a test, and otherwise
+ * falls back to a sane native-PHP behavior. Tests can also inspect the
+ * recorded call arguments to verify delegation.
+ */
+
+if (!function_exists('current_datetime')) {
+    function current_datetime(): DateTimeImmutable
+    {
+        global $_wp_current_datetime;
+        return $_wp_current_datetime ?? new DateTimeImmutable('now');
+    }
+}
+
+if (!function_exists('wp_timezone')) {
+    function wp_timezone(): DateTimeZone
+    {
+        global $_wp_timezone;
+        return $_wp_timezone ?? new DateTimeZone(date_default_timezone_get());
+    }
+}
+
+if (!function_exists('wp_date')) {
+    function wp_date(string $format, ?int $timestamp = null, ?DateTimeZone $timezone = null): string
+    {
+        global $_wp_date_calls;
+        $_wp_date_calls[] = ['format' => $format, 'timestamp' => $timestamp, 'timezone' => $timezone];
+
+        $timestamp ??= time();
+        $instant = (new DateTimeImmutable('@' . $timestamp))->setTimezone(
+            $timezone ?? new DateTimeZone(date_default_timezone_get())
+        );
+
+        return $instant->format($format);
+    }
+}
+
+if (!function_exists('human_time_diff')) {
+    function human_time_diff(int $from, int $to = 0): string
+    {
+        global $_wp_human_time_diff_calls;
+        $_wp_human_time_diff_calls[] = ['from' => $from, 'to' => $to];
+
+        $to = $to ?: time();
+        return abs($to - $from) . ' seconds';
+    }
+}

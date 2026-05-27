@@ -45,6 +45,7 @@
         "phpnomad/email": "^1.0",
         "phpnomad/tasks": "^2.1",
         "phpnomad/cache": "^1.0",
+        "phpnomad/chrono": "^1.0",
         "phpnomad/rest": "^2.0",
         "phpnomad/http": "^1.1",
         "phpnomad/console": "^1.0",

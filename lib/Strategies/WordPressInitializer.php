@@ -16,6 +16,10 @@ use PHPNomad\Auth\Interfaces\SecretProvider as SecretProviderInterface;
 use PHPNomad\Cache\Interfaces\CachePolicy as CoreCachePolicy;
 use PHPNomad\Cache\Interfaces\CacheStrategy;
 use PHPNomad\Cache\Interfaces\HasDefaultTtl;
+use PHPNomad\Chrono\Interfaces\CanFormatLocalizedDate;
+use PHPNomad\Chrono\Interfaces\CanFormatRelativeTime;
+use PHPNomad\Chrono\Interfaces\ClockStrategy as CoreClockStrategy;
+use PHPNomad\Chrono\Interfaces\HasTimezone;
 use PHPNomad\Console\Interfaces\ConsoleStrategy as CoreConsoleStrategy;
 use PHPNomad\Console\Interfaces\OutputStrategy as CoreOutputStrategy;
 use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
@@ -117,7 +121,13 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             WordPressTaskStrategy::class => TaskStrategyInterface::class,
             WordPressObjectCacheIdempotencyStore::class => IdempotencyStore::class,
             WordPressTaskHandlerRegistry::class => WordPressTaskHandlerRegistry::class,
-            FetchStrategy::class => FetchStrategyInterface::class
+            FetchStrategy::class => FetchStrategyInterface::class,
+            WordPressClockStrategy::class => [
+                CoreClockStrategy::class,
+                HasTimezone::class,
+                CanFormatLocalizedDate::class,
+                CanFormatRelativeTime::class
+            ]
         ];
     }
 
