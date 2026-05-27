@@ -7,6 +7,7 @@ use DateTimeZone;
 use PHPNomad\Chrono\Interfaces\CanFormatLocalizedDate;
 use PHPNomad\Chrono\Interfaces\CanFormatRelativeTime;
 use PHPNomad\Chrono\Interfaces\ClockStrategy;
+use PHPNomad\Chrono\Interfaces\HasLocale;
 use PHPNomad\Chrono\Interfaces\HasTimezone;
 use PHPNomad\Integrations\WordPress\Strategies\WordPressClockStrategy;
 use PHPNomad\Integrations\WordPress\Tests\TestCase;
@@ -15,9 +16,10 @@ class WordPressClockStrategyTest extends TestCase
 {
     protected function tearDown(): void
     {
-        global $_wp_current_datetime, $_wp_timezone, $_wp_date_calls, $_wp_human_time_diff_calls;
+        global $_wp_current_datetime, $_wp_timezone, $_wp_determined_locale, $_wp_date_calls, $_wp_human_time_diff_calls;
         $_wp_current_datetime = null;
         $_wp_timezone = null;
+        $_wp_determined_locale = null;
         $_wp_date_calls = [];
         $_wp_human_time_diff_calls = [];
         parent::tearDown();
@@ -29,6 +31,7 @@ class WordPressClockStrategyTest extends TestCase
 
         $this->assertInstanceOf(ClockStrategy::class, $strategy);
         $this->assertInstanceOf(HasTimezone::class, $strategy);
+        $this->assertInstanceOf(HasLocale::class, $strategy);
         $this->assertInstanceOf(CanFormatLocalizedDate::class, $strategy);
         $this->assertInstanceOf(CanFormatRelativeTime::class, $strategy);
     }
@@ -70,6 +73,24 @@ class WordPressClockStrategyTest extends TestCase
 
         $this->assertInstanceOf(DateTimeZone::class, $result);
         $this->assertEquals('Europe/Berlin', $result->getName());
+    }
+
+    public function testGetLocaleDelegatesToDetermineLocale(): void
+    {
+        global $_wp_determined_locale;
+        $_wp_determined_locale = 'fr_FR';
+
+        $result = (new WordPressClockStrategy())->getLocale();
+
+        $this->assertSame('fr_FR', $result);
+    }
+
+    public function testGetLocaleReturnsStub(): void
+    {
+        // No override set; the bootstrap stub returns 'en_US' as a fallback.
+        $result = (new WordPressClockStrategy())->getLocale();
+
+        $this->assertSame('en_US', $result);
     }
 
     public function testFormatLocalizedDelegatesToWpDateWithInstantTimestampAndTimezone(): void

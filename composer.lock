@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1feaa901c42b931935868ae5fc02a698",
+    "content-hash": "a4b0d4cf35976d81c00484ec7206a14a",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -141,12 +141,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/chrono.git",
-                "reference": "7b35e28d9f997f836a0c29e5da635d0bff0f3aa6"
+                "reference": "04a11f702e242a3042b7fe802706e935346fb1c3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/chrono/zipball/7b35e28d9f997f836a0c29e5da635d0bff0f3aa6",
-                "reference": "7b35e28d9f997f836a0c29e5da635d0bff0f3aa6",
+                "url": "https://api.github.com/repos/phpnomad/chrono/zipball/04a11f702e242a3042b7fe802706e935346fb1c3",
+                "reference": "04a11f702e242a3042b7fe802706e935346fb1c3",
                 "shasum": ""
             },
             "require": {
@@ -186,7 +186,7 @@
                 "issues": "https://github.com/phpnomad/chrono/issues",
                 "source": "https://github.com/phpnomad/chrono/tree/1.0.0"
             },
-            "time": "2026-05-27T17:45:51+00:00"
+            "time": "2026-05-27T19:22:35+00:00"
         },
         {
             "name": "phpnomad/console",

@@ -19,6 +19,7 @@ use PHPNomad\Cache\Interfaces\HasDefaultTtl;
 use PHPNomad\Chrono\Interfaces\CanFormatLocalizedDate;
 use PHPNomad\Chrono\Interfaces\CanFormatRelativeTime;
 use PHPNomad\Chrono\Interfaces\ClockStrategy as CoreClockStrategy;
+use PHPNomad\Chrono\Interfaces\HasLocale;
 use PHPNomad\Chrono\Interfaces\HasTimezone;
 use PHPNomad\Console\Interfaces\ConsoleStrategy as CoreConsoleStrategy;
 use PHPNomad\Console\Interfaces\OutputStrategy as CoreOutputStrategy;
@@ -125,6 +126,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             WordPressClockStrategy::class => [
                 CoreClockStrategy::class,
                 HasTimezone::class,
+                HasLocale::class,
                 CanFormatLocalizedDate::class,
                 CanFormatRelativeTime::class
             ]

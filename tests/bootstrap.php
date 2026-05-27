@@ -96,3 +96,11 @@ if (!function_exists('human_time_diff')) {
         return abs($to - $from) . ' seconds';
     }
 }
+
+if (!function_exists('determine_locale')) {
+    function determine_locale(): string
+    {
+        global $_wp_determined_locale;
+        return $_wp_determined_locale ?? 'en_US';
+    }
+}

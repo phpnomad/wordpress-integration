@@ -7,11 +7,13 @@ use DateTimeZone;
 use PHPNomad\Chrono\Interfaces\CanFormatLocalizedDate;
 use PHPNomad\Chrono\Interfaces\CanFormatRelativeTime;
 use PHPNomad\Chrono\Interfaces\ClockStrategy;
+use PHPNomad\Chrono\Interfaces\HasLocale;
 use PHPNomad\Chrono\Interfaces\HasTimezone;
 
 class WordPressClockStrategy implements
     ClockStrategy,
     HasTimezone,
+    HasLocale,
     CanFormatLocalizedDate,
     CanFormatRelativeTime
 {
@@ -23,6 +25,11 @@ class WordPressClockStrategy implements
     public function getTimezone(): DateTimeZone
     {
         return wp_timezone();
+    }
+
+    public function getLocale(): string
+    {
+        return determine_locale();
     }
 
     public function formatLocalized(DateTimeImmutable $instant, string $format): string
