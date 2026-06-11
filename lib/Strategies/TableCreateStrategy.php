@@ -39,13 +39,17 @@ class TableCreateStrategy implements CoreTableCreateStrategy
      */
     protected function buildCreateQuery(Table $table): string
     {
+        global $wpdb;
+
         $args = Arr::process([$this->convertColumnsToSqlString($table), $this->convertIndicesToSqlString($table)])
             ->whereNotEmpty()
             ->setSeparator(",\n ")
             ->toString();
 
+        $tableIdentifier = $wpdb->prepare('%i', $table->getName());
+
         return <<<SQL
-            CREATE TABLE IF NOT EXISTS {$table->getName()} (
+            CREATE TABLE IF NOT EXISTS {$tableIdentifier} (
                 $args
             ) CHARACTER SET {$table->getCharset()} COLLATE {$table->getCollation()};
         SQL;

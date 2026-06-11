@@ -82,7 +82,7 @@ trait CanQueryWordPressDatabase
         global $wpdb;
 
         if (empty($data)) {
-            $inserted = $wpdb->query('INSERT INTO ' . $table->getName() . '() VALUES ();');
+            $inserted = $wpdb->query($wpdb->prepare('INSERT INTO %i() VALUES ();', $table->getName()));
         } else {
             $inserted = $wpdb->insert($table->getName(), $data, $this->getFormats($data));
         }
