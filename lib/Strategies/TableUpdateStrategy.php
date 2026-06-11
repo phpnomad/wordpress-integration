@@ -57,11 +57,11 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
     protected function getCurrentColumns(string $tableName): array
     {
         global $wpdb;
-        $query = "SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA
+        $query = 'SELECT COLUMN_NAME, COLUMN_TYPE, IS_NULLABLE, COLUMN_DEFAULT, EXTRA
               FROM INFORMATION_SCHEMA.COLUMNS
-              WHERE TABLE_NAME = '{$tableName}'";
+              WHERE TABLE_NAME = %s';
 
-        $results = $wpdb->get_results($wpdb->prepare($query), ARRAY_A);
+        $results = $wpdb->get_results($wpdb->prepare($query, $tableName), ARRAY_A);
         $columns = [];
 
         foreach ($results as $row) {
@@ -101,6 +101,8 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
      */
     protected function buildSyncColumnsQuery(Table $table): ?string
     {
+        global $wpdb;
+
         $currentColumns = $this->getCurrentColumns($table->getName());
         $newColumns = $table->getColumns();
         $queries = [];
@@ -124,7 +126,7 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
         // Drop columns that no longer exist in the new definition
         foreach ($currentColumns as $currentColumnName => $currentColumnData) {
             if (!in_array($currentColumnName, $newColumnNames)) {
-                $queries[] = "DROP COLUMN `{$currentColumnName}`";
+                $queries[] = 'DROP COLUMN ' . $wpdb->prepare('%i', $currentColumnName);
             }
         }
 
@@ -137,8 +139,10 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
             return null;
         }
 
+        $tableIdentifier = $wpdb->prepare('%i', $table->getName());
+
         return <<<SQL
-            ALTER TABLE {$table->getName()} 
+            ALTER TABLE {$tableIdentifier} 
             $args 
         SQL;
     }

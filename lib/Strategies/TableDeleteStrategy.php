@@ -21,7 +21,7 @@ class TableDeleteStrategy implements CoreTableDeleteStrategy
     public function delete(string $tableName): void
     {
         try {
-            $this->wpdbQuery("DROP TABLE IF EXISTS $tableName");
+            $this->wpdbQuery('DROP TABLE IF EXISTS %i', $tableName);
         } catch (DatastoreErrorException $e) {
             throw new TableDropFailedException($e->getMessage(), $e->getCode(), $e);
         }
