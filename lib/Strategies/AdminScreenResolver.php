@@ -41,7 +41,7 @@ class AdminScreenResolver implements ScreenResolverStrategy
      */
     public function isCurrentScreen(string $slug): bool
     {
-        return $_REQUEST['page'] === $slug;
+        return $this->readRequestKey('page') === $slug;
     }
 
     /**
@@ -49,7 +49,7 @@ class AdminScreenResolver implements ScreenResolverStrategy
      */
     public function isCurrentAction(string $slug, string $action): bool
     {
-        return $this->isCurrentScreen($slug) && $_REQUEST[$this->actionKey] === $action;
+        return $this->isCurrentScreen($slug) && $this->readRequestKey($this->actionKey) === $action;
     }
 
     /**
@@ -57,7 +57,7 @@ class AdminScreenResolver implements ScreenResolverStrategy
      */
     public function getCurrentScreen(): ?string
     {
-        return $_REQUEST['page'] ?? null;
+        return $this->readRequestKey('page');
     }
 
     /**
@@ -65,6 +65,23 @@ class AdminScreenResolver implements ScreenResolverStrategy
      */
     public function getCurrentAction(): ?string
     {
-        return $_REQUEST[$this->actionKey] ?? null;
+        return $this->readRequestKey($this->actionKey);
+    }
+
+    /**
+     * Read a request key sanitized for screen/action comparisons.
+     *
+     * Screen slugs and action names are key-shaped values; sanitize_key()
+     * mirrors how WordPress core treats the `page` query arg and strips
+     * anything an attacker could smuggle through the raw superglobal.
+     */
+    protected function readRequestKey(string $key): ?string
+    {
+        if (!isset($_REQUEST[$key]) || !is_string($_REQUEST[$key])) {
+            return null;
+        }
+
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only comparison helpers; mutation handlers verify nonces at their own boundary.
+        return sanitize_key(wp_unslash($_REQUEST[$key]));
     }
 }
