@@ -104,3 +104,35 @@ if (!function_exists('determine_locale')) {
         return $_wp_determined_locale ?? 'en_US';
     }
 }
+
+if (!class_exists('WP_Error')) {
+    class WP_Error
+    {
+        public function __construct(
+            public string $code = '',
+            public string $message = '',
+            public array $data = []
+        ) {
+        }
+    }
+}
+
+if (!class_exists('WP_REST_Request')) {
+    class WP_REST_Request
+    {
+        public function get_params(): array
+        {
+            return [];
+        }
+
+        public function get_param(string $key)
+        {
+            return null;
+        }
+
+        public function get_headers(): array
+        {
+            return [];
+        }
+    }
+}
