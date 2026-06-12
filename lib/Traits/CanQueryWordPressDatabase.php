@@ -10,9 +10,12 @@ use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
 use PHPNomad\Integrations\WordPress\Database\ClauseBuilder;
 use PHPNomad\Integrations\WordPress\Database\QueryBuilder as WordPressQueryBuilder;
 use PHPNomad\Utils\Helpers\Arr;
+use PHPNomad\Integrations\WordPress\Traits\LogsDatabaseErrors;
 
 trait CanQueryWordPressDatabase
 {
+    use LogsDatabaseErrors;
+
     use CanGetDataFormats;
 
     /**
@@ -28,15 +31,16 @@ trait CanQueryWordPressDatabase
             $query = $queryBuilder->build();
             $result = $wpdb->get_results($query, ARRAY_A);
         } catch (QueryBuilderException $e) {
-            throw new DatastoreErrorException('Get results failed. Invalid query: ' . $e->getMessage(), 500, $e);
+            throw new DatastoreErrorException('Get results failed: invalid query.', 500, $e);
         }
 
         if (is_null($result)) {
-            throw new DatastoreErrorException('Get results failed - ' . $wpdb->last_error);
+            $this->logDatabaseError('Get results failed', $wpdb->last_error);
+            throw new DatastoreErrorException('Get results failed.');
         }
 
         if (empty($result)) {
-            throw new RecordNotFoundException('No records found for query: ' . $query);
+            throw new RecordNotFoundException('No records found for the query.');
         }
 
         return $result;
@@ -61,10 +65,11 @@ trait CanQueryWordPressDatabase
 
         if (!$result) {
             if (!empty($wpdb->last_error)) {
-                throw new DatastoreErrorException('Get row failed - ' . $wpdb->last_error);
+                $this->logDatabaseError('Get row failed', $wpdb->last_error);
+                throw new DatastoreErrorException('Get row failed.');
             }
 
-            throw new RecordNotFoundException('No record found for query: ' . $query);
+            throw new RecordNotFoundException('No record found for the query.');
         }
 
         return $result;
@@ -88,7 +93,8 @@ trait CanQueryWordPressDatabase
         }
 
         if (false === $inserted) {
-            throw new DatastoreErrorException('Insert failed - ' . $wpdb->last_error);
+            $this->logDatabaseError('Insert failed', $wpdb->last_error);
+            throw new DatastoreErrorException('Insert failed.');
         }
 
         $fields = $table->getFieldsForIdentity();
@@ -127,7 +133,8 @@ trait CanQueryWordPressDatabase
         $result = $wpdb->update($table->getName(), $data, $where, $this->getFormats($data), $this->getFormats($where));
 
         if (false === $result) {
-            throw new DatastoreErrorException('Update failed - ' . $wpdb->last_error);
+            $this->logDatabaseError('Update failed', $wpdb->last_error);
+            throw new DatastoreErrorException('Update failed.');
         }
 
         // When no records were updated, we need to figure out if this is because the record couldn't be found.
@@ -173,7 +180,8 @@ trait CanQueryWordPressDatabase
         global $wpdb;
 
         if (false === $wpdb->delete($table->getName(), $where, $this->getFormats($where))) {
-            throw new DatastoreErrorException('Delete failed - ' . $wpdb->last_error);
+            $this->logDatabaseError('Delete failed', $wpdb->last_error);
+            throw new DatastoreErrorException('Delete failed.');
         }
     }
 
@@ -197,9 +205,10 @@ trait CanQueryWordPressDatabase
 
         if (is_null($result)) {
             if (empty($wpdb->last_error)) {
-                throw new RecordNotFoundException('No value found for query: ' . $query);
+                throw new RecordNotFoundException('No value found for the query.');
             } else {
-                throw new DatastoreErrorException('Get var failed - ' . $wpdb->last_error);
+                $this->logDatabaseError('Get var failed', $wpdb->last_error);
+                throw new DatastoreErrorException('Get var failed.');
             }
         }
 
