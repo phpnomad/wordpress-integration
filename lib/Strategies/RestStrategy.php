@@ -98,6 +98,18 @@ class RestStrategy implements CoreRestStrategy
             return true;
         }
 
+        // WordPress invokes EVERY method's permission callback on the
+        // matched route while rest_send_allow_header builds the Allow
+        // header — including methods that are not being dispatched. Running
+        // another verb's middleware against a request shaped for this verb
+        // produces spurious validation failures, null-param warnings, and
+        // pointless queries. Only the dispatching method's callback can
+        // run, so only its middleware outcome matters; advertise the
+        // method and let a real request of that verb run its own chain.
+        if (strtoupper($wpRequest->get_method()) !== strtoupper($controller->getMethod())) {
+            return true;
+        }
+
         $outcomes = $this->middlewareOutcomes[$wpRequest] ?? [];
         $controllerClass = get_class($controller);
 
