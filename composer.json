@@ -37,6 +37,7 @@
         "phpnomad/tests": "^0.3.0"
     },
     "require": {
+        "php": ">=8.0",
         "phpnomad/auth": "^1.0",
         "phpnomad/asset": "^1.0",
         "phpnomad/db": "^2.0",
