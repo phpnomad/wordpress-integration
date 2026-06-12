@@ -138,4 +138,113 @@ class RestStrategyPermissionsTest extends TestCase
 
         $this->assertSame(1, $middleware->runs);
     }
+
+    public function testRepeatedPermissionChecksRunMiddlewareOnlyOnce(): void
+    {
+        // WordPress invokes permission_callback again per method on the
+        // matched route while building the Allow header
+        // (rest_send_allow_header), so the chain must be memoized —
+        // middleware is not required to be idempotent.
+        $middleware = new class implements Middleware {
+            public int $runs = 0;
+
+            public function process(Request $request): void
+            {
+                $this->runs++;
+
+                if ($this->runs > 1) {
+                    throw new \TypeError('non-idempotent middleware ran twice');
+                }
+            }
+        };
+
+        $controller = $this->makeControllerWithMiddleware($middleware);
+        $strategy = $this->makeStrategy();
+        $wpRequest = new WP_REST_Request();
+
+        $first = $this->checkPermissions($strategy, $controller, $wpRequest);
+        $second = $this->checkPermissions($strategy, $controller, $wpRequest);
+
+        $this->assertTrue($first);
+        $this->assertTrue($second);
+        $this->assertSame(1, $middleware->runs);
+    }
+
+    public function testRepeatedAuthRejectionReturnsSameWpErrorWithoutRerun(): void
+    {
+        $middleware = new class implements Middleware {
+            public int $runs = 0;
+
+            public function process(Request $request): void
+            {
+                $this->runs++;
+                throw new RestException('Forbidden.', [], 403);
+            }
+        };
+
+        $controller = $this->makeControllerWithMiddleware($middleware);
+        $strategy = $this->makeStrategy();
+        $wpRequest = new WP_REST_Request();
+
+        $first = $this->checkPermissions($strategy, $controller, $wpRequest);
+        $second = $this->checkPermissions($strategy, $controller, $wpRequest);
+
+        $this->assertInstanceOf(WP_Error::class, $first);
+        $this->assertInstanceOf(WP_Error::class, $second);
+        $this->assertSame(1, $middleware->runs);
+    }
+
+    public function testOutcomeIsKeyedPerControllerNotPerRequest(): void
+    {
+        // rest_send_allow_header checks EVERY method registered on the
+        // route against the same WP_REST_Request; one controller's failed
+        // middleware must not clobber another controller's passing outcome.
+        $passing = new class implements Middleware {
+            public function process(Request $request): void
+            {
+            }
+        };
+        $failing = new class implements Middleware {
+            public function process(Request $request): void
+            {
+                throw new RestException('Validation failed.', [], 422);
+            }
+        };
+
+        $getController = $this->makeControllerWithMiddleware($passing);
+        $postController = $this->makeControllerWithMiddleware($failing);
+        $strategy = $this->makeStrategy();
+        $wpRequest = new WP_REST_Request();
+
+        $this->assertTrue($this->checkPermissions($strategy, $getController, $wpRequest));
+        $this->assertTrue($this->checkPermissions($strategy, $postController, $wpRequest));
+
+        // The GET controller's stored outcome must still be a clean pass:
+        // wrapCallback must NOT throw the POST controller's 422.
+        $wrap = new ReflectionMethod($strategy, 'wrapCallback');
+        $resolve = new ReflectionMethod($strategy, 'resolveRequest');
+
+        try {
+            $wrap->invoke($strategy, $getController, $resolve->invoke($strategy, $wpRequest), $wpRequest);
+            $this->fail('Expected getResponse() sentinel exception.');
+        } catch (RestException $e) {
+            $this->fail('GET controller inherited the POST controller\'s middleware failure.');
+        } catch (Exception $e) {
+            $this->assertSame('not used', $e->getMessage());
+        }
+    }
+
+    public function testMiddlewareTypeErrorBecomesWpErrorInsteadOfFatal(): void
+    {
+        $middleware = new class implements Middleware {
+            public function process(Request $request): void
+            {
+                throw new \TypeError('explode(): Argument #2 ($string) must be of type string, array given');
+            }
+        };
+
+        $result = $this->checkPermissions($this->makeStrategy(), $this->makeControllerWithMiddleware($middleware), new WP_REST_Request());
+
+        $this->assertInstanceOf(WP_Error::class, $result);
+    }
 }
