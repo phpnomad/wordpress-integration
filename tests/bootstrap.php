@@ -120,6 +120,18 @@ if (!class_exists('WP_Error')) {
 if (!class_exists('WP_REST_Request')) {
     class WP_REST_Request
     {
+        private string $method;
+
+        public function __construct(string $method = 'GET')
+        {
+            $this->method = $method;
+        }
+
+        public function get_method(): string
+        {
+            return $this->method;
+        }
+
         public function get_params(): array
         {
             return [];

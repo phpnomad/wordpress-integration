@@ -247,4 +247,28 @@ class RestStrategyPermissionsTest extends TestCase
 
         $this->assertInstanceOf(WP_Error::class, $result);
     }
+
+    public function testMismatchedMethodControllerSkipsMiddlewareEntirely(): void
+    {
+        // rest_send_allow_header checks the POST controller's permission
+        // callback during a GET request; running its middleware against a
+        // GET-shaped request fires validations with null params.
+        $middleware = new class implements Middleware {
+            public int $runs = 0;
+
+            public function process(Request $request): void
+            {
+                $this->runs++;
+            }
+        };
+
+        $controller = $this->makeControllerWithMiddleware($middleware); // getMethod() === 'GET'
+        $strategy = $this->makeStrategy();
+        $wpRequest = new WP_REST_Request('POST');
+
+        $result = $this->checkPermissions($strategy, $controller, $wpRequest);
+
+        $this->assertTrue($result);
+        $this->assertSame(0, $middleware->runs);
+    }
 }
