@@ -45,11 +45,20 @@ class RestStrategy implements CoreRestStrategy
 
     /**
      * Requests whose middleware chain already ran in the permission
-     * callback, mapped to the middleware outcome (true, or the caught
-     * non-auth RestException to be re-thrown by the route callback so
-     * clients keep the rich legacy error shape).
+     * callback, mapped per controller class to the middleware outcome
+     * (true, the caught non-auth RestException to be re-thrown by the
+     * route callback so clients keep the rich legacy error shape, or
+     * the WP_Error returned for auth rejections).
      *
-     * @var WeakMap<WP_REST_Request, true|RestException>
+     * Keyed by controller class because WordPress invokes the permission
+     * callback of EVERY method registered on a matched route for the same
+     * WP_REST_Request (rest_send_allow_header does this to build the
+     * Allow header), and one controller's outcome must not clobber
+     * another's. Memoized so the chain runs at most once per controller
+     * per request — middleware is not required to be idempotent (e.g.
+     * CSV conversion mutates request params).
+     *
+     * @var WeakMap<WP_REST_Request, array<class-string, true|RestException|WP_Error>>
      */
     private WeakMap $middlewareOutcomes;
 
@@ -89,26 +98,51 @@ class RestStrategy implements CoreRestStrategy
             return true;
         }
 
+        $outcomes = $this->middlewareOutcomes[$wpRequest] ?? [];
+        $controllerClass = get_class($controller);
+
+        // Already ran for this controller — return the same answer without
+        // re-running the chain. WordPress calls this more than once per
+        // request (dispatch, then rest_send_allow_header for every method
+        // on the route), and middleware may not be idempotent.
+        if (array_key_exists($controllerClass, $outcomes)) {
+            $stored = $outcomes[$controllerClass];
+
+            return $stored instanceof WP_Error ? $stored : true;
+        }
+
         $request = $this->resolveRequest($wpRequest);
 
         try {
             Arr::each($controller->getMiddleware($request), fn(Middleware $middleware) => $middleware->process($request));
-            $this->middlewareOutcomes[$wpRequest] = true;
+            $outcomes[$controllerClass] = true;
         } catch (RestException $e) {
             if (in_array($e->getCode(), [401, 403], true)) {
-                return new WP_Error(
+                $error = new WP_Error(
                     $e->getCode() === 401 ? 'rest_not_logged_in' : 'rest_forbidden',
                     $e->getMessage(),
                     ['status' => $e->getCode()]
                 );
+                $outcomes[$controllerClass] = $error;
+                $this->middlewareOutcomes[$wpRequest] = $outcomes;
+
+                return $error;
             }
 
-            $this->middlewareOutcomes[$wpRequest] = $e;
-        } catch (Exception $e) {
-            $this->logger->logException($e);
+            $outcomes[$controllerClass] = $e;
+        } catch (\Throwable $e) {
+            // \Throwable, not Exception: a TypeError thrown by middleware
+            // must surface as a 500, not fatal the whole request before
+            // WordPress can serve a body. logException() takes Exception,
+            // so non-Exception throwables are wrapped.
+            $this->logger->logException(
+                $e instanceof Exception ? $e : new Exception($e->getMessage(), (int) $e->getCode(), $e)
+            );
 
             return new WP_Error('rest_unexpected_error', 'An unexpected error occurred.', ['status' => 500]);
         }
+
+        $this->middlewareOutcomes[$wpRequest] = $outcomes;
 
         return true;
     }
@@ -121,7 +155,8 @@ class RestStrategy implements CoreRestStrategy
      */
     private function wrapCallback(Controller $controller, Request $request, ?WP_REST_Request $wpRequest = null): Response
     {
-        $outcome = $wpRequest !== null ? ($this->middlewareOutcomes[$wpRequest] ?? null) : null;
+        $outcomes = $wpRequest !== null ? ($this->middlewareOutcomes[$wpRequest] ?? []) : [];
+        $outcome = $outcomes[get_class($controller)] ?? null;
 
         if ($outcome instanceof RestException) {
             // Middleware already ran in the permission callback and failed
