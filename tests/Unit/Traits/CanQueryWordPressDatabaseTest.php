@@ -27,7 +27,7 @@ class CanQueryWordPressDatabaseTest extends TestCase
         parent::tearDown();
     }
 
-    public function testWpdbGetResultsUsesLastErrorWhenQueryReturnsNull(): void
+    public function testWpdbGetResultsThrowsStableMessageAndLogsLastErrorWhenQueryReturnsNull(): void
     {
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $queryBuilder->expects($this->once())
@@ -53,9 +53,22 @@ class CanQueryWordPressDatabaseTest extends TestCase
         };
 
         $this->expectException(DatastoreErrorException::class);
-        $this->expectExceptionMessage('Get results failed - Replica read failed');
+        // The thrown message must stay stable and free of MySQL error detail —
+        // it can surface in REST payloads or rendered fatals. The detail is
+        // recorded via error_log instead (redirected to a temp file below).
+        $this->expectExceptionMessage('Get results failed.');
 
-        $subject->getResults($queryBuilder);
+        $errorLog = tempnam(sys_get_temp_dir(), 'phpnomad-log');
+        $previousLog = ini_set('error_log', $errorLog);
+
+        try {
+            $subject->getResults($queryBuilder);
+        } finally {
+            ini_set('error_log', $previousLog);
+            $logged = file_get_contents($errorLog);
+            unlink($errorLog);
+            $this->assertStringContainsString('Replica read failed', $logged);
+        }
     }
 
     public function testWpdbUpdateIncludesTableIdentityAndPayloadWhenRecordIsMissing(): void

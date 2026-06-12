@@ -3,9 +3,12 @@
 namespace PHPNomad\Integrations\WordPress\Traits;
 
 use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
+use PHPNomad\Integrations\WordPress\Traits\LogsDatabaseErrors;
 
 trait CanModifyWordPressDatabase
 {
+    use LogsDatabaseErrors;
+
     /**
      * @param string $query
      * @param ...$args
@@ -20,7 +23,8 @@ trait CanModifyWordPressDatabase
         $wpdb->query($this->maybePrepare($query, ...$args));
 
         if ($wpdb->last_error) {
-            throw new DatastoreErrorException('Query responded with error: ' . $wpdb->last_error);
+            $this->logDatabaseError('Query failed', $wpdb->last_error);
+            throw new DatastoreErrorException('Query failed.');
         }
     }
 
