@@ -23,6 +23,7 @@ use wpdb;
 final class RealWpdbQueryContractTest extends TestCase
 {
     private const PREDICATE_TABLE = 'nomad_wpdb_contract_predicates';
+    private const JOIN_TABLE = 'nomad_wpdb_contract_join_records';
     private const COMPOUND_TABLE = 'nomad_wpdb_contract_compound';
     private const COMPOUND_CONTROL_TABLE = 'nomad_wpdb_contract_compound_control';
 
@@ -101,6 +102,10 @@ final class RealWpdbQueryContractTest extends TestCase
             'CREATE TEMPORARY TABLE ' . self::PREDICATE_TABLE
             . ' (id INT PRIMARY KEY, score INT NULL, label VARCHAR(128) NOT NULL) ENGINE=InnoDB'
         );
+        self::rawQuery(
+            'CREATE TEMPORARY TABLE ' . self::JOIN_TABLE
+            . ' (id INT PRIMARY KEY, score INT NULL, label VARCHAR(128) NOT NULL) ENGINE=InnoDB'
+        );
 
         foreach ([self::COMPOUND_TABLE, self::COMPOUND_CONTROL_TABLE] as $tableName) {
             self::rawQuery(
@@ -122,6 +127,11 @@ final class RealWpdbQueryContractTest extends TestCase
             'INSERT INTO ' . self::PREDICATE_TABLE . ' (id, score, label) VALUES (%d,%d,%s)',
             [70, 90, self::literalMarkerValue()]
         );
+        self::rawQuery('DELETE FROM ' . self::JOIN_TABLE);
+        self::rawQuery(
+            "INSERT INTO " . self::JOIN_TABLE . " (id, score, label) VALUES "
+            . "(500,70,'matching'),(600,999,'unmatched')"
+        );
     }
 
     public static function tearDownAfterClass(): void
@@ -130,7 +140,9 @@ final class RealWpdbQueryContractTest extends TestCase
             return;
         }
 
-        foreach ([self::PREDICATE_TABLE, self::COMPOUND_TABLE, self::COMPOUND_CONTROL_TABLE] as $tableName) {
+        foreach (
+            [self::PREDICATE_TABLE, self::JOIN_TABLE, self::COMPOUND_TABLE, self::COMPOUND_CONTROL_TABLE] as $tableName
+        ) {
             self::rawQuery("DROP TEMPORARY TABLE IF EXISTS {$tableName}");
         }
 
@@ -671,6 +683,77 @@ final class RealWpdbQueryContractTest extends TestCase
         self::assertSame(DatastoreErrorException::class, $caught ? get_class($caught) : null);
         self::assertInstanceOf(QueryBuilderException::class, $caught?->getPrevious());
         self::assertSame(self::compoundRows(self::COMPOUND_CONTROL_TABLE), self::compoundRows(self::COMPOUND_TABLE));
+    }
+
+    public function testInjectedWpdbBuildsJoinedQueriesAndClearsMetadataAcrossReuse(): void
+    {
+        $joinedTable = new ContractTable(
+            self::JOIN_TABLE,
+            'matching_predicates',
+            self::$predicateTable->getColumns(),
+            ['id']
+        );
+        $globalWpdb = $GLOBALS['wpdb'];
+        $GLOBALS['wpdb'] = new class () {
+            public function prepare(): void
+            {
+                throw new \RuntimeException('The injected builders must not use the global wpdb resource.');
+            }
+        };
+
+        try {
+            $clause = (new ClauseBuilder(self::$wpdb))
+                ->useTable(self::$predicateTable)
+                ->where('id', '=', 50);
+            $builder = (new class (self::$wpdb) extends QueryBuilder {
+                public function preparedLimit(int $limit): self
+                {
+                    $this->limit = ['LIMIT', ['type' => '%d', 'value' => $limit]];
+
+                    return $this;
+                }
+            })
+                ->from(self::$predicateTable)
+                ->select('id')
+                ->leftJoin($joinedTable, 'score', 'score')
+                ->where($clause)
+                ->orderBy('id', 'ASC')
+                ->preparedLimit(1);
+
+            self::assertSame(
+                [self::$predicateTable, $joinedTable],
+                $builder->getReferencedTables()
+            );
+
+            $joinedSql = $builder->build();
+            self::assertStringContainsString("WHERE predicates.id = '50'", $joinedSql);
+            self::assertStringContainsString('LIMIT 1', $joinedSql);
+            self::assertSame([], $builder->getReferencedTables());
+
+            $plainSql = $builder
+                ->from(self::$predicateTable)
+                ->select('*')
+                ->orderBy('id', 'ASC')
+                ->build();
+
+            self::assertStringNotContainsString('JOIN', $plainSql);
+            self::assertSame([], $builder->getReferencedTables());
+
+            $builder
+                ->from(self::$predicateTable)
+                ->select('*')
+                ->leftJoin($joinedTable, 'score', 'score')
+                ->resetClauses('join');
+
+            self::assertSame([self::$predicateTable], $builder->getReferencedTables());
+            $resetSql = $builder->build();
+        } finally {
+            $GLOBALS['wpdb'] = $globalWpdb;
+        }
+
+        self::assertSame('50', self::rawSelect($joinedSql)[0]['id']);
+        self::assertCount(4, self::rawSelect($plainSql));
+        self::assertCount(4, self::rawSelect($resetSql));
     }
 
     private static function selectQuery(ClauseBuilder $clause): QueryBuilder

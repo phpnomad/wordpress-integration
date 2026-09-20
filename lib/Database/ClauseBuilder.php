@@ -6,6 +6,7 @@ use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\ClauseBuilder as ClauseBuilderInterface;
 use PHPNomad\Database\Traits\WithPrependedFields;
 use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
+use wpdb;
 
 class ClauseBuilder implements ClauseBuilderInterface
 {
@@ -18,6 +19,13 @@ class ClauseBuilder implements ClauseBuilderInterface
         '=', '<', '>', '<=', '>=', '<>', '!=', 'LIKE', 'NOT LIKE',
         'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL',
     ];
+
+    private ?wpdb $database = null;
+
+    public function __construct(?wpdb $database = null)
+    {
+        $this->database = $database;
+    }
 
     /** @inheritDoc */
     public function where($field, string $operator, ...$values)
@@ -149,8 +157,7 @@ class ClauseBuilder implements ClauseBuilderInterface
         }
 
         if ($preparedValues !== []) {
-            global $wpdb;
-            $condition = $wpdb->prepare($condition, ...$preparedValues);
+            $condition = $this->wpdb()->prepare($condition, ...$preparedValues);
             if (!is_string($condition) || $condition === '') {
                 throw new QueryBuilderException('WordPress could not prepare a condition.');
             }
@@ -312,5 +319,17 @@ class ClauseBuilder implements ClauseBuilderInterface
         }
 
         return $logic;
+    }
+
+    /** @return wpdb */
+    private function wpdb()
+    {
+        if ($this->database !== null) {
+            return $this->database;
+        }
+
+        global $wpdb;
+
+        return $wpdb;
     }
 }

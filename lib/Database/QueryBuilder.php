@@ -4,6 +4,7 @@ namespace PHPNomad\Integrations\WordPress\Database;
 
 use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\ClauseBuilder;
+use PHPNomad\Database\Interfaces\HasQueryTables;
 use PHPNomad\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
 use PHPNomad\Database\Interfaces\Table;
 use PHPNomad\Database\Traits\WithPrependedFields;
@@ -11,7 +12,7 @@ use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
 use PHPNomad\Utils\Helpers\Arr;
 use wpdb;
 
-class QueryBuilder implements QueryBuilderInterface
+class QueryBuilder implements QueryBuilderInterface, HasQueryTables
 {
     use CanGetDataFormats;
     use WithPrependedFields;
@@ -19,6 +20,8 @@ class QueryBuilder implements QueryBuilderInterface
     protected array $select = [];
 
     protected array $from = [];
+
+    protected array $join = [];
 
     protected array $sql = [];
 
@@ -40,6 +43,18 @@ class QueryBuilder implements QueryBuilderInterface
 
     protected ?ClauseBuilder $clauseBuilder = null;
     protected array $groupBy = [];
+
+    private ?Table $rootTable = null;
+
+    /** @var list<Table> */
+    private array $joinTables = [];
+
+    private ?wpdb $database = null;
+
+    public function __construct(?wpdb $database = null)
+    {
+        $this->database = $database;
+    }
 
     /** @inheritDoc */
     public function select(string $field, string ...$fields)
@@ -64,6 +79,7 @@ class QueryBuilder implements QueryBuilderInterface
     public function from(Table $table)
     {
         $this->useTable($table);
+        $this->rootTable = $table;
         $this->from = ['FROM', $table->getName(), 'AS', $table->getAlias()];
 
         return $this;
@@ -99,6 +115,8 @@ class QueryBuilder implements QueryBuilderInterface
             $this->join = $join;
         }
 
+        $this->joinTables[] = $table;
+
         return $this;
     }
 
@@ -122,6 +140,8 @@ class QueryBuilder implements QueryBuilderInterface
             // Build join
             $this->join = $join;
         }
+
+        $this->joinTables[] = $table;
 
         return $this;
     }
@@ -275,11 +295,22 @@ class QueryBuilder implements QueryBuilderInterface
     }
 
     /** @inheritDoc */
+    public function getReferencedTables(): array
+    {
+        if ($this->rootTable === null) {
+            return [];
+        }
+
+        return array_merge([$this->rootTable], $this->joinTables);
+    }
+
+    /** @inheritDoc */
     public function reset()
     {
         $this->select = [];
         $this->clauseBuilder = null;
         $this->from = [];
+        $this->join = [];
         $this->sql = [];
         $this->preparedValues = [];
         $this->prepare = [];
@@ -290,6 +321,8 @@ class QueryBuilder implements QueryBuilderInterface
         $this->offset = [];
         $this->orderBy = [];
         $this->groupBy = [];
+        $this->rootTable = null;
+        $this->joinTables = [];
 
         return $this;
     }
@@ -302,6 +335,14 @@ class QueryBuilder implements QueryBuilderInterface
         foreach ($clauses as $clauseToReset) {
             if (isset($this->$clauseToReset)) {
                 $this->$clauseToReset = [];
+            }
+
+            if ($clauseToReset === 'from') {
+                $this->rootTable = null;
+            }
+
+            if ($clauseToReset === 'join') {
+                $this->joinTables = [];
             }
         }
 
@@ -347,6 +388,10 @@ class QueryBuilder implements QueryBuilderInterface
      */
     private function wpdb(): wpdb
     {
+        if ($this->database !== null) {
+            return $this->database;
+        }
+
         global $wpdb;
 
         return $wpdb;

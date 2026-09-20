@@ -98,6 +98,19 @@ class ClauseBuilderTest extends TestCase
         self::assertSame("records.id = '50'", $builder->build());
     }
 
+    public function testSubclassConstructorCanKeepGlobalWpdbFallback(): void
+    {
+        $builder = (new class () extends ClauseBuilder {
+            public function __construct()
+            {
+            }
+        })
+            ->useTable($this->table)
+            ->where('id', '=', 50);
+
+        self::assertSame("records.id = '50'", $builder->build());
+    }
+
     private function conditionSeamBuilder(): ClauseBuilder
     {
         return (new class () extends ClauseBuilder {
