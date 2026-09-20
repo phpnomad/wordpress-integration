@@ -104,15 +104,40 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         self::assertSame($this->strategy, $this->container->get(UpdateStrategy::class));
     }
 
-    public function testRetirementPersistsOnlyNamedDropsAndIsIdempotent(): void
+    public function testRetirementDeduplicatesBackendEquivalentNamesAndIsIdempotent(): void
     {
         self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
 
-        $retired = ['legacyValue', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'];
+        $retired = [
+            'legacyValue',
+            'LEGACYVALUE',
+            'legacy value',
+            'odd`name',
+            'select',
+            'legacy-name',
+            'légacy值',
+            'LÉGACY值',
+        ];
         $this->strategy->retireColumns($this->table, ...$retired);
         $this->strategy->retireColumns($this->table, ...$retired);
 
         self::assertSame(['id', 'unrelatedUnknown'], self::columns());
+        self::assertSame(
+            [['id' => '1', 'unrelatedUnknown' => 'keep']],
+            self::rawSelect('SELECT id, unrelatedUnknown FROM ' . self::TABLE)
+        );
+    }
+
+    public function testCaseVariantPresentAndAbsentNamesRetireOnlyThePresentIntersection(): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        $this->strategy->retireColumns($this->table, 'LEGACYVALUE', 'missingLegacy');
+
+        self::assertSame(
+            ['id', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'],
+            self::columns()
+        );
         self::assertSame(
             [['id' => '1', 'unrelatedUnknown' => 'keep']],
             self::rawSelect('SELECT id, unrelatedUnknown FROM ' . self::TABLE)
