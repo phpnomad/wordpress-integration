@@ -6,12 +6,13 @@ use PHPNomad\Database\Exceptions\TableUpdateFailedException;
 use PHPNomad\Database\Factories\Column;
 use PHPNomad\Database\Factories\Index;
 use PHPNomad\Database\Interfaces\Table;
+use PHPNomad\Database\Interfaces\TableColumnRetirementStrategy as CoreTableColumnRetirementStrategy;
 use PHPNomad\Database\Interfaces\TableUpdateStrategy as CoreTableUpdateStrategy;
 use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
 use PHPNomad\Integrations\WordPress\Traits\CanModifyWordPressDatabase;
 use PHPNomad\Utils\Helpers\Arr;
 
-class TableUpdateStrategy implements CoreTableUpdateStrategy
+class TableUpdateStrategy implements CoreTableUpdateStrategy, CoreTableColumnRetirementStrategy
 {
     use CanModifyWordPressDatabase;
 
@@ -34,6 +35,18 @@ class TableUpdateStrategy implements CoreTableUpdateStrategy
         } catch (DatastoreErrorException $e) {
             throw new TableUpdateFailedException($e);
         }
+    }
+
+    /** Acceptance stub. Implementation is intentionally a separate phase. */
+    public function columnExists(Table $table, string $columnName): bool
+    {
+        throw new \LogicException('Table column retirement is not implemented.');
+    }
+
+    /** Acceptance stub. Implementation is intentionally a separate phase. */
+    public function retireColumns(Table $table, string ...$columnNames): void
+    {
+        throw new \LogicException('Table column retirement is not implemented.');
     }
 
     protected function convertColumnToSql(Column $column): string
