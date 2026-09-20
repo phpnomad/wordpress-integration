@@ -7,7 +7,7 @@ require_once dirname(__DIR__, 2) . '/vendor/autoload.php';
 $wordpressRoot = getenv('WORDPRESS_ROOT');
 
 if (!is_string($wordpressRoot) || $wordpressRoot === '') {
-    throw new RuntimeException('WORDPRESS_ROOT must point to an official WordPress source tree.');
+    return;
 }
 
 $wordpressRoot = rtrim($wordpressRoot, '/');

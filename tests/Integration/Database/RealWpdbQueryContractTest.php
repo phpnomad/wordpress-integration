@@ -33,6 +33,10 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public static function setUpBeforeClass(): void
     {
+        if (!class_exists(wpdb::class)) {
+            self::markTestSkipped('Set WORDPRESS_ROOT to the pinned official WordPress source tree.');
+        }
+
         $host = self::environment('MYSQL_HOST', '127.0.0.1');
         $port = self::environment('MYSQL_PORT', '3306');
         $user = self::environment('MYSQL_USER', 'root');
@@ -122,6 +126,10 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public static function tearDownAfterClass(): void
     {
+        if (!isset(self::$wpdb)) {
+            return;
+        }
+
         foreach ([self::PREDICATE_TABLE, self::COMPOUND_TABLE, self::COMPOUND_CONTROL_TABLE] as $tableName) {
             self::rawQuery("DROP TEMPORARY TABLE IF EXISTS {$tableName}");
         }

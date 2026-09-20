@@ -10,7 +10,8 @@
     "minimum-stability": "dev",
     "scripts": {
         "php-cs-fixer": "php-cs-fixer fix",
-        "test:integration": "phpunit -c phpunit-integration.xml --colors=never --fail-on-skipped"
+        "test:integration": "phpunit -c phpunit-integration.xml --colors=never",
+        "test:integration:required": "phpunit -c phpunit-integration.xml --colors=never --fail-on-skipped"
     },
     "repositories": [
         {
