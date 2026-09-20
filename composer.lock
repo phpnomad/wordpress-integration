@@ -274,12 +274,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/db.git",
-                "reference": "208e994c8dadd6e04f5cf441d68fc23fedc25d88"
+                "reference": "77031d8de80c3a548c9b0eb3ad1f35716b9963c8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/db/zipball/208e994c8dadd6e04f5cf441d68fc23fedc25d88",
-                "reference": "208e994c8dadd6e04f5cf441d68fc23fedc25d88",
+                "url": "https://api.github.com/repos/phpnomad/db/zipball/77031d8de80c3a548c9b0eb3ad1f35716b9963c8",
+                "reference": "77031d8de80c3a548c9b0eb3ad1f35716b9963c8",
                 "shasum": ""
             },
             "require": {
@@ -323,7 +323,7 @@
                 "source": "https://github.com/phpnomad/db/tree/packet/table-column-retirement-contract",
                 "issues": "https://github.com/phpnomad/db/issues"
             },
-            "time": "2026-09-20T16:55:34+00:00"
+            "time": "2026-09-20T17:17:50+00:00"
         },
         {
             "name": "phpnomad/di",
