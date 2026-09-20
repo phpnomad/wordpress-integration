@@ -27,6 +27,38 @@ class ClauseBuilder implements ClauseBuilderInterface
         $this->database = $database;
     }
 
+    /**
+     * Return an operation-local copy that prepares through the supplied wpdb.
+     *
+     * The ordinary builder remains global-state compatible. Coordinated
+     * operations use this seam so a caller's mutable clause is not rebound in
+     * place while another request is using it.
+     */
+    public function forDatabase(wpdb $database): static
+    {
+        $clone = clone $this;
+        $clone->database = $database;
+
+        foreach ($clone->clauses as $index => $clause) {
+            if (!is_array($clause) || ($clause['type'] ?? null) !== 'group') {
+                continue;
+            }
+
+            $bound = [];
+            foreach ($clause['clauses'] as $groupClause) {
+                if (!$groupClause instanceof self) {
+                    throw new \PHPNomad\Database\Exceptions\UnsupportedCoordinationException(
+                        'Coordinated WordPress queries require official WordPress grouped clause builders.'
+                    );
+                }
+                $bound[] = $groupClause->forDatabase($database);
+            }
+            $clone->clauses[$index]['clauses'] = $bound;
+        }
+
+        return $clone;
+    }
+
     /** @inheritDoc */
     public function where($field, string $operator, ...$values)
     {
@@ -64,7 +96,7 @@ class ClauseBuilder implements ClauseBuilderInterface
             $this->clauses[] = 'AND';
         }
 
-        $this->clauses[] = ['logic' => $logic, 'clauses' => $clauses];
+        $this->clauses[] = ['type' => 'group', 'logic' => $logic, 'clauses' => $clauses];
         return $this;
     }
 
@@ -77,7 +109,7 @@ class ClauseBuilder implements ClauseBuilderInterface
             $this->clauses[] = 'OR';
         }
 
-        $this->clauses[] = ['logic' => $logic, 'clauses' => $clauses];
+        $this->clauses[] = ['type' => 'group', 'logic' => $logic, 'clauses' => $clauses];
         return $this;
     }
 
@@ -140,34 +172,18 @@ class ClauseBuilder implements ClauseBuilderInterface
 
         $fieldString = $this->getFieldString($field);
         $values = $this->normalizeValues($field, $operator, $values);
-        $placeholder = $this->generatePlaceholder($field, $values, $operator);
-        $condition = "{$fieldString} {$operator}" . ($placeholder === '' ? '' : " {$placeholder}");
-
-        $preparedValues = [];
-        foreach ($values as $value) {
-            if (is_array($value)) {
-                foreach ($value as $tupleValue) {
-                    if ($tupleValue !== null) {
-                        $preparedValues[] = $tupleValue;
-                    }
-                }
-            } elseif ($value !== null) {
-                $preparedValues[] = $value;
-            }
-        }
-
-        if ($preparedValues !== []) {
-            $condition = $this->wpdb()->prepare($condition, ...$preparedValues);
-            if (!is_string($condition) || $condition === '') {
-                throw new QueryBuilderException('WordPress could not prepare a condition.');
-            }
-        }
 
         if ($this->clauses !== [] && $logic !== null) {
             $this->clauses[] = $logic;
         }
 
-        $this->clauses[] = $condition;
+        $this->clauses[] = [
+            'type' => 'condition',
+            'field' => $fieldString,
+            'placeholderField' => $field,
+            'operator' => $operator,
+            'values' => $values,
+        ];
         return $this;
     }
 
@@ -179,6 +195,11 @@ class ClauseBuilder implements ClauseBuilderInterface
         foreach ($this->clauses as $clause) {
             if (is_string($clause)) {
                 $queryParts[] = $clause;
+                continue;
+            }
+
+            if (($clause['type'] ?? null) === 'condition') {
+                $queryParts[] = $this->buildCondition($clause);
                 continue;
             }
 
@@ -204,6 +225,16 @@ class ClauseBuilder implements ClauseBuilderInterface
     /** @inheritDoc */
     public function reset()
     {
+        foreach ($this->clauses as $clause) {
+            if (!is_array($clause) || ($clause['type'] ?? null) !== 'group') {
+                continue;
+            }
+            foreach ($clause['clauses'] as $groupClause) {
+                if ($groupClause instanceof ClauseBuilderInterface) {
+                    $groupClause->reset();
+                }
+            }
+        }
         $this->clauses = [];
         $this->preparedValues = [];
         return $this;
@@ -301,6 +332,7 @@ class ClauseBuilder implements ClauseBuilderInterface
     private function appendGroup(string $logic, array $clauses): void
     {
         $this->clauses[] = [
+            'type' => 'group',
             'logic' => $this->validateGroup($logic, $clauses),
             'clauses' => $clauses,
         ];
@@ -331,5 +363,35 @@ class ClauseBuilder implements ClauseBuilderInterface
         global $wpdb;
 
         return $wpdb;
+    }
+
+    /** @param array{field:string, placeholderField:string|string[], operator:string, values:array<int,mixed>} $clause */
+    private function buildCondition(array $clause): string
+    {
+        $values = $clause['values'];
+        $preparedValues = [];
+        foreach ($values as $value) {
+            if (is_array($value)) {
+                foreach ($value as $tupleValue) {
+                    if ($tupleValue !== null) {
+                        $preparedValues[] = $tupleValue;
+                    }
+                }
+            } elseif ($value !== null) {
+                $preparedValues[] = $value;
+            }
+        }
+
+        $placeholder = $this->generatePlaceholder($clause['placeholderField'], $values, $clause['operator']);
+        $condition = $clause['field'] . ' ' . $clause['operator']
+            . ($placeholder === '' ? '' : ' ' . $placeholder);
+        if ($preparedValues !== []) {
+            $condition = $this->wpdb()->prepare($condition, ...$preparedValues);
+            if (!is_string($condition) || $condition === '') {
+                throw new QueryBuilderException('WordPress could not prepare a condition.');
+            }
+        }
+
+        return $condition;
     }
 }

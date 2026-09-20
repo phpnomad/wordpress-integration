@@ -26,6 +26,7 @@ use PHPNomad\Console\Interfaces\OutputStrategy as CoreOutputStrategy;
 use PHPNomad\Database\Interfaces\CanConvertDatabaseStringToDateTime;
 use PHPNomad\Database\Interfaces\CanConvertToDatabaseDateString;
 use PHPNomad\Database\Interfaces\ClauseBuilder as CoreClauseBuilder;
+use PHPNomad\Database\Interfaces\CoordinatedQueryStrategy as CoreCoordinatedQueryStrategy;
 use PHPNomad\Database\Interfaces\HasCharsetProvider;
 use PHPNomad\Database\Interfaces\HasCollateProvider;
 use PHPNomad\Database\Interfaces\HasGlobalDatabasePrefix;
@@ -93,7 +94,11 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             ActionBindingStrategy::class => CoreActionBindingStrategy::class,
             ObjectCacheStrategy::class => CacheStrategy::class,
             CachePolicy::class => CoreCachePolicy::class,
-            QueryStrategy::class => CoreQueryStrategy::class,
+            // Opting into the coordinated capability must not create a second
+            // strategy. DatabaseServiceProvider and both public aliases share
+            // one resource-owning instance, while inherited CRUD remains the
+            // ordinary WordPress implementation.
+            CoordinatedQueryStrategy::class => [CoreQueryStrategy::class, CoreCoordinatedQueryStrategy::class],
             DefaultCacheTtlProvider::class => HasDefaultTtl::class,
             TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
             TableUpdateStrategy::class => CoreTableUpdateStrategy::class,
@@ -108,7 +113,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             CurrentContextResolverStrategy::class => CurrentContextResolverStrategyInterface::class,
             CurrentUserResolverStrategy::class => CurrentUserResolverStrategyInterface::class,
             PostAuthorResolver::class => PageAuthorResolver::class,
-            DatabaseProvider::class => [HasDefaultTtl::class, HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
+            DatabaseProvider::class => [HasGlobalDatabasePrefix::class, HasCollateProvider::class, HasCharsetProvider::class],
             DatabaseDateAdapter::class => [CanConvertToDatabaseDateString::class, CanConvertDatabaseStringToDateTime::class],
             AssetStrategy::class => AssetStrategyInterface::class,
             TrackingPermissionStrategy::class => TrackingPermissionStrategyInterface::class,
