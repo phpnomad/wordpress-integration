@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f4c2534653e351a307308b15f6fd502f",
+    "content-hash": "5aa3582af01550ffc37b307cf60bffe3",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -270,16 +270,16 @@
         },
         {
             "name": "phpnomad/db",
-            "version": "2.2.1",
+            "version": "dev-packet/table-column-retirement-contract",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/db.git",
-                "reference": "6e423f78b4bf0c166981fcee4b14d39fa2925f5d"
+                "reference": "208e994c8dadd6e04f5cf441d68fc23fedc25d88"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/db/zipball/6e423f78b4bf0c166981fcee4b14d39fa2925f5d",
-                "reference": "6e423f78b4bf0c166981fcee4b14d39fa2925f5d",
+                "url": "https://api.github.com/repos/phpnomad/db/zipball/208e994c8dadd6e04f5cf441d68fc23fedc25d88",
+                "reference": "208e994c8dadd6e04f5cf441d68fc23fedc25d88",
                 "shasum": ""
             },
             "require": {
@@ -290,6 +290,7 @@
                 "phpnomad/utils": "^1.0"
             },
             "require-dev": {
+                "phpnomad/event": "^1.0",
                 "phpnomad/tests": "^0.1.0 || ^0.3.0"
             },
             "type": "library",
@@ -298,7 +299,16 @@
                     "PHPNomad\\Database\\": "lib/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "PHPNomad\\Database\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "php-cs-fixer": [
+                    "php-cs-fixer fix"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -310,10 +320,10 @@
             ],
             "homepage": "https://github.com/phpnomad/core",
             "support": {
-                "issues": "https://github.com/phpnomad/db/issues",
-                "source": "https://github.com/phpnomad/db/tree/2.2.1"
+                "source": "https://github.com/phpnomad/db/tree/packet/table-column-retirement-contract",
+                "issues": "https://github.com/phpnomad/db/issues"
             },
-            "time": "2026-05-02T01:06:15+00:00"
+            "time": "2026-09-20T16:55:34+00:00"
         },
         {
             "name": "phpnomad/di",
@@ -6122,9 +6132,18 @@
             "time": "2025-11-17T20:03:58+00:00"
         }
     ],
-    "aliases": [],
+    "aliases": [
+        {
+            "package": "phpnomad/db",
+            "version": "dev-packet/table-column-retirement-contract",
+            "alias": "2.2.x-dev",
+            "alias_normalized": "2.2.9999999.9999999-dev"
+        }
+    ],
     "minimum-stability": "dev",
-    "stability-flags": {},
+    "stability-flags": {
+        "phpnomad/db": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

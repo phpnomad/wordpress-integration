@@ -74,6 +74,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         );
 
         self::assertTrue($this->strategy->columnExists($this->table, 'legacyValue'));
+        self::assertTrue($this->strategy->columnExists($this->table, 'LEGACYVALUE'));
         self::assertFalse($this->strategy->columnExists($this->table, 'crossSchemaOnly'));
 
         $this->strategy->syncColumns($this->table);
@@ -117,7 +118,59 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         }
     }
 
-    public function testIndexedAndInboundForeignKeyColumnsAreRefusedWithoutSchemaChanges(): void
+    public function testPlainIndexedColumnIsRefusedWithoutSchemaChanges(): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        self::rawQuery('ALTER TABLE ' . self::TABLE . ' ADD INDEX legacy_value_index (legacyValue)');
+
+        try {
+            $this->strategy->retireColumns($this->table, 'legacyValue');
+            self::fail('Retirement must not remove a plain index implicitly.');
+        } catch (\InvalidArgumentException $expected) {
+            self::assertContains('legacyValue', self::columns());
+            self::assertSame(
+                'legacy_value_index',
+                self::rawSelect(
+                    "SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS "
+                    . "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . self::TABLE . "' "
+                    . "AND COLUMN_NAME = 'legacyValue'"
+                )[0]['INDEX_NAME']
+            );
+        }
+    }
+
+    public function testFunctionalIndexDependencyIsRefusedWhenStatisticsColumnNameIsNull(): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        self::rawQuery(
+            'ALTER TABLE ' . self::TABLE . ' ADD INDEX legacy_value_expression ((legacyValue + 1))'
+        );
+
+        self::assertNull(self::rawSelect(
+            "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.STATISTICS "
+            . "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . self::TABLE . "' "
+            . "AND INDEX_NAME = 'legacy_value_expression'"
+        )[0]['COLUMN_NAME']);
+
+        try {
+            $this->strategy->retireColumns($this->table, 'legacyValue');
+            self::fail('Retirement must not overlook a functional-index dependency.');
+        } catch (\InvalidArgumentException $expected) {
+            self::assertContains('legacyValue', self::columns());
+            self::assertSame(
+                'legacy_value_expression',
+                self::rawSelect(
+                    "SELECT INDEX_NAME FROM INFORMATION_SCHEMA.STATISTICS "
+                    . "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . self::TABLE . "' "
+                    . "AND INDEX_NAME = 'legacy_value_expression'"
+                )[0]['INDEX_NAME']
+            );
+        }
+    }
+
+    public function testInboundForeignKeyColumnIsRefusedWithoutSchemaChanges(): void
     {
         self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
 
@@ -131,7 +184,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
         try {
             $this->strategy->retireColumns($this->table, 'legacyValue');
-            self::fail('Retirement must not remove an index or inbound foreign key implicitly.');
+            self::fail('Retirement must not remove an inbound foreign key implicitly.');
         } catch (\InvalidArgumentException $expected) {
             self::assertContains('legacyValue', self::columns());
             self::assertSame(
