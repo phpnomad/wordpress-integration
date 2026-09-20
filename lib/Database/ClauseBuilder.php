@@ -5,11 +5,9 @@ namespace PHPNomad\Integrations\WordPress\Database;
 use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\ClauseBuilder as ClauseBuilderInterface;
 use PHPNomad\Database\Traits\WithPrependedFields;
-use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
 
 class ClauseBuilder implements ClauseBuilderInterface
 {
-    use CanGetDataFormats;
     use WithPrependedFields;
 
     protected array $clauses = [];
@@ -118,6 +116,13 @@ class ClauseBuilder implements ClauseBuilderInterface
      */
     protected function addCondition($field, string $operator, array $values, ?string $logic = null): self
     {
+        if ($logic !== null) {
+            $logic = strtoupper($logic);
+            if (!in_array($logic, ['AND', 'OR'], true)) {
+                throw new QueryBuilderException("Unknown condition logic: {$logic}");
+            }
+        }
+
         $operator = strtoupper($operator);
         if (!in_array($operator, $this->validOperators, true)) {
             throw new QueryBuilderException("Unknown operator: {$operator}");
@@ -125,7 +130,29 @@ class ClauseBuilder implements ClauseBuilderInterface
 
         $fieldString = $this->getFieldString($field);
         $values = $this->normalizeValues($field, $operator, $values);
-        $condition = $this->renderCondition($fieldString, $field, $operator, $values);
+        $placeholder = $this->generatePlaceholder($field, $values, $operator);
+        $condition = "{$fieldString} {$operator}" . ($placeholder === '' ? '' : " {$placeholder}");
+
+        $preparedValues = [];
+        foreach ($values as $value) {
+            if (is_array($value)) {
+                foreach ($value as $tupleValue) {
+                    if ($tupleValue !== null) {
+                        $preparedValues[] = $tupleValue;
+                    }
+                }
+            } elseif ($value !== null) {
+                $preparedValues[] = $value;
+            }
+        }
+
+        if ($preparedValues !== []) {
+            global $wpdb;
+            $condition = $wpdb->prepare($condition, ...$preparedValues);
+            if (!is_string($condition) || $condition === '') {
+                throw new QueryBuilderException('WordPress could not prepare a condition.');
+            }
+        }
 
         if ($this->clauses !== [] && $logic !== null) {
             $this->clauses[] = $logic;
@@ -176,23 +203,32 @@ class ClauseBuilder implements ClauseBuilderInterface
     protected function generatePlaceholder($field, array $values, string $operator): string
     {
         $operator = strtoupper($operator);
+        $placeholderFor = static fn ($value): string => $value === null ? 'NULL' : '%s';
 
         if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
             return '';
         }
 
+        if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
+            return $placeholderFor($values[0]) . ' AND ' . $placeholderFor($values[1]);
+        }
+
         if ($operator === 'IN' || $operator === 'NOT IN') {
             if (is_array($field)) {
-                $subgroup = '(' . implode(', ', array_fill(0, count($field), '%s')) . ')';
-                $placeholderGroup = implode(', ', array_fill(0, count($values), $subgroup));
+                $rows = array_map(
+                    static fn (array $tuple): string => '('
+                        . implode(', ', array_map($placeholderFor, $tuple)) . ')',
+                    $values
+                );
+                $placeholderGroup = implode(', ', $rows);
             } else {
-                $placeholderGroup = implode(', ', array_fill(0, count($values), '%s'));
+                $placeholderGroup = implode(', ', array_map($placeholderFor, $values));
             }
 
             return "({$placeholderGroup})";
         }
 
-        return '%s';
+        return $placeholderFor($values[0]);
     }
 
     /** @param string|string[] $field */
@@ -250,49 +286,6 @@ class ClauseBuilder implements ClauseBuilderInterface
         }
 
         return $values;
-    }
-
-    /** @param string|string[] $field */
-    private function renderCondition(string $fieldString, $field, string $operator, array $values): string
-    {
-        if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
-            return "{$fieldString} {$operator}";
-        }
-
-        if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
-            return "{$fieldString} {$operator} "
-                . $this->renderValue($values[0]) . ' AND ' . $this->renderValue($values[1]);
-        }
-
-        if ($operator === 'IN' || $operator === 'NOT IN') {
-            if (is_array($field)) {
-                $rows = array_map(function (array $tuple): string {
-                    return '(' . implode(', ', array_map(fn ($value): string => $this->renderValue($value), $tuple)) . ')';
-                }, $values);
-                return "{$fieldString} {$operator} (" . implode(', ', $rows) . ')';
-            }
-
-            return "{$fieldString} {$operator} ("
-                . implode(', ', array_map(fn ($value): string => $this->renderValue($value), $values)) . ')';
-        }
-
-        return "{$fieldString} {$operator} " . $this->renderValue($values[0]);
-    }
-
-    private function renderValue($value): string
-    {
-        global $wpdb;
-
-        if ($value === null) {
-            return 'NULL';
-        }
-
-        $prepared = $wpdb->prepare($this->getFieldSprintfType($value), $value);
-        if (!is_string($prepared) || $prepared === '') {
-            throw new QueryBuilderException('WordPress could not prepare a condition value.');
-        }
-
-        return $prepared;
     }
 
     /** @param ClauseBuilderInterface[] $clauses */

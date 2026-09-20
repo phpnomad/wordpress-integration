@@ -25,17 +25,12 @@ class ClauseBuilderTest extends TestCase
         ]);
 
         $GLOBALS['wpdb'] = new class () {
-            public function prepare(string $format, $value): string
+            public function prepare(string $format, ...$values): string
             {
-                if ($format === '%d') {
-                    return (string) (int) $value;
-                }
-
-                if ($format === '%f') {
-                    return (string) (float) $value;
-                }
-
-                return "'" . addslashes((string) $value) . "'";
+                return vsprintf($format, array_map(
+                    static fn ($value): string => "'" . addslashes((string) $value) . "'",
+                    $values
+                ));
             }
         };
     }
@@ -58,7 +53,7 @@ class ClauseBuilderTest extends TestCase
             ->orGroup('AND', $child);
 
         self::assertSame(
-            "records.label = '__NOMADIC_SUBQUERY__1 %s %i %% O\\'Reilly' OR (records.score IN (NULL, 30))",
+            "records.label = '__NOMADIC_SUBQUERY__1 %s %i %% O\\'Reilly' OR (records.score IN (NULL, '30'))",
             $builder->build()
         );
     }
@@ -76,7 +71,7 @@ class ClauseBuilderTest extends TestCase
             self::assertSame('Operator IN tuple width must match the field list.', $exception->getMessage());
         }
 
-        self::assertSame('records.id = 50', $builder->build());
+        self::assertSame("records.id = '50'", $builder->build());
     }
 
     public function testProtectedConditionSeamNormalizesValidLogic(): void
@@ -84,7 +79,7 @@ class ClauseBuilderTest extends TestCase
         $builder = $this->conditionSeamBuilder();
         $builder->where('id', '=', 50)->addUsingLogic('and');
 
-        self::assertSame('records.id = 50 AND records.score = 30', $builder->build());
+        self::assertSame("records.id = '50' AND records.score = '30'", $builder->build());
     }
 
     public function testProtectedConditionSeamRejectsInvalidLogicWithoutChangingState(): void
@@ -100,7 +95,7 @@ class ClauseBuilderTest extends TestCase
         }
 
         self::assertInstanceOf(QueryBuilderException::class, $caught);
-        self::assertSame('records.id = 50', $builder->build());
+        self::assertSame("records.id = '50'", $builder->build());
     }
 
     private function conditionSeamBuilder(): ClauseBuilder
