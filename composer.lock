@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dc71371cf132afefdb55d5c65ab7c3bb",
+    "content-hash": "eaf236c6bf4115474b7d8ac3a7758467",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -319,10 +319,6 @@
                 }
             ],
             "homepage": "https://github.com/phpnomad/core",
-            "support": {
-                "source": "https://github.com/phpnomad/db/tree/packet/table-column-retirement-contract",
-                "issues": "https://github.com/phpnomad/db/issues"
-            },
             "time": "2026-09-20T17:17:50+00:00"
         },
         {
