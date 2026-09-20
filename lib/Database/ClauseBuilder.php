@@ -2,110 +2,108 @@
 
 namespace PHPNomad\Integrations\WordPress\Database;
 
+use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\ClauseBuilder as ClauseBuilderInterface;
 use PHPNomad\Database\Traits\WithPrependedFields;
 use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
-use PHPNomad\Utils\Helpers\Arr;
 
 class ClauseBuilder implements ClauseBuilderInterface
 {
-    use CanGetDataFormats, WithPrependedFields;
+    use CanGetDataFormats;
+    use WithPrependedFields;
 
     protected array $clauses = [];
     protected array $preparedValues = [];
-    protected array $validOperators = ["=", "<", ">", "<=", ">=", "<>", "!=",
-        "LIKE", "NOT LIKE", "IN", "NOT IN", "BETWEEN",
-        "NOT BETWEEN", "IS NULL", "IS NOT NULL"];
+    protected array $validOperators = [
+        '=', '<', '>', '<=', '>=', '<>', '!=', 'LIKE', 'NOT LIKE',
+        'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN', 'IS NULL', 'IS NOT NULL',
+    ];
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function where($field, string $operator, ...$values)
     {
         $this->addCondition($field, $operator, $values);
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function andWhere($field, string $operator, ...$values)
     {
         $this->addCondition($field, $operator, $values, 'AND');
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function orWhere($field, string $operator, ...$values)
     {
         $this->addCondition($field, $operator, $values, 'OR');
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function group(string $logic, ClauseBuilderInterface ...$clauses)
     {
-        $group = ['logic' => $logic, 'clauses' => $clauses];
-        $this->clauses[] = $group;
+        $this->appendGroup($logic, $clauses);
+        return $this;
+    }
 
+    /** @inheritDoc */
+    public function andGroup(string $logic, ClauseBuilderInterface ...$clauses)
+    {
+        $logic = $this->validateGroup($logic, $clauses);
+
+        if ($this->clauses !== []) {
+            $this->clauses[] = 'AND';
+        }
+
+        $this->clauses[] = ['logic' => $logic, 'clauses' => $clauses];
+        return $this;
+    }
+
+    /** @inheritDoc */
+    public function orGroup(string $logic, ClauseBuilderInterface ...$clauses)
+    {
+        $logic = $this->validateGroup($logic, $clauses);
+
+        if ($this->clauses !== []) {
+            $this->clauses[] = 'OR';
+        }
+
+        $this->clauses[] = ['logic' => $logic, 'clauses' => $clauses];
         return $this;
     }
 
     /**
-     * @inheritDoc
-     */
-    public function andGroup(string $logic, ClauseBuilderInterface ...$clauses)
-    {
-        if (!empty($this->clauses)) {
-            $this->clauses[] = 'AND';
-        }
-
-        return $this->group($logic, ...$clauses);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function orGroup(string $logic, ClauseBuilderInterface ...$clauses)
-    {
-        if (!empty($this->clauses)) {
-            $this->clauses[] = 'OR';
-        }
-
-        return $this->group($logic, ...$clauses);
-    }
-
-    /**
-     * Gets the field string, filtering invalid fields.
+     * Gets the field string, rejecting invalid fields.
      *
-     * @param $field
+     * @param string|string[] $field
      * @return string|null
+     * @throws QueryBuilderException
      */
     protected function getFieldString($field): ?string
     {
-        $result = null;
-
-        if (!is_array($field) && $this->tableHasField($field)) {
-            $result = $this->prependField($field);
-        }
-
-        if (is_array($field)) {
-            $fieldStr = Arr::process($field)
-                ->filter(fn($field) => $this->tableHasField($field))
-                ->map(fn($field) => $this->prependField($field))
-                ->setSeparator(', ')
-                ->toString();
-
-            if (!empty($fieldStr)) {
-                $result = "($fieldStr)";
+        if (!is_array($field)) {
+            if (!is_string($field) || !$this->tableHasField($field)) {
+                throw new QueryBuilderException('Unknown field: ' . (string) $field);
             }
+
+            return $this->prependField($field);
         }
 
-        return $result;
+        if ($field === []) {
+            throw new QueryBuilderException('A condition field list cannot be empty.');
+        }
+
+        $fields = [];
+        foreach ($field as $member) {
+            if (!is_string($member) || !$this->tableHasField($member)) {
+                throw new QueryBuilderException('Unknown field: ' . (string) $member);
+            }
+
+            $fields[] = $this->prependField($member);
+        }
+
+        return '(' . implode(', ', $fields) . ')';
     }
 
     /**
@@ -114,107 +112,64 @@ class ClauseBuilder implements ClauseBuilderInterface
      * @param string|string[] $field The field, or fields to be compared.
      * @param string $operator The operator to be used in the comparison.
      * @param array $values The values to be compared against.
-     * @param ?string $logic (optional) The logic operator to be prepended to the condition.
+     * @param ?string $logic The logic operator to be prepended to the condition.
      * @return $this
+     * @throws QueryBuilderException
      */
     protected function addCondition($field, string $operator, array $values, ?string $logic = null): self
     {
         $operator = strtoupper($operator);
-
-        if (!in_array($operator, $this->validOperators)) {
-            return $this;
+        if (!in_array($operator, $this->validOperators, true)) {
+            throw new QueryBuilderException("Unknown operator: {$operator}");
         }
 
-        $placeholder = $this->generatePlaceholder($field, $values, $operator);
+        $fieldString = $this->getFieldString($field);
+        $values = $this->normalizeValues($field, $operator, $values);
+        $condition = $this->renderCondition($fieldString, $field, $operator, $values);
 
-        $fieldStr = $this->getFieldString($field);
-
-        if (!empty($this->clauses) && $logic && in_array(strtoupper($logic), ['AND', 'OR'])) {
-            $this->clauses[] = strtoupper($logic);
+        if ($this->clauses !== [] && $logic !== null) {
+            $this->clauses[] = $logic;
         }
 
-        $this->clauses[] = $fieldStr;
-        $this->clauses[] = $operator;
-        $this->clauses[] = $placeholder;
-
-        foreach (Arr::whereNotNull($values) as $value) {
-            if (is_array($value)) {
-                $this->preparedValues = Arr::merge($this->preparedValues, array_values($value));
-            } else {
-                $this->preparedValues[] = $value;
-            }
-        }
-
+        $this->clauses[] = $condition;
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function build(): string
     {
-        global $wpdb;
         $queryParts = [];
-        $allValues = $this->preparedValues; // Initially prepared values
-        $subQueryReplacements = [];
-        $query = "";
-        $marker = 0;
 
         foreach ($this->clauses as $clause) {
             if (is_string($clause)) {
-                // Directly append logical operators or raw SQL parts
                 $queryParts[] = $clause;
-            } elseif (is_array($clause) && isset($clause['logic'], $clause['clauses'])) {
-                // Process group of clauses
-                $groupParts = [];
-                foreach ($clause['clauses'] as $groupClause) {
-                    if ($groupClause instanceof ClauseBuilderInterface) {
-                        $marker++;
-                        $uniqueMarker = '__NOMADIC_SUBQUERY__' . $marker;
-                        $builtClause = $groupClause->build();
-                        $subQueryReplacements[$uniqueMarker] = $builtClause;
-                        $groupParts[] = $uniqueMarker;
-                    }
-                }
-                if (!empty($groupParts)) {
-                    $queryParts[] = '(' . implode(" {$clause['logic']} ", $groupParts) . ')';
-                }
-            } elseif ($clause instanceof ClauseBuilderInterface) {
-                $marker++;
-                $uniqueMarker = '__NOMADIC_SUBQUERY__' . $marker;
-                $builtClause = $clause->build();
-                $subQueryReplacements[$uniqueMarker] = $builtClause;
-                $queryParts[] = $uniqueMarker;
+                continue;
             }
+
+            $groupParts = [];
+            foreach ($clause['clauses'] as $groupClause) {
+                $builtClause = $groupClause->build();
+                if ($builtClause === '') {
+                    throw new QueryBuilderException('A grouped condition cannot be empty.');
+                }
+
+                $groupParts[] = $builtClause;
+            }
+
+            $queryParts[] = '(' . implode(" {$clause['logic']} ", $groupParts) . ')';
         }
 
-        if (!empty($queryParts)) {
-            $query = implode(' ', $queryParts);
-
-            // Prepare the query with initial values if available
-            if (!empty($allValues)) {
-                $query = $wpdb->prepare($query, ...$allValues);
-            }
-
-            // Replace subquery markers with their actual queries
-            foreach ($subQueryReplacements as $marker => $subQuery) {
-                $query = str_replace($marker, $subQuery, $query);
-            }
-        }
-
+        $query = implode(' ', $queryParts);
         $this->reset();
 
         return $query;
     }
 
-    /**
-     * @inheritDoc
-     */
+    /** @inheritDoc */
     public function reset()
     {
         $this->clauses = [];
         $this->preparedValues = [];
-
         return $this;
     }
 
@@ -222,23 +177,145 @@ class ClauseBuilder implements ClauseBuilderInterface
     {
         $operator = strtoupper($operator);
 
-        if($operator === 'IS NULL' || $operator === 'IS NOT NULL'){
-            return "";
+        if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
+            return '';
         }
 
         if ($operator === 'IN' || $operator === 'NOT IN') {
-
-            // Group fields with multiple $field values (%s,%s),(%s,%s), else just flatten them %s,%s,%s,%s
             if (is_array($field)) {
-                $subgroup = "(" . implode(', ', array_fill(0, count($field), '%s')) . ")";
+                $subgroup = '(' . implode(', ', array_fill(0, count($field), '%s')) . ')';
                 $placeholderGroup = implode(', ', array_fill(0, count($values), $subgroup));
             } else {
                 $placeholderGroup = implode(', ', array_fill(0, count($values), '%s'));
             }
 
-            return "($placeholderGroup)";
+            return "({$placeholderGroup})";
         }
 
         return '%s';
+    }
+
+    /** @param string|string[] $field */
+    private function normalizeValues($field, string $operator, array $values): array
+    {
+        $count = count($values);
+
+        if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
+            if ($values === [] || $values === [null]) {
+                return [];
+            }
+
+            throw new QueryBuilderException("Operator {$operator} accepts no values or one null value.");
+        }
+
+        if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
+            if ($count !== 2 || is_array($values[0]) || is_array($values[1])) {
+                throw new QueryBuilderException("Operator {$operator} expects exactly two scalar or null values.");
+            }
+
+            return $values;
+        }
+
+        if ($operator === 'IN' || $operator === 'NOT IN') {
+            if ($count === 0) {
+                throw new QueryBuilderException("Operator {$operator} expects at least one value.");
+            }
+
+            if (is_array($field)) {
+                foreach ($values as $tuple) {
+                    if (!is_array($tuple) || count($tuple) !== count($field)) {
+                        throw new QueryBuilderException("Operator {$operator} tuple width must match the field list.");
+                    }
+                }
+
+                return array_map('array_values', $values);
+            }
+
+            if ($count === 1 && is_array($values[0])) {
+                $nested = array_values($values[0]);
+                return $nested === [] ? [null] : $nested;
+            }
+
+            foreach ($values as $value) {
+                if (is_array($value)) {
+                    throw new QueryBuilderException("Operator {$operator} received an invalid nested value.");
+                }
+            }
+
+            return $values;
+        }
+
+        if ($count !== 1 || is_array($values[0])) {
+            throw new QueryBuilderException("Operator {$operator} expects exactly one scalar or null value.");
+        }
+
+        return $values;
+    }
+
+    /** @param string|string[] $field */
+    private function renderCondition(string $fieldString, $field, string $operator, array $values): string
+    {
+        if ($operator === 'IS NULL' || $operator === 'IS NOT NULL') {
+            return "{$fieldString} {$operator}";
+        }
+
+        if ($operator === 'BETWEEN' || $operator === 'NOT BETWEEN') {
+            return "{$fieldString} {$operator} "
+                . $this->renderValue($values[0]) . ' AND ' . $this->renderValue($values[1]);
+        }
+
+        if ($operator === 'IN' || $operator === 'NOT IN') {
+            if (is_array($field)) {
+                $rows = array_map(function (array $tuple): string {
+                    return '(' . implode(', ', array_map(fn ($value): string => $this->renderValue($value), $tuple)) . ')';
+                }, $values);
+                return "{$fieldString} {$operator} (" . implode(', ', $rows) . ')';
+            }
+
+            return "{$fieldString} {$operator} ("
+                . implode(', ', array_map(fn ($value): string => $this->renderValue($value), $values)) . ')';
+        }
+
+        return "{$fieldString} {$operator} " . $this->renderValue($values[0]);
+    }
+
+    private function renderValue($value): string
+    {
+        global $wpdb;
+
+        if ($value === null) {
+            return 'NULL';
+        }
+
+        $prepared = $wpdb->prepare($this->getFieldSprintfType($value), $value);
+        if (!is_string($prepared) || $prepared === '') {
+            throw new QueryBuilderException('WordPress could not prepare a condition value.');
+        }
+
+        return $prepared;
+    }
+
+    /** @param ClauseBuilderInterface[] $clauses */
+    private function appendGroup(string $logic, array $clauses): void
+    {
+        $this->clauses[] = [
+            'logic' => $this->validateGroup($logic, $clauses),
+            'clauses' => $clauses,
+        ];
+    }
+
+    /** @param ClauseBuilderInterface[] $clauses */
+    private function validateGroup(string $logic, array $clauses): string
+    {
+        $logic = strtoupper($logic);
+        if (!in_array($logic, ['AND', 'OR'], true)) {
+            throw new QueryBuilderException("Unknown group logic: {$logic}");
+        }
+
+        if ($clauses === []) {
+            throw new QueryBuilderException('A condition group cannot be empty.');
+        }
+
+        return $logic;
     }
 }

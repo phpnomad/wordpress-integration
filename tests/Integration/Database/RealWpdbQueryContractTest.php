@@ -139,7 +139,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testPackageBootstrapResolvesAndExecutesCoreQueryStrategy(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $container = new Container();
         (new Bootstrapper($container, new WordPressInitializer()))->load();
@@ -165,7 +164,6 @@ final class RealWpdbQueryContractTest extends TestCase
         array $values,
         string $literal
     ): void {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $clause = (new ClauseBuilder())->useTable(self::$predicateTable);
         $prefix = '';
@@ -215,7 +213,6 @@ final class RealWpdbQueryContractTest extends TestCase
     /** @dataProvider tupleListProvider */
     public function testTupleListMatchesLiteralSqlControl(string $operator): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $clause = (new ClauseBuilder())
             ->useTable(self::$predicateTable)
@@ -244,7 +241,6 @@ final class RealWpdbQueryContractTest extends TestCase
     /** @dataProvider groupEntryProvider */
     public function testGroupsKeepParentAndChildValuePositions(string $groupMethod): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $firstChild = (new ClauseBuilder())
             ->useTable(self::$predicateTable)
@@ -283,7 +279,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testLiteralPlaceholderAndSubqueryMarkerTextStaysDataAcrossNestedGroups(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $literal = self::literalMarkerValue();
         $grandchild = (new ClauseBuilder())
@@ -319,7 +314,6 @@ final class RealWpdbQueryContractTest extends TestCase
         string $operator,
         array $values
     ): void {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $clause = (new ClauseBuilder())
             ->useTable(self::$predicateTable)
@@ -368,7 +362,6 @@ final class RealWpdbQueryContractTest extends TestCase
     /** @dataProvider groupEntryProvider */
     public function testInvalidGroupLogicRejectsBeforeChangingBuilderState(string $groupMethod): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $clause = (new ClauseBuilder())
             ->useTable(self::$predicateTable)
@@ -398,7 +391,6 @@ final class RealWpdbQueryContractTest extends TestCase
     /** @dataProvider groupEntryProvider */
     public function testEmptyGroupRejectsBeforeChangingBuilderState(string $groupMethod): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $clause = (new ClauseBuilder())
             ->useTable(self::$predicateTable)
@@ -424,7 +416,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testMalformedNestedGroupFailsBeforeWpdbExecutesSql(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $lastQuery = self::$wpdb->last_query;
         $clause = null;
@@ -453,7 +444,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testQueryStrategyWrapsBuilderFailureWithOriginalCause(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $cause = new QueryBuilderException('Malformed query contract fixture.');
         $builder = new class ($cause) extends QueryBuilder {
@@ -474,7 +464,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testQueryStrategyClassifiesWpdbSqlErrorAsDatastoreError(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $builder = new class extends QueryBuilder {
             public function build(): string
@@ -490,7 +479,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testQueryStrategyKeepsGenuineEmptyResultAsRecordNotFound(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $clause = (new ClauseBuilder())
             ->useTable(self::$predicateTable)
@@ -505,7 +493,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testCompoundInsertReturnsAndPersistsWholeIdentity(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         self::resetCompoundTables();
         $data = ['leftId' => 4, 'rightId' => 40, 'label' => 'inserted', 'value' => 'four'];
@@ -523,7 +510,6 @@ final class RealWpdbQueryContractTest extends TestCase
     /** @dataProvider compoundWriteProvider */
     public function testCompoundWritesMatchPreparedSqlControl(string $operation): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         self::resetCompoundTables();
 
@@ -556,7 +542,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testLiteralPlaceholderAndMarkerStringsStayDataOnInsert(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         self::resetCompoundTables();
         $literal = self::literalMarkerValue() . ' ?s ?n ?i ?a ?u ?p';
@@ -574,7 +559,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testLiteralPlaceholderStringsStayDataAcrossCompoundWrites(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         $literal = 'literal %s %d %f %i %% ?s ?n ?i ?a ?u ?p';
         self::resetCompoundTables($literal);
@@ -601,7 +585,6 @@ final class RealWpdbQueryContractTest extends TestCase
 
     public function testZeroRowUpdateWrapsExistenceProbeBuilderFailure(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted query contract.');
 
         self::resetCompoundTables();
         $incompleteMetadata = new ContractTable(

@@ -34,6 +34,11 @@ trait CanQueryWordPressDatabase
             throw new DatastoreErrorException('Get results failed: invalid query.', 500, $e);
         }
 
+        if (!empty($wpdb->last_error)) {
+            $this->logDatabaseError('Get results failed', $wpdb->last_error);
+            throw new DatastoreErrorException('Get results failed.');
+        }
+
         if (is_null($result)) {
             $this->logDatabaseError('Get results failed', $wpdb->last_error);
             throw new DatastoreErrorException('Get results failed.');
@@ -119,8 +124,9 @@ trait CanQueryWordPressDatabase
      * @param Table $table
      * @param array $data
      * @param array $where
-     * @return int
+     * @return void
      * @throws DatastoreErrorException
+     * @throws QueryBuilderException
      */
     protected function wpdbUpdate(Table $table, array $data, array $where): void
     {
@@ -170,7 +176,7 @@ trait CanQueryWordPressDatabase
 
     /**
      * Deletes a record from the database.
-     * @param string $table
+     * @param Table $table
      * @param array $where
      * @return void
      * @throws DatastoreErrorException
