@@ -88,6 +88,57 @@ final class TableColumnRetirementStrategyTest extends TestCase
         }
     }
 
+    /** @dataProvider malformedMetadataResults */
+    public function testMalformedIdentifierComparisonFailsClosedBeforeDdl($result): void
+    {
+        $this->database->columns = ['id', 'legacyValue'];
+        $this->database->metadataOverrides['identifier'] = $result;
+
+        try {
+            (new TableUpdateStrategy())->retireColumns($this->table(), 'legacyValue');
+            self::fail('Malformed identifier-comparison metadata must fail closed.');
+        } catch (TableUpdateFailedException $expected) {
+            self::assertSame([], $this->database->alterQueries());
+        }
+    }
+
+    /** @dataProvider malformedMetadataResults */
+    public function testMalformedStatisticsMetadataFailsClosedBeforeDdl($result): void
+    {
+        $this->database->columns = ['id', 'legacyValue'];
+        $this->database->metadataOverrides['statistics'] = $result;
+
+        try {
+            (new TableUpdateStrategy())->retireColumns($this->table(), 'legacyValue');
+            self::fail('Malformed index metadata must fail closed.');
+        } catch (TableUpdateFailedException $expected) {
+            self::assertSame([], $this->database->alterQueries());
+        }
+    }
+
+    /** @dataProvider malformedMetadataResults */
+    public function testMalformedForeignKeyMetadataFailsClosedBeforeDdl($result): void
+    {
+        $this->database->columns = ['id', 'legacyValue'];
+        $this->database->metadataOverrides['foreign_key'] = $result;
+
+        try {
+            (new TableUpdateStrategy())->retireColumns($this->table(), 'legacyValue');
+            self::fail('Malformed foreign-key metadata must fail closed.');
+        } catch (TableUpdateFailedException $expected) {
+            self::assertSame([], $this->database->alterQueries());
+        }
+    }
+
+    public function malformedMetadataResults(): array
+    {
+        return [
+            'false result' => [false],
+            'null result' => [null],
+            'malformed row' => [[null]],
+        ];
+    }
+
     public function testRetirementDropsOnlyTheNamedColumn(): void
     {
         $this->database->columns = ['id', 'legacyValue', 'unrelatedUnknown'];
@@ -233,7 +284,9 @@ final class RetirementWpdb
     public bool $failMetadata = false;
     public bool $failAlter = false;
     public bool $overrideMetadataResult = false;
-    public array $metadataResult = [];
+    public $metadataResult = [];
+    /** @var array<string, mixed> */
+    public array $metadataOverrides = [];
 
     public function prepare(string $query, ...$args): string
     {
@@ -259,12 +312,24 @@ final class RetirementWpdb
         return $query;
     }
 
-    public function get_results(string $query, string $output): array
+    public function get_results(string $query, string $output)
     {
         $this->queries[] = $query;
         if ($this->failMetadata) {
             $this->last_error = 'metadata failed';
             return [];
+        }
+        if (stripos($query, 'AS identifiers_equal') !== false
+            && array_key_exists('identifier', $this->metadataOverrides)) {
+            return $this->metadataOverrides['identifier'];
+        }
+        if (stripos($query, 'INFORMATION_SCHEMA.STATISTICS') !== false
+            && array_key_exists('statistics', $this->metadataOverrides)) {
+            return $this->metadataOverrides['statistics'];
+        }
+        if (stripos($query, 'INFORMATION_SCHEMA.KEY_COLUMN_USAGE') !== false
+            && array_key_exists('foreign_key', $this->metadataOverrides)) {
+            return $this->metadataOverrides['foreign_key'];
         }
         if ($this->overrideMetadataResult && stripos($query, 'INFORMATION_SCHEMA.') !== false) {
             return $this->metadataResult;

@@ -154,18 +154,18 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         $table = new ContractTable(
             self::ACCENT_TABLE,
             'retirement',
-            [new Column('id', 'INT', null, 'PRIMARY KEY')],
+            [new Column('id', 'INT', null, 'PRIMARY KEY'), new Column('legacy', 'INT')],
             ['id']
         );
 
         self::assertTrue($this->strategy->columnExists($table, 'LEGACY'));
         self::assertTrue($this->strategy->columnExists($table, 'LÉGACY'));
-        $this->strategy->retireColumns($table, 'LEGACY');
+        $this->strategy->retireColumns($table, 'LÉGACY');
 
-        self::assertSame(['id', 'légacy', 'unrelatedUnknown'], self::columns(self::ACCENT_TABLE));
+        self::assertSame(['id', 'legacy', 'unrelatedUnknown'], self::columns(self::ACCENT_TABLE));
         self::assertSame(
-            [['id' => '1', 'légacy' => '42', 'unrelatedUnknown' => 'keep']],
-            self::rawSelect('SELECT id, `légacy`, unrelatedUnknown FROM ' . self::ACCENT_TABLE)
+            [['id' => '1', 'legacy' => '41', 'unrelatedUnknown' => 'keep']],
+            self::rawSelect('SELECT id, legacy, unrelatedUnknown FROM ' . self::ACCENT_TABLE)
         );
     }
 
