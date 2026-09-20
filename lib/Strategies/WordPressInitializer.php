@@ -30,6 +30,7 @@ use PHPNomad\Database\Interfaces\CoordinatedQueryStrategy as CoreCoordinatedQuer
 use PHPNomad\Database\Interfaces\HasCharsetProvider;
 use PHPNomad\Database\Interfaces\HasCollateProvider;
 use PHPNomad\Database\Interfaces\HasGlobalDatabasePrefix;
+use PHPNomad\Database\Interfaces\OperationDatabaseProviderFactory as CoreOperationDatabaseProviderFactory;
 use PHPNomad\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
 use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyAlias;
@@ -99,6 +100,7 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             // one resource-owning instance, while inherited CRUD remains the
             // ordinary WordPress implementation.
             CoordinatedQueryStrategy::class => [CoreQueryStrategy::class, CoreCoordinatedQueryStrategy::class],
+            WordPressOperationDatabaseProviderFactory::class => CoreOperationDatabaseProviderFactory::class,
             DefaultCacheTtlProvider::class => HasDefaultTtl::class,
             TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
             TableUpdateStrategy::class => CoreTableUpdateStrategy::class,
