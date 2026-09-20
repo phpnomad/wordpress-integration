@@ -9,7 +9,8 @@
     "prefer-stable": true,
     "minimum-stability": "dev",
     "scripts": {
-        "php-cs-fixer": "php-cs-fixer fix"
+        "php-cs-fixer": "php-cs-fixer fix",
+        "test:integration": "phpunit -c phpunit-integration.xml --colors=never --fail-on-skipped"
     },
     "repositories": [
         {
@@ -34,6 +35,7 @@
         }
     ],
     "require-dev": {
+        "phpnomad/di-container": "^1.1",
         "phpnomad/tests": "^0.3.0"
     },
     "require": {

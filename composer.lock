@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a4b0d4cf35976d81c00484ec7206a14a",
+    "content-hash": "f4c2534653e351a307308b15f6fd502f",
     "packages": [
         {
             "name": "phpnomad/asset",
@@ -317,16 +317,16 @@
         },
         {
             "name": "phpnomad/di",
-            "version": "2.0.0",
+            "version": "2.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpnomad/di.git",
-                "reference": "71cf432571f405e96c30dab4cfbccc22462bcc67"
+                "reference": "2f343769c816c0574a9ed4b39f4bba0335a0de63"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpnomad/di/zipball/71cf432571f405e96c30dab4cfbccc22462bcc67",
-                "reference": "71cf432571f405e96c30dab4cfbccc22462bcc67",
+                "url": "https://api.github.com/repos/phpnomad/di/zipball/2f343769c816c0574a9ed4b39f4bba0335a0de63",
+                "reference": "2f343769c816c0574a9ed4b39f4bba0335a0de63",
                 "shasum": ""
             },
             "require-dev": {
@@ -351,9 +351,9 @@
             "homepage": "https://github.com/phpnomad/core",
             "support": {
                 "issues": "https://github.com/phpnomad/di/issues",
-                "source": "https://github.com/phpnomad/di/tree/2.0.0"
+                "source": "https://github.com/phpnomad/di/tree/2.0.1"
             },
-            "time": "2026-03-31T15:22:46+00:00"
+            "time": "2026-06-12T10:56:38+00:00"
         },
         {
             "name": "phpnomad/email",
@@ -2274,6 +2274,50 @@
                 "source": "https://github.com/phar-io/version/tree/3.2.1"
             },
             "time": "2022-02-21T01:04:05+00:00"
+        },
+        {
+            "name": "phpnomad/di-container",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpnomad/di-container.git",
+                "reference": "42be402b3a5e747c6e55b5aa9c042e787251ba28"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpnomad/di-container/zipball/42be402b3a5e747c6e55b5aa9c042e787251ba28",
+                "reference": "42be402b3a5e747c6e55b5aa9c042e787251ba28",
+                "shasum": ""
+            },
+            "require": {
+                "phpnomad/di": "^2.0",
+                "phpnomad/utils": "^1.0"
+            },
+            "require-dev": {
+                "phpnomad/tests": "^0.1.0 || ^0.3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPNomad\\Di\\Container\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Standiford",
+                    "email": "alex@standiford.us"
+                }
+            ],
+            "description": "Lightweight dependency injection container for PHPNomad",
+            "support": {
+                "issues": "https://github.com/phpnomad/di-container/issues",
+                "source": "https://github.com/phpnomad/di-container/tree/1.1.0"
+            },
+            "time": "2026-08-23T22:17:11+00:00"
         },
         {
             "name": "phpnomad/tests",
@@ -6084,6 +6128,7 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
+        "php": ">=8.0",
         "ext-json": "*"
     },
     "platform-dev": {},
