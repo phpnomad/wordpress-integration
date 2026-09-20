@@ -78,4 +78,38 @@ class ClauseBuilderTest extends TestCase
 
         self::assertSame('records.id = 50', $builder->build());
     }
+
+    public function testProtectedConditionSeamNormalizesValidLogic(): void
+    {
+        $builder = $this->conditionSeamBuilder();
+        $builder->where('id', '=', 50)->addUsingLogic('and');
+
+        self::assertSame('records.id = 50 AND records.score = 30', $builder->build());
+    }
+
+    public function testProtectedConditionSeamRejectsInvalidLogicWithoutChangingState(): void
+    {
+        $builder = $this->conditionSeamBuilder();
+        $builder->where('id', '=', 50);
+        $caught = null;
+
+        try {
+            $builder->addUsingLogic('XOR');
+        } catch (QueryBuilderException $exception) {
+            $caught = $exception;
+        }
+
+        self::assertInstanceOf(QueryBuilderException::class, $caught);
+        self::assertSame('records.id = 50', $builder->build());
+    }
+
+    private function conditionSeamBuilder(): ClauseBuilder
+    {
+        return (new class () extends ClauseBuilder {
+            public function addUsingLogic(string $logic): self
+            {
+                return $this->addCondition('score', '=', [30], $logic);
+            }
+        })->useTable($this->table);
+    }
 }

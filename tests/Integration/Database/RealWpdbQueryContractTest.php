@@ -303,6 +303,73 @@ final class RealWpdbQueryContractTest extends TestCase
         self::assertSame($control, $actual);
     }
 
+    public function testFloatPredicatePreservesFullStringPrecision(): void
+    {
+        self::preparedQuery(
+            'INSERT INTO ' . self::PREDICATE_TABLE . ' (id, score, label) VALUES (%d,%d,%s)',
+            [80, 80, '0.123456789']
+        );
+        $clause = (new ClauseBuilder())
+            ->useTable(self::$predicateTable)
+            ->where('label', '=', 0.123456789);
+
+        self::assertSame(
+            self::preparedSelect(
+                'SELECT * FROM ' . self::PREDICATE_TABLE . ' WHERE label=%s ORDER BY id',
+                ['0.123456789']
+            ),
+            self::$strategy->query(self::selectQuery($clause))
+        );
+    }
+
+    public function testIntegerPredicateKeepsVarcharComparisonAsQuotedString(): void
+    {
+        self::preparedQuery(
+            'INSERT INTO ' . self::PREDICATE_TABLE . ' (id, score, label) VALUES '
+            . '(%d,%d,%s),(%d,%d,%s)',
+            [80, 80, '0', 81, 81, 'not-a-number']
+        );
+        $clause = (new ClauseBuilder())
+            ->useTable(self::$predicateTable)
+            ->where('label', '=', 0);
+
+        self::assertSame(
+            self::preparedSelect(
+                'SELECT * FROM ' . self::PREDICATE_TABLE . ' WHERE label=%s ORDER BY id',
+                ['0']
+            ),
+            self::$strategy->query(self::selectQuery($clause))
+        );
+    }
+
+    public function testPlaceholderOverrideChangesTheExecutedPredicate(): void
+    {
+        self::preparedQuery(
+            'INSERT INTO ' . self::PREDICATE_TABLE . ' (id, score, label) VALUES '
+            . '(%d,%d,%s),(%d,%d,%s)',
+            [80, 80, 'CaseToken', 81, 81, 'casetoken']
+        );
+        $clause = (new class () extends ClauseBuilder {
+            protected function generatePlaceholder($field, array $values, string $operator): string
+            {
+                return $operator === '='
+                    ? '%s COLLATE utf8mb4_bin'
+                    : parent::generatePlaceholder($field, $values, $operator);
+            }
+        })
+            ->useTable(self::$predicateTable)
+            ->where('label', '=', 'CaseToken');
+
+        self::assertSame(
+            self::preparedSelect(
+                'SELECT * FROM ' . self::PREDICATE_TABLE
+                . ' WHERE label=%s COLLATE utf8mb4_bin ORDER BY id',
+                ['CaseToken']
+            ),
+            self::$strategy->query(self::selectQuery($clause))
+        );
+    }
+
     /**
      * @dataProvider invalidConditionProvider
      * @param string|list<string> $field
