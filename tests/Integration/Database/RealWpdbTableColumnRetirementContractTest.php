@@ -82,6 +82,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
         self::assertTrue($this->strategy->columnExists($this->table, 'legacyValue'));
         self::assertTrue($this->strategy->columnExists($this->table, 'LEGACYVALUE'));
+        self::assertTrue($this->strategy->columnExists($this->table, 'LÉGACY值'));
         self::assertFalse($this->strategy->columnExists($this->table, 'crossSchemaOnly'));
 
         $this->strategy->syncColumns($this->table);
@@ -131,6 +132,27 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
             );
             $this->strategy->retireColumns($declaredTable, 'legacyValue', 'UNRELATEDUNKNOWN');
             self::fail('A case-variant declared column must reject the whole batch.');
+        } catch (\InvalidArgumentException $expected) {
+            self::assertSame(
+                ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'],
+                self::columns()
+            );
+        }
+    }
+
+    public function testWholeBatchPreflightUsesDatabaseCaseSemanticsForUnicodeNames(): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        try {
+            $declaredTable = new ContractTable(
+                self::TABLE,
+                'retirement',
+                [new Column('id', 'INT'), new Column('légacy值', 'INT')],
+                ['id']
+            );
+            $this->strategy->retireColumns($declaredTable, 'legacyValue', 'LÉGACY值');
+            self::fail('A Unicode case-variant declared column must reject the whole batch.');
         } catch (\InvalidArgumentException $expected) {
             self::assertSame(
                 ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'],
