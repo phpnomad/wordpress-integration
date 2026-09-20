@@ -3,12 +3,13 @@
 namespace PHPNomad\Integrations\WordPress\Database;
 
 use PHPNomad\Database\Exceptions\QueryBuilderException;
-use PHPNomad\Database\Interfaces\ClauseBuilder;
+use PHPNomad\Database\Interfaces\ClauseBuilder as ClauseBuilderInterface;
 use PHPNomad\Database\Interfaces\HasQueryTables;
 use PHPNomad\Database\Interfaces\QueryBuilder as QueryBuilderInterface;
 use PHPNomad\Database\Interfaces\Table;
 use PHPNomad\Database\Traits\WithPrependedFields;
 use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
+use PHPNomad\Integrations\WordPress\Database\ClauseBuilder as WordPressClauseBuilder;
 use PHPNomad\Utils\Helpers\Arr;
 use wpdb;
 
@@ -41,7 +42,7 @@ class QueryBuilder implements QueryBuilderInterface, HasQueryTables
 
     protected array $orderBy = [];
 
-    protected ?ClauseBuilder $clauseBuilder = null;
+    protected ?ClauseBuilderInterface $clauseBuilder = null;
     protected array $groupBy = [];
 
     private ?Table $rootTable = null;
@@ -54,6 +55,31 @@ class QueryBuilder implements QueryBuilderInterface, HasQueryTables
     public function __construct(?wpdb $database = null)
     {
         $this->database = $database;
+    }
+
+    /**
+     * Return an operation-local copy bound to one wpdb resource.
+     *
+     * Query builders are mutable and may be shared by the regular database
+     * provider. Coordinated calls clone instead of changing that provider's
+     * builder or the process-global wpdb object.
+     */
+    public function forDatabase(wpdb $database): static
+    {
+        $clone = clone $this;
+        $clone->database = $database;
+
+        if ($clone->clauseBuilder !== null) {
+            $clauseBuilder = $clone->clauseBuilder;
+            if (!$clauseBuilder instanceof WordPressClauseBuilder) {
+                throw new \PHPNomad\Database\Exceptions\UnsupportedCoordinationException(
+                    'Coordinated WordPress queries require the official WordPress clause builder.'
+                );
+            }
+            $clone->clauseBuilder = $clauseBuilder->forDatabase($database);
+        }
+
+        return $clone;
     }
 
     /** @inheritDoc */
@@ -86,7 +112,7 @@ class QueryBuilder implements QueryBuilderInterface, HasQueryTables
     }
 
     /** @inheritDoc */
-    public function where(?ClauseBuilder $clauseBuilder)
+    public function where(?ClauseBuilderInterface $clauseBuilder)
     {
         $this->clauseBuilder = $clauseBuilder->useTable($this->table);
 
@@ -307,6 +333,9 @@ class QueryBuilder implements QueryBuilderInterface, HasQueryTables
     /** @inheritDoc */
     public function reset()
     {
+        if ($this->clauseBuilder !== null) {
+            $this->clauseBuilder->reset();
+        }
         $this->select = [];
         $this->clauseBuilder = null;
         $this->from = [];

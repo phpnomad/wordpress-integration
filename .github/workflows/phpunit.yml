@@ -19,3 +19,47 @@ jobs:
           php_version: "8.3"
           version: "9.6"
           configuration: phpunit.xml
+
+  integration:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: nomad_coordination_fixture
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -uroot -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=12
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-interaction --no-progress --prefer-dist
+
+      - name: Install official WordPress 6.8.3
+        run: |
+          curl --fail --silent --show-error --location https://wordpress.org/wordpress-6.8.3.tar.gz \
+            | tar -xz -C "$RUNNER_TEMP"
+
+      - name: PHPUnit integration tests
+        env:
+          WORDPRESS_ROOT: ${{ runner.temp }}/wordpress
+          MYSQL_HOST: 127.0.0.1
+          MYSQL_PORT: 3306
+          MYSQL_USER: root
+          MYSQL_PASSWORD: root
+          MYSQL_DATABASE: nomad_coordination_fixture
+        run: vendor/bin/phpunit -c phpunit-integration.xml --colors=never --fail-on-skipped

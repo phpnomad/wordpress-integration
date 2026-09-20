@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace PHPNomad\Integrations\WordPress\Tests\Integration\Database;
 
 use PHPNomad\Database\Exceptions\QueryBuilderException;
+use PHPNomad\Database\Exceptions\UnsupportedCoordinationException;
 use PHPNomad\Database\Factories\Column;
+use PHPNomad\Database\Interfaces\ClauseBuilder as CoreClauseBuilder;
 use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
 use PHPNomad\Datastore\Exceptions\RecordNotFoundException;
@@ -754,6 +756,78 @@ final class RealWpdbQueryContractTest extends TestCase
         self::assertSame('50', self::rawSelect($joinedSql)[0]['id']);
         self::assertCount(4, self::rawSelect($plainSql));
         self::assertCount(4, self::rawSelect($resetSql));
+    }
+
+    public function testClausePreparedForAnotherSessionIsRepreparedOnBoundWpdb(): void
+    {
+        $alternate = new class (
+            self::environment('MYSQL_USER', 'root'),
+            self::environment('MYSQL_PASSWORD', ''),
+            self::environment('MYSQL_DATABASE', 'phpnomad_wordpress_integration_test'),
+            self::environment('MYSQL_HOST', '127.0.0.1') . ':' . self::environment('MYSQL_PORT', '3306')
+        ) extends wpdb {
+            public function prepare($query, ...$args)
+            {
+                throw new \RuntimeException('The alternate session must not prepare operation clauses.');
+            }
+        };
+
+        try {
+            self::assertNotSame(self::$wpdb->dbh, $alternate->dbh);
+            $clause = (new ClauseBuilder($alternate))
+                ->useTable(self::$predicateTable)
+                ->where('label', '=', "session-bound O'Reilly");
+
+            $sql = self::selectQuery($clause)->forDatabase(self::$wpdb)->build();
+
+            self::assertStringContainsString("predicates.label = 'session-bound O\\'Reilly'", $sql);
+
+            $tupleClause = (new ClauseBuilder($alternate))
+                ->useTable(self::$compoundTable)
+                ->where(['leftId', 'rightId'], 'IN', [1, 10]);
+            $tupleSql = (new QueryBuilder())
+                ->from(self::$compoundTable)
+                ->select('*')
+                ->where($tupleClause)
+                ->forDatabase(self::$wpdb)
+                ->build();
+
+            self::assertStringContainsString(
+                "compound_records.leftId, compound_records.rightId) IN (('1', '10'))",
+                $tupleSql
+            );
+        } finally {
+            $alternate->close();
+        }
+    }
+
+    public function testForDatabaseRefusesACustomClauseBuilder(): void
+    {
+        $custom = $this->createMock(CoreClauseBuilder::class);
+        $custom->method('useTable')->willReturnSelf();
+        $query = (new QueryBuilder())
+            ->from(self::$predicateTable)
+            ->select('*')
+            ->where($custom);
+
+        $this->expectException(UnsupportedCoordinationException::class);
+        $query->forDatabase(self::$wpdb);
+    }
+
+    public function testQueryResetClearsHeldClauseAndGroupedChildren(): void
+    {
+        $child = (new ClauseBuilder())
+            ->useTable(self::$predicateTable)
+            ->where('id', '=', 50);
+        $clause = (new ClauseBuilder())
+            ->useTable(self::$predicateTable)
+            ->group('AND', $child);
+        $query = self::selectQuery($clause);
+
+        $query->reset();
+
+        self::assertSame('', $clause->build());
+        self::assertSame('', $child->build());
     }
 
     private static function selectQuery(ClauseBuilder $clause): QueryBuilder
