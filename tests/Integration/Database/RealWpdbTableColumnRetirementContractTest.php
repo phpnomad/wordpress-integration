@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace PHPNomad\Integrations\WordPress\Tests\Integration\Database;
 
 use PHPNomad\Database\Factories\Column;
-use PHPNomad\Integrations\WordPress\Strategies\TableUpdateStrategy;
+use PHPNomad\Database\Interfaces\TableColumnRetirementStrategy as RetirementStrategy;
+use PHPNomad\Database\Interfaces\TableUpdateStrategy as UpdateStrategy;
+use PHPNomad\Di\Container\Container;
+use PHPNomad\Integrations\WordPress\Strategies\WordPressInitializer;
 use PHPNomad\Integrations\WordPress\Tests\Integration\Support\ContractTable;
+use PHPNomad\Loader\Bootstrapper;
 use PHPUnit\Framework\TestCase;
 use wpdb;
 
@@ -17,7 +21,8 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
     private const CHILD_TABLE = 'nomad_wpdb_column_retirement_child';
 
     private static wpdb $wpdb;
-    private TableUpdateStrategy $strategy;
+    private Container $container;
+    private RetirementStrategy $strategy;
     private ContractTable $table;
     private string $shadowSchema;
 
@@ -40,7 +45,9 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->strategy = new TableUpdateStrategy();
+        $this->container = new Container();
+        (new Bootstrapper($this->container, new WordPressInitializer()))->load();
+        $this->strategy = $this->container->get(RetirementStrategy::class);
         $this->table = new ContractTable(
             self::TABLE,
             'retirement',
@@ -80,7 +87,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         $this->strategy->syncColumns($this->table);
 
         self::assertSame(
-            ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'modernValue'],
+            ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值', 'modernValue'],
             self::columns()
         );
         self::assertSame(
@@ -89,12 +96,20 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         );
     }
 
+    public function testBootstrapperResolvesOneStrategyForBaseAndRetirementContracts(): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        self::assertSame($this->strategy, $this->container->get(UpdateStrategy::class));
+    }
+
     public function testRetirementPersistsOnlyNamedDropsAndIsIdempotent(): void
     {
         self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
 
-        $this->strategy->retireColumns($this->table, 'legacyValue', 'legacy value', 'odd`name');
-        $this->strategy->retireColumns($this->table, 'legacyValue', 'legacy value', 'odd`name');
+        $retired = ['legacyValue', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'];
+        $this->strategy->retireColumns($this->table, ...$retired);
+        $this->strategy->retireColumns($this->table, ...$retired);
 
         self::assertSame(['id', 'unrelatedUnknown'], self::columns());
         self::assertSame(
@@ -108,11 +123,17 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
 
         try {
-            $this->strategy->retireColumns($this->table, 'legacyValue', 'ID');
+            $declaredTable = new ContractTable(
+                self::TABLE,
+                'retirement',
+                [new Column('id', 'INT'), new Column('unrelatedUnknown', 'VARCHAR', [32])],
+                ['id']
+            );
+            $this->strategy->retireColumns($declaredTable, 'legacyValue', 'UNRELATEDUNKNOWN');
             self::fail('A case-variant declared column must reject the whole batch.');
         } catch (\InvalidArgumentException $expected) {
             self::assertSame(
-                ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name'],
+                ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'],
                 self::columns()
             );
         }
@@ -205,11 +226,13 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         self::rawQuery(
             'CREATE TABLE ' . self::TABLE . ' ('
             . 'id INT PRIMARY KEY, legacyValue INT NULL, unrelatedUnknown VARCHAR(32) NULL, '
-            . '`legacy value` INT NULL, `odd``name` INT NULL) ENGINE=InnoDB'
+            . '`legacy value` INT NULL, `odd``name` INT NULL, `select` INT NULL, '
+            . '`legacy-name` INT NULL, `légacy值` INT NULL) ENGINE=InnoDB'
         );
         self::rawQuery(
             "INSERT INTO " . self::TABLE
-            . " (id, legacyValue, unrelatedUnknown, `legacy value`, `odd``name`) VALUES (1, 41, 'keep', 42, 43)"
+            . " (id, legacyValue, unrelatedUnknown, `legacy value`, `odd``name`, `select`, `legacy-name`, `légacy值`) "
+            . "VALUES (1, 41, 'keep', 42, 43, 44, 45, 46)"
         );
     }
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5aa3582af01550ffc37b307cf60bffe3",
+    "content-hash": "dc71371cf132afefdb55d5c65ab7c3bb",
     "packages": [
         {
             "name": "phpnomad/asset",
