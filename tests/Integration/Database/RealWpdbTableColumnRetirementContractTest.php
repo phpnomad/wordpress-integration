@@ -19,6 +19,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 {
     private const TABLE = 'nomad_wpdb_column_retirement';
     private const CHILD_TABLE = 'nomad_wpdb_column_retirement_child';
+    private const QUOTED_TABLE = 'nomad wpdb odd`table';
 
     private static wpdb $wpdb;
     private Container $container;
@@ -62,6 +63,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
     {
         self::rawQuery('DROP TABLE IF EXISTS ' . self::CHILD_TABLE);
         self::rawQuery('DROP TABLE IF EXISTS ' . self::TABLE);
+        self::rawQuery('DROP TABLE IF EXISTS ' . self::quoteIdentifier(self::QUOTED_TABLE));
         self::rawQuery('DROP DATABASE IF EXISTS ' . self::quoteIdentifier($this->shadowSchema));
     }
 
@@ -141,6 +143,62 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         self::assertSame(
             [['id' => '1', 'unrelatedUnknown' => 'keep']],
             self::rawSelect('SELECT id, unrelatedUnknown FROM ' . self::TABLE)
+        );
+    }
+
+    /** @dataProvider invalidBatchMembers */
+    public function testInvalidBatchMemberPreventsAnyPersistedMutation(string $invalidName): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        $failure = null;
+        try {
+            $this->strategy->retireColumns($this->table, 'legacyValue', $invalidName);
+        } catch (\InvalidArgumentException $expected) {
+            $failure = $expected;
+        }
+
+        self::assertSame(
+            ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'],
+            self::columns()
+        );
+        self::assertSame(
+            [['id' => '1', 'legacyValue' => '41', 'unrelatedUnknown' => 'keep']],
+            self::rawSelect('SELECT id, legacyValue, unrelatedUnknown FROM ' . self::TABLE)
+        );
+        self::assertInstanceOf(\InvalidArgumentException::class, $failure);
+    }
+
+    public function invalidBatchMembers(): array
+    {
+        return [[''], ["legacy\0Value"]];
+    }
+
+    public function testRetirementQuotesThePersistedTableIdentifier(): void
+    {
+        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
+
+        $quotedTable = self::quoteIdentifier(self::QUOTED_TABLE);
+        self::rawQuery(
+            'CREATE TABLE ' . $quotedTable
+            . ' (id INT PRIMARY KEY, `legacy value` INT NULL, unrelatedUnknown VARCHAR(32) NULL) ENGINE=InnoDB'
+        );
+        self::rawQuery(
+            "INSERT INTO " . $quotedTable . " (id, `legacy value`, unrelatedUnknown) VALUES (1, 42, 'keep')"
+        );
+        $table = new ContractTable(
+            self::QUOTED_TABLE,
+            'retirement',
+            [new Column('id', 'INT', null, 'PRIMARY KEY')],
+            ['id']
+        );
+
+        $this->strategy->retireColumns($table, 'legacy value');
+
+        self::assertSame(['id', 'unrelatedUnknown'], self::columns(self::QUOTED_TABLE));
+        self::assertSame(
+            [['id' => '1', 'unrelatedUnknown' => 'keep']],
+            self::rawSelect('SELECT id, unrelatedUnknown FROM ' . $quotedTable)
         );
     }
 
@@ -269,6 +327,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
     {
         self::rawQuery('DROP TABLE IF EXISTS ' . self::CHILD_TABLE);
         self::rawQuery('DROP TABLE IF EXISTS ' . self::TABLE);
+        self::rawQuery('DROP TABLE IF EXISTS ' . self::quoteIdentifier(self::QUOTED_TABLE));
         self::rawQuery('DROP DATABASE IF EXISTS ' . self::quoteIdentifier($this->shadowSchema));
         self::rawQuery(
             'CREATE TABLE ' . self::TABLE . ' ('
@@ -284,11 +343,13 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
     }
 
     /** @return list<string> */
-    private static function columns(): array
+    private static function columns(string $tableName = self::TABLE): array
     {
+        $quotedName = str_replace("'", "''", $tableName);
+
         return array_column(self::rawSelect(
             "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS "
-            . "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . self::TABLE . "' ORDER BY ORDINAL_POSITION"
+            . "WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = '" . $quotedName . "' ORDER BY ORDINAL_POSITION"
         ), 'COLUMN_NAME');
     }
 
