@@ -1,0 +1,6 @@
+{
+    "version": "6.8.3",
+    "source": "https://github.com/WordPress/WordPress.git",
+    "ref": "6.8.3",
+    "commit": "ba9e7f97f08a7fbb88fbfa35641bcc230500b37a"
+}

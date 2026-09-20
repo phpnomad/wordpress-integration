@@ -2,6 +2,7 @@
 
 namespace PHPNomad\Integrations\WordPress\Strategies;
 
+use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\QueryBuilder;
 use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\Table;
@@ -33,7 +34,11 @@ class QueryStrategy implements CoreQueryStrategy
     /** @inheritDoc */
     public function update(Table $table, array $where, array $data): void
     {
-        $this->wpdbUpdate($table, $data, $where);
+        try {
+            $this->wpdbUpdate($table, $data, $where);
+        } catch (QueryBuilderException $e) {
+            throw new DatastoreErrorException('Update failed. Invalid query.', 500, $e);
+        }
     }
 
     /** @inheritDoc */
