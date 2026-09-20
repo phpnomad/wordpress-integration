@@ -20,6 +20,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
     private const TABLE = 'nomad_wpdb_column_retirement';
     private const CHILD_TABLE = 'nomad_wpdb_column_retirement_child';
     private const QUOTED_TABLE = 'nomad wpdb odd`table';
+    private const ACCENT_TABLE = 'nomad_wpdb_identifier_accent';
 
     private static wpdb $wpdb;
     private Container $container;
@@ -64,6 +65,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         self::rawQuery('DROP TABLE IF EXISTS ' . self::CHILD_TABLE);
         self::rawQuery('DROP TABLE IF EXISTS ' . self::TABLE);
         self::rawQuery('DROP TABLE IF EXISTS ' . self::quoteIdentifier(self::QUOTED_TABLE));
+        self::rawQuery('DROP TABLE IF EXISTS ' . self::ACCENT_TABLE);
         self::rawQuery('DROP DATABASE IF EXISTS ' . self::quoteIdentifier($this->shadowSchema));
     }
 
@@ -74,8 +76,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testSyncIsAdditiveAndColumnExistenceIsScopedToTheActiveSchema(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         self::rawQuery('CREATE DATABASE ' . self::quoteIdentifier($this->shadowSchema));
         self::rawQuery(
             'CREATE TABLE ' . self::quoteIdentifier($this->shadowSchema) . '.' . self::TABLE
@@ -101,15 +101,11 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testBootstrapperResolvesOneStrategyForBaseAndRetirementContracts(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         self::assertSame($this->strategy, $this->container->get(UpdateStrategy::class));
     }
 
     public function testRetirementDeduplicatesBackendEquivalentNamesAndIsIdempotent(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         $retired = [
             'legacyValue',
             'LEGACYVALUE',
@@ -132,8 +128,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testCaseVariantPresentAndAbsentNamesRetireOnlyThePresentIntersection(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         $this->strategy->retireColumns($this->table, 'LEGACYVALUE', 'missingLegacy');
 
         self::assertSame(
@@ -146,11 +140,75 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         );
     }
 
+    public function testMetadataResolutionIsCaseInsensitiveButAccentSensitive(): void
+    {
+        self::rawQuery(
+            'CREATE TABLE ' . self::ACCENT_TABLE
+            . ' (id INT PRIMARY KEY, legacy INT NULL, `légacy` INT NULL, unrelatedUnknown VARCHAR(32) NULL) '
+            . 'ENGINE=InnoDB'
+        );
+        self::rawQuery(
+            "INSERT INTO " . self::ACCENT_TABLE
+            . " (id, legacy, `légacy`, unrelatedUnknown) VALUES (1, 41, 42, 'keep')"
+        );
+        $table = new ContractTable(
+            self::ACCENT_TABLE,
+            'retirement',
+            [new Column('id', 'INT', null, 'PRIMARY KEY')],
+            ['id']
+        );
+
+        self::assertTrue($this->strategy->columnExists($table, 'LEGACY'));
+        self::assertTrue($this->strategy->columnExists($table, 'LÉGACY'));
+        $this->strategy->retireColumns($table, 'LEGACY');
+
+        self::assertSame(['id', 'légacy', 'unrelatedUnknown'], self::columns(self::ACCENT_TABLE));
+        self::assertSame(
+            [['id' => '1', 'légacy' => '42', 'unrelatedUnknown' => 'keep']],
+            self::rawSelect('SELECT id, `légacy`, unrelatedUnknown FROM ' . self::ACCENT_TABLE)
+        );
+    }
+
+    /** @dataProvider absentDeclaredCaseVariants */
+    public function testAbsentDeclaredCaseVariantRejectsWholeBatchBeforeMutation(
+        string $declaredName,
+        string $requestedName
+    ): void {
+        $failure = null;
+        try {
+            $declaredTable = new ContractTable(
+                self::TABLE,
+                'retirement',
+                [new Column('id', 'INT'), new Column($declaredName, 'INT')],
+                ['id']
+            );
+            $this->strategy->retireColumns($declaredTable, 'legacyValue', $requestedName);
+        } catch (\InvalidArgumentException $expected) {
+            $failure = $expected;
+        }
+
+        self::assertSame(
+            ['id', 'legacyValue', 'unrelatedUnknown', 'legacy value', 'odd`name', 'select', 'legacy-name', 'légacy值'],
+            self::columns()
+        );
+        self::assertSame(
+            [['id' => '1', 'legacyValue' => '41', 'unrelatedUnknown' => 'keep']],
+            self::rawSelect('SELECT id, legacyValue, unrelatedUnknown FROM ' . self::TABLE)
+        );
+        self::assertInstanceOf(\InvalidArgumentException::class, $failure);
+    }
+
+    public function absentDeclaredCaseVariants(): array
+    {
+        return [
+            'ASCII case variant' => ['modernValue', 'MODERNVALUE'],
+            'Unicode case variant' => ['módernValue', 'MÓDERNVALUE'],
+        ];
+    }
+
     /** @dataProvider invalidBatchMembers */
     public function testInvalidBatchMemberPreventsAnyPersistedMutation(string $invalidName): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         $failure = null;
         try {
             $this->strategy->retireColumns($this->table, 'legacyValue', $invalidName);
@@ -176,8 +234,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testRetirementQuotesThePersistedTableIdentifier(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         $quotedTable = self::quoteIdentifier(self::QUOTED_TABLE);
         self::rawQuery(
             'CREATE TABLE ' . $quotedTable
@@ -204,8 +260,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testWholeBatchPreflightRejectsADeclaredCaseVariantBeforeDdl(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         try {
             $declaredTable = new ContractTable(
                 self::TABLE,
@@ -225,8 +279,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testWholeBatchPreflightUsesDatabaseCaseSemanticsForUnicodeNames(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         try {
             $declaredTable = new ContractTable(
                 self::TABLE,
@@ -246,8 +298,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testPlainIndexedColumnIsRefusedWithoutSchemaChanges(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         self::rawQuery('ALTER TABLE ' . self::TABLE . ' ADD INDEX legacy_value_index (legacyValue)');
 
         try {
@@ -268,8 +318,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testFunctionalIndexDependencyIsRefusedWhenStatisticsColumnNameIsNull(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         self::rawQuery(
             'ALTER TABLE ' . self::TABLE . ' ADD INDEX legacy_value_expression ((legacyValue + 1))'
         );
@@ -298,8 +346,6 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
 
     public function testInboundForeignKeyColumnIsRefusedWithoutSchemaChanges(): void
     {
-        self::markTestIncomplete('Remove this marker when implementing the accepted retirement contract.');
-
         self::rawQuery('ALTER TABLE ' . self::TABLE . ' ADD UNIQUE INDEX legacy_value_unique (legacyValue)');
         self::rawQuery(
             'CREATE TABLE ' . self::CHILD_TABLE
@@ -328,6 +374,7 @@ final class RealWpdbTableColumnRetirementContractTest extends TestCase
         self::rawQuery('DROP TABLE IF EXISTS ' . self::CHILD_TABLE);
         self::rawQuery('DROP TABLE IF EXISTS ' . self::TABLE);
         self::rawQuery('DROP TABLE IF EXISTS ' . self::quoteIdentifier(self::QUOTED_TABLE));
+        self::rawQuery('DROP TABLE IF EXISTS ' . self::ACCENT_TABLE);
         self::rawQuery('DROP DATABASE IF EXISTS ' . self::quoteIdentifier($this->shadowSchema));
         self::rawQuery(
             'CREATE TABLE ' . self::TABLE . ' ('

@@ -43,7 +43,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testDefaultSyncIsAdditiveAndPreservesUnknownColumns(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'unrelatedUnknown'];
 
         (new TableUpdateStrategy())->syncColumns($this->table(['id']));
@@ -53,7 +52,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testColumnExistsUsesTheActiveSchemaMetadata(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['legacyValue'];
 
         self::assertTrue((new TableUpdateStrategy())->columnExists($this->table(), 'legacyValue'));
@@ -62,7 +60,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testMissingColumnIsReportedAsAbsent(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id'];
 
         self::assertFalse((new TableUpdateStrategy())->columnExists($this->table(), 'legacyValue'));
@@ -70,7 +67,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testMetadataFailureIsNotClassifiedAsAbsence(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['legacyValue'];
         $this->database->failMetadata = true;
 
@@ -78,9 +74,22 @@ final class TableColumnRetirementStrategyTest extends TestCase
         (new TableUpdateStrategy())->columnExists($this->table(), 'legacyValue');
     }
 
+    public function testMalformedMetadataResultFailsClosedBeforeDdl(): void
+    {
+        $this->database->columns = ['legacyValue'];
+        $this->database->overrideMetadataResult = true;
+        $this->database->metadataResult = [null];
+
+        try {
+            (new TableUpdateStrategy())->retireColumns($this->table(), 'legacyValue');
+            self::fail('Malformed metadata must fail closed.');
+        } catch (TableUpdateFailedException $expected) {
+            self::assertSame([], $this->database->alterQueries());
+        }
+    }
+
     public function testRetirementDropsOnlyTheNamedColumn(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'legacyValue', 'unrelatedUnknown'];
         (new TableUpdateStrategy())->retireColumns($this->table(), 'legacyValue');
 
@@ -91,7 +100,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testAbsentNamedColumnIsAnIdempotentNoOp(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'unrelatedUnknown'];
         $strategy = new TableUpdateStrategy();
 
@@ -103,7 +111,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testEmptyRetirementRequestIsRejectedBeforeDdl(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         try {
             (new TableUpdateStrategy())->retireColumns($this->table());
             self::fail('An empty retirement request must be rejected.');
@@ -115,7 +122,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
     /** @dataProvider invalidColumnNames */
     public function testEmptyOrNulColumnNameIsRejectedBeforeDdl(string $name): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         try {
             (new TableUpdateStrategy())->retireColumns($this->table(), 'legacyValue', $name);
             self::fail('The invalid name must be rejected.');
@@ -131,7 +137,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testCaseVariantOfDeclaredColumnIsRejectedBeforeDdl(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id'];
 
         try {
@@ -144,7 +149,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testOneDeclaredNameRejectsTheWholeBatchBeforeDdl(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'legacyValue'];
 
         try {
@@ -157,7 +161,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testQuotedBackendIdentifiersAreAccepted(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'legacy value', 'odd`name'];
         (new TableUpdateStrategy())->retireColumns($this->table(), 'legacy value', 'odd`name');
 
@@ -168,7 +171,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testIndexedColumnIsRejectedWithoutDdl(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'legacyValue'];
         $this->database->indexedColumns = ['legacyValue'];
 
@@ -182,7 +184,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testForeignKeyColumnIsRejectedWithoutDdl(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'legacyValue'];
         $this->database->foreignKeyColumns = ['legacyValue'];
 
@@ -196,7 +197,6 @@ final class TableColumnRetirementStrategyTest extends TestCase
 
     public function testDdlFailureIsWrapped(): void
     {
-        $this->markTestIncomplete('Implementation follows architecture approval.');
         $this->database->columns = ['id', 'legacyValue'];
         $this->database->failAlter = true;
 
@@ -232,6 +232,8 @@ final class RetirementWpdb
     public array $foreignKeyColumns = [];
     public bool $failMetadata = false;
     public bool $failAlter = false;
+    public bool $overrideMetadataResult = false;
+    public array $metadataResult = [];
 
     public function prepare(string $query, ...$args): string
     {
@@ -264,14 +266,39 @@ final class RetirementWpdb
             $this->last_error = 'metadata failed';
             return [];
         }
+        if ($this->overrideMetadataResult && stripos($query, 'INFORMATION_SCHEMA.') !== false) {
+            return $this->metadataResult;
+        }
+        if (stripos($query, 'AS identifiers_equal') !== false) {
+            if (preg_match(
+                "/SELECT candidate = '((?:''|[^'])*)'.*UNION ALL SELECT '((?:''|[^'])*)'/is",
+                $query,
+                $matches
+            ) !== 1) {
+                throw new \RuntimeException('Identifier comparison query was not understood by the fixture.');
+            }
+            $right = str_replace("''", "'", $matches[1]);
+            $left = str_replace("''", "'", $matches[2]);
+
+            return [['identifiers_equal' => strcasecmp($left, $right) === 0 ? '1' : '0']];
+        }
         if (stripos($query, 'INFORMATION_SCHEMA.COLUMNS') !== false) {
+            $columns = $this->columns;
+            if (preg_match("/AND COLUMN_NAME = '((?:''|[^'])*)'/i", $query, $matches) === 1) {
+                $requestedName = str_replace("''", "'", $matches[1]);
+                $columns = array_values(array_filter(
+                    $columns,
+                    static fn (string $name): bool => strcasecmp($name, $requestedName) === 0
+                ));
+            }
+
             return array_map(static fn (string $name): array => [
                 'COLUMN_NAME' => $name,
                 'COLUMN_TYPE' => 'bigint',
                 'IS_NULLABLE' => 'YES',
                 'COLUMN_DEFAULT' => null,
                 'EXTRA' => '',
-            ], $this->columns);
+            ], $columns);
         }
         if (stripos($query, 'INFORMATION_SCHEMA.STATISTICS') !== false) {
             return array_map(static fn (string $name): array => ['COLUMN_NAME' => $name], $this->indexedColumns);
