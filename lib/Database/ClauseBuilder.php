@@ -5,9 +5,11 @@ namespace PHPNomad\Integrations\WordPress\Database;
 use PHPNomad\Database\Exceptions\QueryBuilderException;
 use PHPNomad\Database\Interfaces\ClauseBuilder as ClauseBuilderInterface;
 use PHPNomad\Database\Traits\WithPrependedFields;
+use PHPNomad\Integrations\WordPress\Traits\CanGetDataFormats;
 
 class ClauseBuilder implements ClauseBuilderInterface
 {
+    use CanGetDataFormats;
     use WithPrependedFields;
 
     protected array $clauses = [];
