@@ -9,6 +9,8 @@ use PHPNomad\Database\Exceptions\CoordinatedOperationOutcomeUnknownException;
 use PHPNomad\Database\Exceptions\CoordinatedOperationReportingFailedException;
 use PHPNomad\Database\Exceptions\UnsupportedCoordinationException;
 use PHPNomad\Database\Interfaces\CoordinatedQueryStrategy as CoordinatedQueryStrategyInterface;
+use PHPNomad\Database\Interfaces\QueryBuilder as CoreQueryBuilder;
+use PHPNomad\Database\Interfaces\QueryStrategy as CoreQueryStrategy;
 use PHPNomad\Database\Interfaces\Table;
 use PHPNomad\Database\Strategies\OperationQueryStrategy;
 use PHPNomad\Datastore\Exceptions\DatastoreErrorException;
@@ -30,6 +32,8 @@ class CoordinatedQueryStrategy extends QueryStrategy implements CoordinatedQuery
     private ?mysqli $connection = null;
     private int $connectionId = 0;
     private bool $transactionActive = false;
+    private ?CoreQueryStrategy $activeOperationStrategy = null;
+    private ?PinnedQueryStrategy $activePinnedStrategy = null;
 
     public function __construct(private ?LoggerStrategy $logger = null)
     {
@@ -95,6 +99,8 @@ class CoordinatedQueryStrategy extends QueryStrategy implements CoordinatedQuery
                     }
                 );
                 $operationStrategy = new OperationQueryStrategy($delegate, $participants);
+                $this->activeOperationStrategy = $operationStrategy;
+                $this->activePinnedStrategy = $delegate;
                 $result = $operation($operationStrategy);
             } catch (Throwable $failure) {
                 $this->abort($names, 'callback', $failure);
@@ -122,8 +128,40 @@ class CoordinatedQueryStrategy extends QueryStrategy implements CoordinatedQuery
             if ($operationStrategy instanceof OperationQueryStrategy) {
                 $operationStrategy->close();
             }
+            $this->activeOperationStrategy = null;
+            $this->activePinnedStrategy = null;
             $this->clearAttempt();
         }
+    }
+
+    /**
+     * Create a fresh builder for the currently active coordinated callback.
+     *
+     * The operation provider factory uses this seam before handlers prepare
+     * clauses. It never exposes the wpdb object or permits a stale callback.
+     */
+    public function createOperationQueryBuilder(CoreQueryStrategy $operation): CoreQueryBuilder
+    {
+        $pinned = $this->assertActiveOperation($operation);
+
+        return $pinned->createQueryBuilder();
+    }
+
+    /** Create a fresh operation-local clause builder bound to the pinned wpdb. */
+    public function createOperationClauseBuilder(CoreQueryStrategy $operation): \PHPNomad\Database\Interfaces\ClauseBuilder
+    {
+        $pinned = $this->assertActiveOperation($operation);
+
+        return $pinned->createClauseBuilder();
+    }
+
+    private function assertActiveOperation(CoreQueryStrategy $operation): PinnedQueryStrategy
+    {
+        if ($this->activeOperationStrategy === null || $operation !== $this->activeOperationStrategy || $this->activePinnedStrategy === null) {
+            throw new UnsupportedCoordinationException('Operation-local WordPress builders are available only inside the active coordinated callback.');
+        }
+
+        return $this->activePinnedStrategy;
     }
 
     private function clearAttempt(): void
