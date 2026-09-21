@@ -37,6 +37,7 @@ use PHPNomad\Database\Interfaces\TableCreateStrategy as CoreTableCreateStrategyA
 use PHPNomad\Database\Interfaces\TableDeleteStrategy as CoreTableDeleteStrategyAlias;
 use PHPNomad\Database\Interfaces\TableExistsStrategy as CoreTableExistsStrategyAlias;
 use PHPNomad\Database\Interfaces\TableUpdateStrategy as CoreTableUpdateStrategy;
+use PHPNomad\Database\Interfaces\TableColumnRetirementStrategy as CoreTableColumnRetirementStrategy;
 use PHPNomad\Datastore\Events\RecordCreated;
 use PHPNomad\Datastore\Events\RecordDeleted;
 use PHPNomad\Di\Interfaces\CanSetContainer;
@@ -103,7 +104,10 @@ class WordPressInitializer implements CanSetContainer, HasLoadCondition, HasClas
             WordPressOperationDatabaseProviderFactory::class => CoreOperationDatabaseProviderFactory::class,
             DefaultCacheTtlProvider::class => HasDefaultTtl::class,
             TableCreateStrategy::class => CoreTableCreateStrategyAlias::class,
-            TableUpdateStrategy::class => CoreTableUpdateStrategy::class,
+            TableUpdateStrategy::class => [
+                CoreTableUpdateStrategy::class,
+                CoreTableColumnRetirementStrategy::class,
+            ],
             TableDeleteStrategy::class => CoreTableDeleteStrategyAlias::class,
             TableExistsStrategy::class => CoreTableExistsStrategyAlias::class,
             TranslationStrategy::class => CoreTranslationStrategyAlias::class,

@@ -47,7 +47,7 @@
         "php": ">=8.0",
         "phpnomad/auth": "^1.0",
         "phpnomad/asset": "^1.0",
-        "phpnomad/db": "dev-codex/operation-local-handler-bridge as 2.2.x-dev",
+        "phpnomad/db": "dev-codex/operation-bridge-retirement-convergence#76d7161702a4368748b6865cd05001dce0b157cc as 2.2.x-dev",
         "phpnomad/datastore": "^2.0",
         "phpnomad/event": "^1.0",
         "phpnomad/email": "^1.0",
