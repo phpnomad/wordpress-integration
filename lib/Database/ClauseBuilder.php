@@ -13,6 +13,14 @@ class ClauseBuilder implements ClauseBuilderInterface
 
     protected array $clauses = [];
     protected array $preparedValues = [];
+
+    /**
+     * Values for each condition, keyed by the index of the condition's
+     * placeholder in $clauses.
+     *
+     * @var array<int, array>
+     */
+    protected array $conditionValues = [];
     protected array $validOperators = ["=", "<", ">", "<=", ">=", "<>", "!=",
         "LIKE", "NOT LIKE", "IN", "NOT IN", "BETWEEN",
         "NOT BETWEEN", "IS NULL", "IS NOT NULL"];
@@ -136,12 +144,16 @@ class ClauseBuilder implements ClauseBuilderInterface
         $this->clauses[] = $fieldStr;
         $this->clauses[] = $operator;
         $this->clauses[] = $placeholder;
+        $placeholderIndex = array_key_last($this->clauses);
+        $this->conditionValues[$placeholderIndex] = [];
 
         foreach (Arr::whereNotNull($values) as $value) {
             if (is_array($value)) {
                 $this->preparedValues = Arr::merge($this->preparedValues, array_values($value));
+                $this->conditionValues[$placeholderIndex] = Arr::merge($this->conditionValues[$placeholderIndex], array_values($value));
             } else {
                 $this->preparedValues[] = $value;
+                $this->conditionValues[$placeholderIndex][] = $value;
             }
         }
 
@@ -149,62 +161,84 @@ class ClauseBuilder implements ClauseBuilderInterface
     }
 
     /**
+     * Builds the clause in a single pass.
+     *
+     * Grouped clauses are built first. Each run of plain conditions between
+     * them is then prepared with its own values, and the finished group SQL is
+     * placed between those prepared runs. Prepared values are never searched
+     * or rewritten afterward.
+     *
      * @inheritDoc
      */
     public function build(): string
     {
-        global $wpdb;
-        $queryParts = [];
-        $allValues = $this->preparedValues; // Initially prepared values
-        $subQueryReplacements = [];
-        $query = "";
-        $marker = 0;
+        $builtGroups = [];
 
-        foreach ($this->clauses as $clause) {
-            if (is_string($clause)) {
-                // Directly append logical operators or raw SQL parts
-                $queryParts[] = $clause;
-            } elseif (is_array($clause) && isset($clause['logic'], $clause['clauses'])) {
-                // Process group of clauses
+        foreach ($this->clauses as $index => $clause) {
+            if (is_array($clause) && isset($clause['logic'], $clause['clauses'])) {
                 $groupParts = [];
                 foreach ($clause['clauses'] as $groupClause) {
                     if ($groupClause instanceof ClauseBuilderInterface) {
-                        $marker++;
-                        $uniqueMarker = '__NOMADIC_SUBQUERY__' . $marker;
-                        $builtClause = $groupClause->build();
-                        $subQueryReplacements[$uniqueMarker] = $builtClause;
-                        $groupParts[] = $uniqueMarker;
+                        $groupParts[] = $groupClause->build();
                     }
                 }
-                if (!empty($groupParts)) {
-                    $queryParts[] = '(' . implode(" {$clause['logic']} ", $groupParts) . ')';
-                }
+                $builtGroups[$index] = empty($groupParts)
+                    ? null
+                    : '(' . implode(" {$clause['logic']} ", $groupParts) . ')';
             } elseif ($clause instanceof ClauseBuilderInterface) {
-                $marker++;
-                $uniqueMarker = '__NOMADIC_SUBQUERY__' . $marker;
-                $builtClause = $clause->build();
-                $subQueryReplacements[$uniqueMarker] = $builtClause;
-                $queryParts[] = $uniqueMarker;
+                $builtGroups[$index] = $clause->build();
             }
         }
 
-        if (!empty($queryParts)) {
-            $query = implode(' ', $queryParts);
+        $queryParts = [];
+        $run = [];
+        $runValues = [];
 
-            // Prepare the query with initial values if available
-            if (!empty($allValues)) {
-                $query = $wpdb->prepare($query, ...$allValues);
-            }
-
-            // Replace subquery markers with their actual queries
-            foreach ($subQueryReplacements as $marker => $subQuery) {
-                $query = str_replace($marker, $subQuery, $query);
+        foreach ($this->clauses as $index => $clause) {
+            if (is_string($clause)) {
+                $run[] = $clause;
+                foreach ($this->conditionValues[$index] ?? [] as $value) {
+                    $runValues[] = $value;
+                }
+            } elseif (array_key_exists($index, $builtGroups)) {
+                if (!empty($run)) {
+                    $queryParts[] = $this->prepareRun(implode(' ', $run), $runValues);
+                    $run = [];
+                    $runValues = [];
+                }
+                if ($builtGroups[$index] !== null) {
+                    $queryParts[] = $builtGroups[$index];
+                }
             }
         }
+
+        if (!empty($run)) {
+            $queryParts[] = $this->prepareRun(implode(' ', $run), $runValues);
+        }
+
+        $query = implode(' ', $queryParts);
 
         $this->reset();
 
         return $query;
+    }
+
+    /**
+     * Prepares a run of conditions that holds no grouped clauses.
+     *
+     * @param string $sql The conditions, with their placeholders.
+     * @param array $values The values for those placeholders, in order.
+     * @return string
+     */
+    protected function prepareRun(string $sql, array $values): string
+    {
+        global $wpdb;
+
+        if (empty($values)) {
+            return $sql;
+        }
+
+        return $wpdb->prepare($sql, ...$values);
     }
 
     /**
@@ -214,6 +248,7 @@ class ClauseBuilder implements ClauseBuilderInterface
     {
         $this->clauses = [];
         $this->preparedValues = [];
+        $this->conditionValues = [];
 
         return $this;
     }
