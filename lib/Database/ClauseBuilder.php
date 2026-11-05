@@ -172,6 +172,18 @@ class ClauseBuilder implements ClauseBuilderInterface
      */
     public function build(): string
     {
+        try {
+            return $this->assemble();
+        } finally {
+            $this->reset();
+        }
+    }
+
+    /**
+     * Assembles the conditions into SQL.
+     */
+    protected function assemble(): string
+    {
         $builtGroups = [];
 
         foreach ($this->clauses as $index => $clause) {
@@ -216,11 +228,7 @@ class ClauseBuilder implements ClauseBuilderInterface
             $queryParts[] = $this->prepareRun(implode(' ', $run), $runValues);
         }
 
-        $query = implode(' ', $queryParts);
-
-        $this->reset();
-
-        return $query;
+        return implode(' ', $queryParts);
     }
 
     /**

@@ -228,18 +228,18 @@ class QueryBuilder implements QueryBuilderInterface
     public function build(): string
     {
         if (empty($this->select)) {
-            $this->reset();
+            $this->abandon();
             throw new QueryBuilderException('Missing select field');
         }
 
         if (empty($this->from)) {
-            $this->reset();
+            $this->abandon();
             throw new QueryBuilderException('Missing from field');
         }
 
         foreach ($this->operands as $operand) {
             if (!$this->isValidOperand($operand)) {
-                $this->reset();
+                $this->abandon();
                 throw new QueryBuilderException('Invalid operand' . $operand);
             }
         }
@@ -272,6 +272,19 @@ class QueryBuilder implements QueryBuilderInterface
         $this->reset();
 
         return $sql;
+    }
+
+    /**
+     * Clears a query this builder refuses to build, with the conditions it
+     * took, so neither reaches the next query on a shared builder.
+     */
+    protected function abandon(): void
+    {
+        if ($this->clauseBuilder !== null) {
+            $this->clauseBuilder->reset();
+        }
+
+        $this->reset();
     }
 
     /** @inheritDoc */
