@@ -55,11 +55,28 @@ final class Request implements CoreRequest
     }
 
     /**
+     * Returns true when the client sent the param, even when it sent it as null.
+     *
+     * A dot in the name walks into nested arrays, the same way getParam() reads
+     * them. Keys are matched with array_key_exists rather than isset, so a body
+     * like {"description": null} reads as "sent", which is what a client means
+     * when it clears a field. This matches WP_REST_Request::has_param().
+     *
      * @inheritDoc
      */
     public function hasParam(string $name): bool
     {
-        return Arr::has($this->request->get_params(), $name);
+        $cursor = $this->request->get_params();
+
+        foreach (explode('.', $name) as $segment) {
+            if (!is_array($cursor) || !array_key_exists($segment, $cursor)) {
+                return false;
+            }
+
+            $cursor = $cursor[$segment];
+        }
+
+        return true;
     }
 
     /**
